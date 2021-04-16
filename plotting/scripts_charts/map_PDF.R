@@ -39,7 +39,7 @@ select <- dplyr::select
 # ====
 
 
-plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id)  { 
+plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports)  { 
   
   # folder_slost = folder where the files to be loaded are stored, file_slost = initial part of the name of the file to be loaded, 
   # case_subcase = identification words which selects the file, 
@@ -128,8 +128,17 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id)  {
       data <- data %>%  
         mutate_if(is.numeric, ~.*100) %>%
           mutate(Global = rowSums(select(., contains("median"))),
-                  EUFootprint = rowSums(select(., contains("median")& ((contains("EP") & contains("EU"))|(starts_with("For") & contains("EU"))|(contains("EP") & contains("im"))|(starts_with("For_") & contains("im"))))),
-                    EUForest = rowSums(select(., contains("median")& ((starts_with("For_") & (contains("EU")|contains("ex"))) | (contains("ForOther") & contains("EU")))))) %>%
+                  EUFootprint = case_when((energy_exports == "ex" | energy_exports == "EPnoex") 
+                                          ~ rowSums(select(., contains("median") & ((contains("EP") & contains("EU"))|(starts_with("For") & contains("EU"))|(contains("EP") & contains("im"))|(starts_with("For_") & contains("im"))))),
+                                          (energy_exports == "noEPnoex")
+                                          ~ rowSums(select(., contains("median") & ((starts_with("For") & contains("EU"))|(starts_with("For_") & contains("im")))))),
+                  EUForest = case_when((energy_exports == "ex") 
+                                       ~ rowSums(select(., contains("median")& ((starts_with("For_") & (contains("EU")|contains("ex"))) | (contains("ForOther") & contains("EU"))))),
+                                       (energy_exports == "EPnoex") 
+                                       ~ rowSums(select(., contains("median") & (((starts_with("For_") | starts_with("EP") ) & (contains("EU"))) | (contains("ForOther") & contains("EU"))))),
+                                       (energy_exports == "noEPnoex") 
+                                       ~ rowSums(select(., contains("median") & ((starts_with("For_") & contains("EU")) | (contains("ForOther") & contains("EU"))))))
+            ) %>%
             select(Group, Scenario, Level, Ecoregion, Year, contains(id)) %>%
               dplyr::rename_at(vars(all_of(id)), ~ "Values") %>%
                 dplyr::rename(eco_code = Ecoregion) 
@@ -198,11 +207,11 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id)  {
   if (length(year) > 1) {
     
     #pdf(file = paste0("./plotting/no_cutoff/", map, "_", climate, "_", region, "_", test,"lr.pdf"), width = 8, height = 15)
-    png(file = paste0(plots_path, map, "_", climate, "_", region, case_subcase, ".png"), width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "_", climate, "_", region, case_subcase, "_", energy_exports , ".png"), width = 6, height = 6, res = 600, units = "in")
     } else{
       
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, ".png"),  width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, ".png"),  width = 6, height = 6, res = 600, units = "in")
   
     }
   print(id)
