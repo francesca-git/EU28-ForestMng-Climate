@@ -145,11 +145,11 @@ select <- dplyr::select
       #zvalues = 2d array of z values (nrows = necoregions, 2? dim = simulations), Aij = 2d dataframe of Aij (area shares),
       # n = number of simulations
       
-      h = affinity_sim(res_ratio,zvalues,n)
+      h = affinity_sim(res_ratio, zvalues, n)
       
       #lapply(1:n, function(sim) h_A_product(h[[sim]], arg3)) 
       
-      a_suit_sim <- vector(mode = "list", length = simulations) # list of suitable areas
+      a_suit_sim <- vector(mode = "list", length = n) # list of suitable areas
       
       for (i in 1:n) {
         
@@ -196,8 +196,6 @@ select <- dplyr::select
       # Sorg, Aij = 2d dataframe (Areas per land use), Anew = 1d array of remaining natural areas, Aorg = 1d array of original natural areas,
       # zvalues = 2d array of z values (nrows = necoregions, 2? dim = simulations), n = number of simulations 
       # res_ratio = 4d array (biomes x land use x taxa x simulations)
-      res_ratio = ratio_eco
-      
       # Aij = Areas_lf[((necoregions*sc)+1):(necoregions*(sc+1)),]
       # n = simulations
       # Aorg = A_org_new[((necoregions*sc)+1):(necoregions*(sc+1)),]$A_org
@@ -255,7 +253,7 @@ select <- dplyr::select
     allocation_sim = function(h, Aij, n) { #h = list of 1000 matrices eco x land use x taxa, Aij = 2d dataframe of Aij, n = number of simulations
       
   
-      allocation_factor_sim <- vector(mode = "list", length = simulations) # list of allocation factors
+      allocation_factor_sim <- vector(mode = "list", length = n) # list of allocation factors
       ptm <- proc.time()
       
       for (i in 1:n) {

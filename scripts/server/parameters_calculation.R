@@ -175,7 +175,7 @@ select <- dplyr::select
     
     if (missing(distribution)) {distribution = "OFF"}
     if (missing(n)) {n = 1000}
-    if (missing(cutoff)) { cutoff = FALSE }
+    if (missing(cutoff)) { cutoff = TRUE}
     if (distribution == "OFF") {simulations = 2} else if (distribution != "OFF") {simulations = n}
   
     ########### LOAD THE DATA AND PREPARE THE CF ###########
@@ -227,7 +227,7 @@ select <- dplyr::select
         ##### CHANGE THE FOREST USE FOR THE EXTENSIVE AND INTENSIVE ####
         
         f_use_ex = f_use[c(3,6,7)] # Retention SelectionSystem SelectiveLogging 
-        f_use_in = f_use[c(2,4,9)] # ClearCut PlantationFuel PlantationTimber 
+        f_use_in = f_use[c(2,4,9)] # ClearCut PlantationFuel PlantationTimber Plantation NonTimber
         f_use_pl = f_use[c(1,4,9)] # PlantationNonTimber PlantationFuel PlantationTimber
         
         CFloc_group_for_aggr = list()
@@ -402,7 +402,7 @@ select <- dplyr::select
           ratio_eco_blu[i,,,] = ratio_sim_blu[pos,,,]
         }
         
-        Eco_code <- Ecoregions %>% select(Eco_code)                     # create a dataframe with only one column containing the codes of the ecoregions
+        Eco_code <- Ecoregions %>% dplyr::select(Eco_code)                     # create a dataframe with only one column containing the codes of the ecoregions
         Ecoregions_global <- Eco_code %>% mutate(Biome_ID = "Global")
         ratio_eco_for <- array(data = NA, dim = c(necoregions,nfuse,ntaxa,simulations), dimnames = list(unique(Ecoregions$Eco_code),f_use,taxa,c(1:simulations)))
         

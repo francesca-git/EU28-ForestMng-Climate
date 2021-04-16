@@ -3,16 +3,19 @@
 
 # function used to arrange the columns of ratio_eco and to put them in the same order as the columns of the dataframe with the areas
 #ratio_eco - land use names
-#[1] "Annual"               "Permanent"            "Pasture"              "Urban"                "PlantationNonTimber"  "ClearCut"             "Retention"            "PlantationFuel"       "SlashAndBurn"         "SelectionSystem"      "SelectiveLogging"    
-#[12] "Agroforestry"         "Plantation"           "ReducedImpactLogging" "Afforested"           "ForExtensive"         "ForIntensive"
+#[1] "Annual"               "Permanent"            "Pasture"              "Urban"                "PlantationNonTimber"  "ClearCut"             
+# "Retention"            "PlantationFuel"       "SlashAndBurn"         "SelectionSystem"      "SelectiveLogging"    
+# "Agroforestry"         "Plantation"           "ReducedImpactLogging" "Afforested"           "ForExtensive"         "ForIntensive"
 
-arrange_columns <- function() {
+name.landuse <- function() {
   
   #this function creates vectors useful to select and replicate the columns of land use types in the matrix ratio_eco according to the initial options (approach and inclusion of timber)
   
   # vectors with the maximum number of land use assessed in this analysis (union of Timber = TRUE and Approach = "AV")
   
-  lu_to_assess = c("Annual",  "Permanent", "Pasture", "Urban", "ClearCut",  "Retention",  "PlantationFuel", "Plantation", "SelectionSystem", "SelectiveLogging" , "Afforested",  "ForExtensive", "ForIntensive")
+  lu_to_assess = c("Annual",  "Permanent", "Pasture", "Urban",  "PlantationNonTimber", "ClearCut",  "Retention",  "PlantationFuel", 
+                   "SlashAndBurn", "SelectionSystem", "SelectiveLogging" , "Agroforestry", "Plantation", "ReducedImpactLogging",
+                   "Afforested",  "ForExtensive", "ForIntensive")
   
   return(lu_to_assess)
   
@@ -71,14 +74,33 @@ allocate.impacts <- function(df, fraction_of_areas) {
     )
   
     
-      test1 <- df_disaggr %>% mutate(sum_test1 = rowSums(select(., -Scenario, -Eco_code, -Year), na.rm = TRUE)) %>%
+      test1 <- df_disaggr %>% mutate(sum_test1 = rowSums(select(., contains("median")), na.rm = TRUE)) %>%
         select(Scenario, Eco_code, sum_test1)
-      test2 <- df %>% mutate(sum_test2 = rowSums(select(., -Scenario, -Eco_code, -Year), na.rm = TRUE)) %>%
+      test2 <- df %>% mutate(sum_test2 = rowSums(select(.,contains("median")), na.rm = TRUE)) %>%
         select(Scenario, Eco_code, sum_test2)
       compare_df <- full_join(test1, test2, by = c("Scenario", "Eco_code")) %>%
         mutate(diff = abs(sum_test1 - sum_test2))
-      if(max(compare_df$diff, na.rm = TRUE) > 1e-18) {stop("ERROR in the allocation of disaggregated areas")}
+      if(max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (median)")}
       rm(test1, test2, compare_df)
+      
+      test1 <- df_disaggr %>% mutate(sum_test1 = rowSums(select(., contains("lower95")), na.rm = TRUE)) %>%
+        select(Scenario, Eco_code, sum_test1)
+      test2 <- df %>% mutate(sum_test2 = rowSums(select(.,contains("lower95")), na.rm = TRUE)) %>%
+        select(Scenario, Eco_code, sum_test2)
+      compare_df <- full_join(test1, test2, by = c("Scenario", "Eco_code")) %>%
+        mutate(diff = abs(sum_test1 - sum_test2))
+      if(max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (lower95)")}
+      rm(test1, test2, compare_df)
+      
+      test1 <- df_disaggr %>% mutate(sum_test1 = rowSums(select(., contains("upper95")), na.rm = TRUE)) %>%
+        select(Scenario, Eco_code, sum_test1)
+      test2 <- df %>% mutate(sum_test2 = rowSums(select(.,contains("upper95")), na.rm = TRUE)) %>%
+        select(Scenario, Eco_code, sum_test2)
+      compare_df <- full_join(test1, test2, by = c("Scenario", "Eco_code")) %>%
+        mutate(diff = abs(sum_test1 - sum_test2))
+      if(max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (upper95)")}
+      rm(test1, test2, compare_df)
+      
       
       df_disaggr <- df_disaggr %>% rename(Ecoregion = Eco_code)
 
