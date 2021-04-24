@@ -1,0 +1,13 @@
+./test_formula.csv
+VS/*
+grouped_land_use_files/*
+temporary_old/*
+ecoregions_data/*
+results/*
+RR_distributions/*
+R-files/*
+aggregation_plotting/Mapping_GLOBIOM/*
+aggregation_plotting/WWF_Ecoregions/*
+aggregation_plotting/results_plots-csv/*
+aggregation_plotting/Figure_assembling.pptx
+aggregation_plotting/wetransfer-dd95f2

@@ -1,5 +1,5 @@
 
-setwd("C:/Users/Rosa/Documents/PhD_project/Forest_management/calculation/") # folder where this calculation takes places
+setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
 
 #load("./ratio.RData")
 source("./CF_functions.R")
