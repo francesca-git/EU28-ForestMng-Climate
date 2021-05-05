@@ -60,20 +60,22 @@ plot.EU.barplot <- function(data, data_top, palette_name) {
     data_top$Group <- factor(data_top$Group, levels = c("RCP6.5 (REF) - Multifunctional", "RCP6.5 (REF) - Set-aside", "RCP2.6 - Multifunctional", "RCP2.6 - Set-aside")) 
 
     # set the maximum value of the y axis according to the max value of the PDF 
+# 
+#       max_data_top <- max(max(data_top$PDFx100), max(data_top$upper95))
+#       min_data_top <- min(min(data_top$PDFx100), min(data_top$upper95))
+#   
+#       if((round(max_data_top, digits = 3) - max_data_top) < 0.005)
+#         { ymax_value <- (round(max_data_top, digits = 2) + 0.01)
+#             } else { ymax_value <- round(max_data_top, digits = 2) }
+#   
+#       if (min_data_top >= 0) {ymin_value = 0}else{
+#       if((min_data_top - round(min_data_top, digits = 3)) > -0.005)
+#         { ymin_value <- (round(min_data_top, digits = 2) - 0.01)
+#       } else { ymin_value <- round(min_data_top, digits = 2) }}
 
-    max_data_top <- max(max(data_top$PDFx100), max(data_top$upper95))
-    min_data_top <- min(min(data_top$PDFx100), min(data_top$upper95))
-    
-    if((round(max_data_top, digits = 3) - max_data_top) < 0.005) 
-      { ymax_value <- (round(max_data_top, digits = 2) + 0.01)
-          } else { ymax_value <- round(max_data_top, digits = 2) }
-    
-    if (min_data_top >= 0) {ymin_value = 0}else{      
-    if((min_data_top - round(min_data_top, digits = 3)) > -0.005) 
-      { ymin_value <- (round(min_data_top, digits = 2) - 0.01)
-    } else { ymin_value <- round(min_data_top, digits = 2) }}
+    ymin_value = 0
+    ymax_value = 0.3
 
-    
     # plot
     
     figure <-

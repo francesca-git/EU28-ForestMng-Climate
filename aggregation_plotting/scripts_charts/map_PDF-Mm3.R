@@ -164,26 +164,31 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
   
   df <- df %>% filter(Scenario != "NA")
   df$Values <- log10(df$Values)
-  
+  df$Values[is.infinite(df$Values)] <- NA
+
   
   #test = "RdYlBu"
       
   #pal <- c("#fafafa", "#EAEDF6", "#D7DFEF", "#C5D1E9", "#B2C3E2", "#A0B5DC", "#8CA7D5", "#789ACF", "#638CC8", "#4B7FC3", "#3872B6", "#3165A2", "#2B598E", "#244D7B", "#1E4069")
   #pal <- c("#F1F1F1", "#E1EDC9", "#C0E7BB", "#98DEB6", "#6BD1B9", "#3CC2BE", "#1CAEC3", "#3797C3", "#5B7BBD", "#775BAF", "#833993", "#80146E")
   # this is the palette to use:    
-  pal <- c("#f3f7f0", "#f0f9e8", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#1E4069", "#011959")
+  pal <- c("#fafafa", "#f0f9e8", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#1E4069", "#011959")
       
   ptm <- proc.time()
   
   if (length(year) > 1) {
     
     #pdf(file = paste0("./plotting/no_cutoff/", map, "_", climate, "_", region, "_", test,"lr.pdf"), width = 8, height = 15)
-    png(file = paste0(plots_path, map, "_", climate, "_", region, case_subcase, "_", energy_exports , "_PDFMm3.png"), width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "Mm3_", climate, "_", region, case_subcase, "_", energy_exports , ".png"), width = 6, height = 6, res = 600, units = "in")
     } else{
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_PDFMm3.png"),  width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "Mm3-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_newleg.png"),  width = 6, height = 6, res = 600, units = "in")
   
     }
+  
+  li <- c(-7, -1.5)
+  la <- c("-7","-6", "-5", "-4", "-3", "-2")
+  br <- c(-7, -6, -5, -4, -3, -2)
   
   print(id)
   figure <- ggplot() +
@@ -192,7 +197,7 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
                   #scale_fill_viridis(option = test, na.value = "grey50", direction = -1) + # for PDF
                   #scale_fill_continuous_diverging(test, c1 = 70, na.value = "white", rev = TRUE) +
                   #scale_fill_scico(palette = test, direction = 1) + #, begin = 0.5, end = 1) +
-                  scale_fill_gradientn(colors = pal, na.value = "white") + ################################ this is the line to keep
+                  scale_fill_gradientn(colors = pal, na.value = "gray98", limits = li, breaks = br, labels = la) + ################################ this is the line to keep
                   #labs(fill = "", x = "", y = "", title = title) +
                   #theme_minimal() +
                   #scale_fill_distiller(palette = test, direction = 1, na.value = "grey90") +

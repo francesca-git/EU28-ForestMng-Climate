@@ -8,7 +8,7 @@
 
 # General task: plot the impact maps according to the selected id (id refer to the impacts of either the global land use, the EU Footprint, the internal EU forests)
 # Date: September 2020
-# Author: Francesca Ros
+# Author: Francesca Rosa
 
 
 
@@ -214,8 +214,8 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
   #pal <- c("#fafafa", "#EAEDF6", "#D7DFEF", "#C5D1E9", "#B2C3E2", "#A0B5DC", "#8CA7D5", "#789ACF", "#638CC8", "#4B7FC3", "#3872B6", "#3165A2", "#2B598E", "#244D7B", "#1E4069")
   #pal <- c("#F1F1F1", "#E1EDC9", "#C0E7BB", "#98DEB6", "#6BD1B9", "#3CC2BE", "#1CAEC3", "#3797C3", "#5B7BBD", "#775BAF", "#833993", "#80146E")
   # this is the palette to use:    
-  pal <- c("#f3f7f0", "#f0f9e8", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#1E4069", "#011959")
-      
+  pal <- c("#fafafa", "#f0f9e8", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#1E4069", "#011959")
+      # #f3f7f0
   ptm <- proc.time()
   
   if (length(year) > 1) {
@@ -225,17 +225,46 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
     } else{
       
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, ".png"),  width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_newleg.png"),  width = 6, height = 6, res = 600, units = "in")
   
     }
+  
   print(id)
+  
+    if(id == "EUFootprint" & case_subcase != "_cutoff_mammals") {
+      li <- c(0, 0.0125)
+      br <- c(0, 0.003, 0.006, 0.009, 0.012)
+    }
+  
+    if(id == "EUForest" & case_subcase != "_cutoff_mammals") {
+      li <- c(0, 0.008)
+      br <- c(0, 0.002, 0.004, 0.006, 0.008)
+    }
+  
+    if(case_subcase == "_cutoff_mammals") {
+      li <- c(0, max(df$Values))
+      br <- round(seq(0, max(df$Values), length = 6), digits = 4)
+    }
+  
+    # if(id = "EUForest" & (case_subcase == "_cutoff" | case_subcase == "_Chaudhary2015" | 
+    #    case_subcase == "_Chaudhary2018" | case_subcase == "_LCImpact")) {
+    #   li <- c(0, 0.014)
+    #   br <- c(0, 0.002, 0.004, 0.006, 0.008, 0.010, 0.012, 0.014)
+    # }
+    # 
+    # if(id = "EUFootprint" & (case_subcase == "_cutoff" | case_subcase == "_Chaudhary2015" | 
+    #      case_subcase == "_Chaudhary2018" | case_subcase == "_LCImpact")) {
+    #     li <- c(0, 0.015)
+    #     br <- c(0, 0.005, 0.010, 0.015)
+    # }
+    # 
   figure <- ggplot() +
               geom_sf(data = shp, fill = "transparent", colour = NA) +
                 geom_sf(data = df, aes(fill = Values), colour = NA) + 
                   #scale_fill_viridis(option = test, na.value = "grey50", direction = -1) + # for PDF
                   #scale_fill_continuous_diverging(test, c1 = 70, na.value = "white", rev = TRUE) +
                   #scale_fill_scico(palette = test, direction = 1) + #, begin = 0.5, end = 1) +
-                  scale_fill_gradientn(colors = pal, na.value = "white") + ################################ this is the line to keep
+                  scale_fill_gradientn(colors = pal, na.value = "white", limits = li, breaks = br) + ################################ this is the line to keep
                   #labs(fill = "", x = "", y = "", title = title) +
                   #theme_minimal() +
                   #scale_fill_distiller(palette = test, direction = 1, na.value = "grey90") +
@@ -244,7 +273,7 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
                   #facet_wrap(~Scenario, nrow = 4, ncol = 2) +
                   labs(fill = legend) +
                   theme(text = element_text(size = 7)) +
-                  theme(strip.background = element_rect(color=NULL, fill="white", size=1.5, linetype="solid"),
+                  theme(strip.background = element_rect(color = NULL, fill = "white", size = 1.5, linetype = "solid"),
                         strip.text = element_text(size = 8)) +
                   theme(panel.background = element_blank(),
                         panel.border = element_rect(colour = "grey", fill = "transparent", size = 0.5),

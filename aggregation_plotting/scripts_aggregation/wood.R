@@ -41,11 +41,11 @@ calculate.impacts.pervolume <- function(csv_path, case_subcase) {
     
     # tidies the dataframe (renames some cells, unifies some columns, arranges the df) such that it can be joined to the df with the species loss
     
-    df1 <- df %>% mutate(Wood_forest_EU = Wood_forest_EU - Wood_forest_ex) %>%                                                             # exports are included in the general EU wood production, this difference keeps them separate 
+    df1 <- data.frame(df %>% mutate(Wood_forest_EU = Wood_forest_EU - Wood_forest_ex) %>%                                                             # exports are included in the general EU wood production, this difference keeps them separate 
                   rename(Group = Mitigation_scenario, Management = Management_scenario) %>%
                     mutate(Region = str_replace(Region, "Pacific_Islands", "Pacific_Island")) %>%                                                              
                       unite("Scenario", Group:Management, sep = "_") %>%
-                         arrange(Region, Scenario, Year)
+                         arrange(Region, Scenario, Year))
     levels(df1$Region) <- sort(levels(df1$Region))
     
     # loads the PDF dataframe and tidies it
@@ -63,7 +63,7 @@ calculate.impacts.pervolume <- function(csv_path, case_subcase) {
     # focus on EU
     
     df_fin <- df2 %>% full_join(df1) %>%
-                        select(Scenario, Region, Year, contains("Wood"), contains("median")& ((starts_with("For_")&(contains("EU")|contains("ex")|contains("im")))|  # selects the columns containing the production of Wood and energy crops/plantations and the columns containing EU internal/imported/exported forest use or energy crops/plantations
+                        select(Scenario, Region, Year, contains("Wood"), contains("median") & ((starts_with("For_")&(contains("EU")|contains("ex")|contains("im")))|  # selects the columns containing the production of Wood and energy crops/plantations and the columns containing EU internal/imported/exported forest use or energy crops/plantations
                                                                                               (starts_with("EP")&((contains("EU")&contains("conv"))|contains("im"))))) %>% 
                           mutate(PDF_forest_EU = rowSums(select(., (starts_with("For_") & contains("EU")))), 
                                  PDF_forest_im = rowSums(select(., (starts_with("For_") & contains("im")))),  

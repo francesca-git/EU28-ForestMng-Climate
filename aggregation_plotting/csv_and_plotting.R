@@ -31,7 +31,7 @@ source("./aggregation_plotting/scripts_aggregation/wood.R")
 # identify the results to access 
   type_of_data <- "impacts"       # "impacts" or "areas"
 
-  case <- "cutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact
+  case <- "cutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact, Chaudhary2015 or Chaudhary2018
   subcase <- ""                   # e.g. plants, mammals or birds (end of the csv files)
   case_areas <- "notimber"        # "notimber" or "timber" 
   energy_exports <- "EPnoex"    # "ex" (Footprint includes energy plantations, Internal EU does not include energy crops but includes exports) 
@@ -75,8 +75,8 @@ source("./aggregation_plotting/scripts_aggregation/wood.R")
     csv_path <- paste0(mainfolder, subfolder,"csv/")      # path used to save csv (generated using the .Rdata)
     csv_path_areas <-  paste0(mainfolder, "areas/", case_areas, "/")     # path used to save csv with data on areas (generated using the .Rdata)
     
-  
 
+    
 ############################ AGGREGATE THE RESULTS BOTH FOR ANALYSIS AND FOR PLOTTING ##############################
 
       
@@ -134,11 +134,16 @@ source("./aggregation_plotting/scripts_aggregation/wood.R")
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
           id = "EUFootprint"
+          map = "PDF"
           plot.map(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports) # map_PDF.R
          # id = can be "EUFootprint", "EUForest" or "Global"
            
-      ################# MAP OF GLOBAL/EU IMPACTS PER MHA #######################
+      ################# MAP OF GLOBAL IMPACTS PER UNIT OF VOLUME #######################
           id = "EUFootprint"
+          plot.map.unitvolume(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports) # map_PDF-Mm3.R
+
+      ################# MAP OF GLOBAL/EU IMPACTS PER MHA #######################
+          id = "EUForest"
           map = "PDFha" # "PDF" or "PDFha"
           plot.map(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports, map) # map_PDF.R
           

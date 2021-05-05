@@ -47,6 +47,13 @@ calculate.slost.Globiom <- function(folder_slost, csv_path, case_subcase) {
   df_regions <- data.frame(df_regions)
   
   ## test
+    
+    test_df <- data.frame(df %>% group_by(Scenario, Year) %>%
+                    summarise_if(is.numeric, sum, na.rm = TRUE))
+    test_df_regions <- data.frame(df_regions %>% group_by(Scenario, Year) %>%
+                    summarise_if(is.numeric, sum, na.rm = TRUE))
+    if (all.equal(test_df, test_df_regions) == FALSE) {stop("Error in the aggregation of impacts at Globiom level")}
+    
     test_year = sample(tstep, 1)
     test_scenario = sample(unique(df$Scenario), 1)
     print(paste0("Test on year ", test_year, " and on scenario ", test_scenario))
@@ -54,7 +61,7 @@ calculate.slost.Globiom <- function(folder_slost, csv_path, case_subcase) {
     test2 = results_in[[11]] %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Ecoregion, -Year)
     if (abs(sum(test1, na.rm = TRUE) - sum(test2, na.rm = TRUE)) > 1e-10) {stop("Error in the aggregation of impacts at Globiom level")}
 
-  rm(test_year, test_scenario, test1, test2)  
+  rm(test_df, test_df_regions, test_year, test_scenario, test1, test2)  
   
   write.csv(df_regions, paste0(csv_path, "slost-globiom", case_subcase, ".csv"), row.names = FALSE)
 
