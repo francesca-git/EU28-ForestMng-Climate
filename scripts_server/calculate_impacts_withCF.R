@@ -10,7 +10,7 @@ library(doParallel)
 library(foreach)
 select <- dplyr::select
 
-input_data <- "2015"
+input_data <- "2018"
 
 ########################## FUNCTION #################################
 
@@ -50,6 +50,8 @@ allocate.impacts <- function(df, fraction_of_areas) {
 
 ########################## LOAD THE DATA #################################
 
+########################## VERIFY THE CLASS OF THE INPUT DATA - ALL COLUMNS EXCEPT THE FIST ONE MUST BE NUMERIC #################################
+
   if (input_data == "2016") {
   data <- read.csv("./comparison_LCImpact/CF_LCImpact_2016_input.csv")
   end_name = "LCImpact"
@@ -58,7 +60,12 @@ allocate.impacts <- function(df, fraction_of_areas) {
     data <- read.csv("./comparison_LCImpact/CF_Chaudhary_2015_input.csv")
     end_name = "Chaudhary2015"
     constant = 1
+  } else if (input_data == "2018") {
+    data <- read.csv("./comparison_LCImpact/CF_Chaudhary_2018_input.csv")
+    end_name = "Chaudhary2018"
+    constant = 1
   }
+
 
 ########################## ADAPT THE FACTORS TO THE LAND USE DATA #################################
 
@@ -135,10 +142,15 @@ registerDoParallel(cl)
                             mutate(Ecoregion = as.factor(Ecoregion))
         
         matrix_areas <- data.matrix(areas_temp %>% select(-Ecoregion, -A_org, -A_new))
+        # convert all elements of data to numeric (except the column Ecoregion)
+        
+        data_temp <- data %>% select(-Ecoregion) 
+        indx <- sapply(data_temp, is.factor)
+        data_temp[indx] <- lapply(data_temp[indx], function(x) as.numeric(as.character(x)))
         matrix_CF <- data.matrix(data %>% select(-Ecoregion))
         
         impacts <- matrix_areas*matrix_CF
-      
+        
       # test ==========
         
         col_in = sample(1:ncol(impacts), 1)

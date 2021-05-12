@@ -23,10 +23,10 @@ source("./allocate_impacts.R")
     Timber = FALSE  # TRUE (part of clear cut areas have been allocated to Timber plantations). !! This option is valid only if approach == "MG"
     
   # Calculation of the response ratio
-    CI = TRUE                            # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+    CI = FALSE                            # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
     cutoff = TRUE # TRUE (all raw RR > 1 are set to 1) or FALSE
     case = "cutoff" # cutoff cutoff_timber nocutoff nocutoff_timber
-    vulnerability = "ON"
+    vulnerability = TRUE
     
 
 ############################# INITIAL SETTINGS ############################# 
@@ -157,7 +157,7 @@ source("./allocate_impacts.R")
           # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
           # 3) CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated. WARNING: at this step, CI must be FALSE,
           # because here this function is used only to compute the median values. The calculation of the CI is computed at a later step (next if loop)
-          # 5) vulnerability: "ON" or "OFF" 
+          # 5) vulnerability: TRUE or FALSE 
           
           # result = list("Aggr_matrix"= Slost_aggr_median, "Aggr_df"= Slost_aggr_df, "PerTaxon_matrix"= Slost_taxa_matrix, "Pertaxon_df"= Slost_taxa_df,
           #              "Aggr2.5_matrix"= Slost_aggr_2.5, "Aggr97.5_matrix"= Slost_aggr_97.5)
@@ -221,13 +221,13 @@ source("./allocate_impacts.R")
 ############################# SAVE THE RESULTS ############################# 
       
 
-        if (Approach == "AV" && vulnerability == "OFF") {
+        if (Approach == "AV" && vulnerability == FALSE) {
           write.csv(Slost_fin, paste0("./species-lost/av/Slost_av_", tstep[t], "noV.csv"), row.names = FALSE)
-        } else if (Approach == "AV" && vulnerability == "ON") {
+        } else if (Approach == "AV" && vulnerability == TRUE) {
           write.csv(Slost_fin, paste0("./species-lost/av/Slost_av_", tstep[t], ".csv"), row.names = FALSE)
-        } else if(Approach == "MG" && vulnerability == "OFF") {
+        } else if(Approach == "MG" && vulnerability == FALSE) {
           write.csv(Slost_fin, paste0("./species-lost/Slost_mg_", tstep[t], "noV.csv"), row.names = FALSE)
-        } else if (Approach == "MG" && vulnerability == "ON") {
+        } else if (Approach == "MG" && vulnerability == TRUE) {
           write.csv(Slost_fin_disaggr, paste0("./species-lost/Slost_mg_", tstep[t],  "_", case, ".csv"), row.names = FALSE)
           write.csv(Slost_fin_disaggr_plants, paste0("./species-lost/Slost_mg_", tstep[t], "_", case, "_plants.csv"), row.names = FALSE)
           write.csv(Slost_fin_disaggr_birds, paste0("./species-lost/Slost_mg_", tstep[t],  "_", case, "_birds.csv"), row.names = FALSE)
