@@ -75,11 +75,11 @@ year  = t[2]              # select the year
               select(Group, Scenario, contains("EU"), (starts_with("For_") & contains("ex"))) %>%
                 transmute(Group = Group, Scenario = Scenario, 
                           Afforestation = rowSums(select(., contains("Afforested"))),
-                          Regrowth = 0, Forest = rowSums(select(., starts_with("For"))), 
-                          Energy_crops_and_plantations = rowSums(select(., contains("EP"))),  
-                          Annual_crops = rowSums(select(., contains("Annual"))),
-                          Pasture = rowSums(select(., contains("Pasture"))), Permanent_crops = rowSums(select(., contains("Permanent"))),
-                          Urban = rowSums(select(., contains("Urban"))))
+                          Regrowth = 0, Forest = rowSums(select(., starts_with("For")), na.rm = TRUE), 
+                          Energy_crops_and_plantations = rowSums(select(., contains("EP")), na.rm = TRUE),  
+                          Annual_crops = rowSums(select(., contains("Annual")), na.rm = TRUE),
+                          Pasture = rowSums(select(., contains("Pasture")), na.rm = TRUE), Permanent_crops = rowSums(select(., contains("Permanent")), na.rm = TRUE),
+                          Urban = rowSums(select(., contains("Urban")), na.rm = TRUE))
       
       # change the format (before: one column per each land use class; after the change: one single column with al the values and one with the corresponding Category)
     
@@ -98,7 +98,9 @@ year  = t[2]              # select the year
           unite("Group", Group:Forest_use, remove = TRUE) %>%
             rename(Scenario = Management) %>% 
               select(Group, Scenario, contains("EU"), (starts_with("For_") & contains("ex"))) %>%
-               transmute(Group, Scenario, PDFx100 = rowSums(select(., contains("median"))), lower95 =  rowSums(select(., contains("lower"))), upper95 = rowSums(select(., contains("upper")))) 
+               transmute(Group, Scenario, PDFx100 = rowSums(select(., contains("median")), na.rm = TRUE), 
+                         lower95 =  rowSums(select(., contains("lower")), na.rm = TRUE), 
+                         upper95 = rowSums(select(., contains("upper")), na.rm = TRUE)) 
       
         write.csv(sums_oneyear, paste0(csv_path, "EU_", year, case_subcase, "_top.csv"), row.names = FALSE)
           # this csv has the following columns: 
@@ -118,10 +120,10 @@ year  = t[2]              # select the year
           results_temp <- results_median[[year]] %>%
                             unite("Group", Group:Forest_use, remove = TRUE) %>%   # convert the columns containing the climatic scenarios and the forest use scenarios in a single column called "Group"
                               rename(Scenario = Management) %>%                   # rename the column containing the forest management scenarios
-                                transmute(Group = Group, Scenario = Scenario, EU28_Energy_crops = rowSums(select(., contains("EP") & contains("EU"))), 
-                                          EU28_Forest_net = rowSums(select(., (starts_with("For") & contains("EU")))), 
-                                          Import_Energy_plantations = rowSums(select(., contains("EP") & contains("im"))), 
-                                          Import_Forest = rowSums(select(., starts_with("For_") & contains("im"))))
+                                transmute(Group = Group, Scenario = Scenario, EU28_Energy_crops = rowSums(select(., contains("EP") & contains("EU")), na.rm = TRUE), 
+                                          EU28_Forest_net = rowSums(select(., (starts_with("For") & contains("EU"))), na.rm = TRUE), 
+                                          Import_Energy_plantations = rowSums(select(., contains("EP") & contains("im")), na.rm = TRUE), 
+                                          Import_Forest = rowSums(select(., starts_with("For_") & contains("im")), na.rm = TRUE))
           
           # change the format (before: one column per each land use class; after the change: one single column with al the values and one with the corresponding Category)
             results_oneyear <- results_temp %>% 
@@ -141,7 +143,9 @@ year  = t[2]              # select the year
                                          (starts_with("For") & contains("im")) | 
                                          (contains("EP") & contains("EU")) | 
                                          (contains("EP") & contains("im")))) %>%
-                transmute(Group, Scenario, PDFx100 = rowSums(select(., contains("median"))), lower95 =  rowSums(select(., contains("lower"))), upper95 = rowSums(select(., contains("upper")))) 
+                transmute(Group, Scenario, PDFx100 = rowSums(select(., contains("median")), na.rm = TRUE), 
+                          lower95 =  rowSums(select(., contains("lower")), na.rm = TRUE), 
+                          upper95 = rowSums(select(., contains("upper")), na.rm = TRUE)) 
       
                   # test ====
                   

@@ -15,21 +15,42 @@ library(ggplot2)
 select <- dplyr::select
 source("./parameters_calculation.R")
 
+#### Statistic to bootstrap ####
+
+foo <- function(data, indices){
+  dt <- data[indices]
+  # print(median(dt))
+  # print((indices))
+  # print("End of this bootstrapping loop")
+  median(dt, na.rm = TRUE)
+} 
+
+foo_mean <-  function(data, indices){
+  dt <- data[indices]
+  # print(median(dt))
+  # print((indices))
+  # print("End of this bootstrapping loop")
+  mean(dt, na.rm = TRUE)
+}
 
 ############################# CALCULATE RR (WITH BOOTSTRAPPING) ############################# 
 
-calculate.RR.bs <- function(uncertainties, cutoff) {
+calculate.RR.bs <- function(uncertainties, n, cutoff) {
   
   # task: 
   # compile a four dimension array containing the response ratio per ecoregion, land use category and taxa.
   # The fourth dimension contains the bootsrtapped medians 
+  # uncertainties -> whether to calculate them or not (TRUE or FALSE)
+  # n = number of replicates in the bootstrapping process
+  # cutoff <- whether to cut off the rr above 1 and covert them to 1 or not (TRUE or FALSE)
   
   if (missing(uncertainties)) {uncertainties = TRUE}
   if (missing(cutoff)) {cutoff = TRUE}
+  if (missing(n)) {n = 100000}
 
   check_mean_median = FALSE
   
-  rr <- prepare.RR(uncertainties, cutoff)
+  rr <- prepare.RR(uncertainties, n, cutoff)
   
   # this function provides
   # rr_land_use = list containing the grouped response ratios. Order of grouping: biome, land use, taxon. This means that the first element will be
@@ -42,8 +63,6 @@ calculate.RR.bs <- function(uncertainties, cutoff) {
   # the first element is 111, which refer to Annual_Plants_1 of rr_land_use (Annual = first land use in the names_dim list, Plants = first taxa in
   # the names_dim list, 1 = first biome in the names_dim list).
   # indices_forest_mng = same as indices_land_use but for rr_forest_mng. 
-  
-  n = 1000
   
   rr_land_use <- rr[["rr_land_use"]]
   rr_forest_mng <- rr[["rr_forest_mng"]]
@@ -79,16 +98,15 @@ calculate.RR.bs <- function(uncertainties, cutoff) {
   
   number_data_group <- sort(sapply(rr_land_use, length))
   number_data_group_forest <- sort(sapply(rr_forest_mng, length))
+
+  # for each combination of biome, land use and taxon, n median values will be bootstrapped
   
-  # statistic to bootstrap
   
-  #results = foreach(counter = 1:2, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 'foreach', 'boot')) %dopar% { 
-    
+  ##### LAND USE #####
+  
   ptm <- proc.time()
   
   set.seed(1)
-  
-  options(warn = -1)
   
   for(counter in 1:length(rr_land_use)) {  
     
@@ -100,29 +118,29 @@ calculate.RR.bs <- function(uncertainties, cutoff) {
     print(names_fin) 
     if(names_in != names_fin) {stop("Error in the sourcing of raw data from the list (land use categories)")}
     
+    # Prepare the input data for the bootstrapping
     data_vector <- rr_land_use[[counter]]
-    df <- data.frame(data_vector)
-    
-    result <- vector(mode = "numeric", length = n)
-    
-    # ind <- c(1:nrow(df))
+    # Create the empty vector where the bootstrapped values will be stored
+    temp_res <- vector("numeric", length = n)
 
-    for (i in 1:n) {
-      res_boot <- kernelboot(data = data_vector, statistic = function(data) median(data, na.rm = TRUE), R = n)
-      #print(paste0("i: ", i))
-      #plot(res_boot)
-      result[i] = mean(res_boot$boot.samples)
+    # Bootstrapping
+        res_boot = boot(data = data_vector, statistic = foo, R = n)
+        temp_res <- res_boot$t
+        
+        rr_land_use_bs[indices_land_use[[counter]][1], indices_land_use[[counter]][2], indices_land_use[[counter]][3], ] <- temp_res
+        
+    rm(res_boot, temp_res)
+        
+    print(paste0("Land use, ", counter))
+      
     }
     
-    rr_land_use_bs[indices_land_use[[counter]][1], indices_land_use[[counter]][2], indices_land_use[[counter]][3], ] = result 
-    
-    print(paste0("Land use, ", counter))
-    
-  }
-  
   proc.time() - ptm 
   
-  save(rr_land_use_bs, file = "rr_land_use_bs.Rdata")
+  save(rr_land_use_bs, file = "./rr_z/rr_land_use_bs.Rdata")
+  
+  
+  ##### FOREST MANAGEMENT #####
   
   ptm <- proc.time()
   
@@ -136,33 +154,28 @@ calculate.RR.bs <- function(uncertainties, cutoff) {
   print(names_fin) 
   if(names_in != names_fin) {stop("Error in the sourcing of raw data from the list (forest management categories)")}
   
+  # Prepare the input data for the bootstrapping
   data_vector <- rr_forest_mng[[counter]]
-  df <- data.frame(data_vector)
+  # Create the empty vector where the bootstrapped values will be stored
+  temp_res <- vector("numeric", length = n)
   
-  result <- vector(mode = "numeric", length = n)
+  # Bootstrapping
+    res_boot = boot(data = data_vector, statistic = foo, R = n)
+    temp_res <- res_boot$t
+    
+    rr_forest_mng_bs[indices_forest_mng[[counter]][1], indices_forest_mng[[counter]][2], indices_forest_mng[[counter]][3], ] = temp_res 
   
-  # ind <- c(1:nrow(df))
-  
-  for (i in 1:n) {
-    res_boot <- kernelboot(data = data_vector, statistic = function(data) median(data, na.rm = TRUE), R = n)
-    #print(paste0("i: ", i))
-    #plot(res_boot)
-    result[i] = mean(res_boot$boot.samples)
-  }
-  
-  rr_forest_mng_bs[indices_forest_mng[[counter]][1], indices_forest_mng[[counter]][2], indices_forest_mng[[counter]][3], ] = result 
+  rm(res_boot, temp_res)
   
   print(paste0("Forest management, ", counter))
-  
   
   }
   
   proc.time() - ptm  
   
-  save(rr_forest_mng_bs, file = "rr_forest_mng_bs.Rdata")
+  save(rr_forest_mng_bs, file = "./rr_z/rr_forest_mng_bs.Rdata")
   
-  options(warn = 0)
-  
+
   rr_landuse_ecoregion <- array(data = NA, dim = c(necoregions, nlanduse, ntaxa, n), dimnames = list(unique(Ecoregions$Eco_code), land_use_types, taxa, c(1:n)))
   for (i in 1:necoregions) {
     pos = which(dimnames(rr_land_use_bs)[[1]] == Ecoregions$Biome_ID[i])
@@ -185,13 +198,11 @@ calculate.RR.bs <- function(uncertainties, cutoff) {
   rr_ecoregion <- abind(rr_landuse_ecoregion, rr_forest_ecoregion, along = 2)
   rr_ecoregion_backup = rr_ecoregion
   
-  save(rr_ecoregion, file = "rr_ecoregion.Rdata")
+  save(rr_ecoregion, file = "./rr_z/rr_ecoregion_bs.Rdata")
   
   return(rr_ecoregion)   
   
-  
-  
-  
+
   # mean and median
   
   if(check_mean_median == TRUE) {
@@ -246,15 +257,14 @@ calculate.RR.bs <- function(uncertainties, cutoff) {
 }
   
  
-prepare.zvalues.bs <- function() {  
+prepare.zvalues.bs <- function(n) {  
   
   # tasks: 
   # bootstrap the z values per habitat type and per taxon type (plant or animal (birds and mammals))
   # assign the z values to all ecoregion 
   # output: array whose rows are the ecoregions and whose columns are the z values
+  # n = number of replicates in the bootstrapping process
   
-  n = 1000
-
   # load the data on the ecoregions
   data_loaded <- load.data()
   Ecoregions <- data_loaded[["Ecoregions"]]
@@ -273,41 +283,30 @@ prepare.zvalues.bs <- function() {
   # not all the information was available in the paper, therefore part of the data were asked to the corresponding author
   
   # array to fill up with bootstrapped results
-  z_2d_sim <- matrix(data = NA, nrow = nhabitats, ncol = n, dimnames = list(c("island", "forest", "non-forest"), as.character(c(1:n))))     # create an empty array to store the result of the simulatio
+  z_bs <- matrix(data = NA, nrow = nhabitats, ncol = n, dimnames = list(c("island", "forest", "non-forest"), as.character(c(1:n))))     # create an empty array to store the result of the bootstrapping
   
   # final array which will be filled up with the values used as input for the calculation of the impacts
   zvalues <- data.frame(matrix(NA, nrow = necoregions, ncol = n + 1))     # create an empty dataframe to store the value of z for each ecoregion 
   names(zvalues)[1] = "Eco_code"
   names(zvalues)[2:length(zvalues)] = as.character(c(1:n))
   zvalues <- zvalues %>% mutate(Eco_code = Ecoregions$Eco_code)                 # add a column with the ecoregion codes
-  
-  # Bootstrapping
-  
-  foo <- function(data, indices){
-    dt <- data[sample(indices, round(0.9*length(indices))),]
-    print(mean(dt))
-    #print((indices))
-    mean(dt, na.rm = TRUE)
-  }
-  
-  
+
   set.seed(2)
   
   for (counter in 1:nhabitats) {
     
+    data_vector <- pull(z_rawvalues_list[[counter]])
     temp_res <- vector("numeric", length = n)
+
+        res_boot = boot(data = data_vector, statistic = foo, R = n)
+        temp_res <- res_boot$t
     
-      for (i in 1:n) {
-        res_boot = boot(data = z_rawvalues_list[[counter]], statistic = foo, R = 1000)
-        temp_res[i] <- res_boot$t0
-        print(res_boot$t0)
-        rm(res_boot)
-      }
+    z_bs[counter,] <- temp_res
     
-    z_2d_sim[counter,] <- temp_res
+    rm(res_boot, temp_res)
   }
   
-  save(z_2d_sim, file = "./ecoregions_data/z_bs.Rdata")
+  save(z_bs, file = "./rr_z/z_bs.Rdata")
   # load("./ecoregions_data/z_bs.Rdata")
   # assign the corresponding simulation result to each ecoregion according to the habitat type (islands, forests, not forests)
   
@@ -316,20 +315,38 @@ prepare.zvalues.bs <- function() {
   for (i in 1:nrow(Ecoregions)) {
     
     if (Ecoregions$Assigned_habitat_type[i] == "island") {
-      zvalues[i,2:length(zvalues)] = z_2d_sim[1,]
+      zvalues[i,2:length(zvalues)] = z_bs[1,]
     } else if (Ecoregions$Assigned_habitat_type[i] == "forest") {
-      zvalues[i,2:length(zvalues)] = z_2d_sim[2,]
+      zvalues[i,2:length(zvalues)] = z_bs[2,]
     } else if (Ecoregions$Assigned_habitat_type[i] == "non-forest") {
-      zvalues[i,2:length(zvalues)] = z_2d_sim[3,]
+      zvalues[i,2:length(zvalues)] = z_bs[3,]
     }
   }
   
   zvalues <- array(zvalues[2:length(zvalues)], dimnames = list(Ecoregions$Eco_code, 1:n))   # convert of the dataframe to an array (this format is needed to use the functions when species lost are computed)
   
-  rm(z_2d_sim, z_lower, z_upper)
+  rm(z_bs, z_lower, z_upper)
+  
+  save(zvalues, file = "./rr_z/zvalues_ecoregion_bs.Rdata")
   
   return(zvalues)
 }
 
 
+# 
+# 
+# for (i in 1:n) {
+#   res_boot <- kernelboot(data = data_vector, statistic = function(data) median(data, na.rm = TRUE), R = n)
+#   #print(paste0("i: ", i))
+#   #plot(res_boot)
+#   result[i] = mean(res_boot$boot.samples)
+# }
 
+
+
+# foo <- function(data, indices){
+#   dt <- data[sample(indices, round(0.9*length(indices))),]
+#   print(mean(dt))
+#   #print((indices))
+#   mean(dt, na.rm = TRUE)
+# }

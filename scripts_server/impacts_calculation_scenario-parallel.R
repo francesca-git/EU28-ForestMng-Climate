@@ -121,39 +121,33 @@ source("./allocate_impacts.R")
       
 ############################# CALCULATE THE IMPACTS ############################# 
         
-  tstep = seq(from = 2000, to = 2100, by = 10)  
-  ntstep = length(tstep) #time steps: 2000 -> 2100
+  tsteps = c(2020, 2050, 2100) # seq(from = 2000, to = 2100, by = 10)  
+  ntsteps = length(tsteps) #time steps: 2000 -> 2100
 
-  #ptm <- proc.time()
   # Parallel for-loop
-    # Packages need to be passed on to each core
-    
-    # Setup parallel computation (setting up a cluster that needs to be stopped later)
-    start.time = Sys.time()
-    
-    UseCores = round(detectCores() / 5 * 4)  # Number of cores (parallel "workers") to be used
-    cl = makeCluster(UseCores)
-    registerDoParallel(cl)
-    
-    
+  # Packages need to be passed on to each core
+  
+  # Setup parallel computation (setting up a cluster that needs to be stopped later)
+  
+  UseCores = round(detectCores() / 5 * 4)  # Number of cores (parallel "workers") to be used
+  cl = makeCluster(UseCores)
+  registerDoParallel(cl)
+  
+  start.time = Sys.time()
+  
     ################### LOOPS OVER THE YEARS ################### 
     
-    
-    # Parallel for-loop
-    # Packages need to be passed on to each core
-    results = foreach(t = 11:11, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 
-                                                'fitdistrplus', 'truncdist', 'foreach', 
-                                                'MASS', 'triangle')) %dopar% {
-    # results = foreach(t = 1:ntstep, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 
-    #                                             'fitdistrplus', 'truncdist', 'foreach', 
-    #                                             'MASS', 'triangle')) %dopar% {
-      t = 11
-          
+  
+    for (tstep in 3:3) {#ntsteps) {
+      #tstep = 3
+      test_matrix <- matrix(1, nrow = necoregions, ncol = 17)
+      ptm_year <- Sys.time()
+      
       #######  AREAS #######
           
-      print(paste0("time step (start): ", tstep[t]))
-      Areas <- myfiles[[t]]
-      fr_Areas <- myfiles_fr[[t]]
+      print(paste0("time step (start): ", tsteps[tstep]))
+      Areas <- myfiles[[tstep]]
+      fr_Areas <- myfiles_fr[[tstep]]
       
       Areas <- Areas %>% rename(Eco_code = Ecoregion)
       fr_Areas <- fr_Areas %>% rename(Eco_code = Ecoregion)
@@ -169,28 +163,65 @@ source("./allocate_impacts.R")
       
       Slost_fin$Scenario = rep(Scenarios, each = necoregions)
       Slost_fin$Eco_code = rep(Ecoregions$Eco_code, nscenarios)
-      Slost_fin$Year = tstep[t]
+      Slost_fin$Year = tsteps[tstep]
       
       Slost_fin_plants <- Slost_fin
       Slost_fin_birds <- Slost_fin
       Slost_fin_mammals <- Slost_fin
       
+      if (file.exists("./species-lost_temp/Slost_fin.csv")) {
+        file.remove("./species-lost_temp/Slost_fin.csv")
+      }
+      if (file.exists("./species-lost_temp/Slost_fin_plants.csv")) {
+        file.remove("./species-lost_temp/Slost_fin_plants.csv")
+      }
+      if (file.exists("./species-lost_temp/Slost_fin_birds.csv")) {
+        file.remove("./species-lost_temp/Slost_fin_birds.csv")
+      }
+      if (file.exists("./species-lost_temp/Slost_fin_mammals.csv")) {
+        file.remove("./species-lost_temp/Slost_fin_mammals.csv")
+      }
+      
+      write.csv(Slost_fin, "./species-lost_temp/Slost_fin.csv", row.names = FALSE)
+      write.csv(Slost_fin_plants, "./species-lost_temp/Slost_fin_plants.csv", row.names = FALSE)
+      write.csv(Slost_fin_birds, "./species-lost_temp/Slost_fin_birds.csv", row.names = FALSE)
+      write.csv(Slost_fin_mammals, "./species-lost_temp/Slost_fin_mammals.csv", row.names = FALSE)
+    
+      if (file.exists("./species-lost_temp/fr_Areas_new.csv")) {
+        file.remove("./species-lost_temp/fr_Areas_new.csv")
+      }
+      
+      
       fr_Areas_new <- data.frame(matrix(NA, nrow = 0, ncol = 0))
+      
+      rm(Slost_fin, Slost_fin_birds, Slost_fin_mammals, Slost_fin_plants)
 
       scenario_in = 0:(nscenarios-1)
       
         
       ################### LOOPS OVER THE SCENARIOS ################### 
       
-        ptm <- proc.time()
-
-      for (sc in 1:1) { #scenario_in) { #scenario_in) {
-        sc = 0
+      # Parallel for-loop
+      # Packages need to be passed on to each core
+      # scenario_in
+      results = foreach(sc = 0:1, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 
+                                               'fitdistrplus', 'truncdist', 'foreach', 
+                                               'MASS', 'triangle')) %dopar% {
+                                                 
+        ptm_scenario <- Sys.time()
+                                                 
+        Slost_fin = read.csv("./species-lost_temp/Slost_fin.csv")
+        Slost_fin_plants = read.csv("./species-lost_temp/Slost_fin_plants.csv")
+        Slost_fin_birds = read.csv("./species-lost_temp/Slost_fin_birds.csv")
+        Slost_fin_mammals = read.csv("./species-lost_temp/Slost_fin_mammals.csv")
         
+        if (file.exists("./species-lost_temp/fr_Areas_new.csv")) {
+          fr_Areas_new = read.csv("./species-lost_temp/fr_Areas_new.csv")
+        }
         
         ##### PREPARE THE AREAS #####
         
-          print(paste0("scenario (start): ", Scenarios[sc+1]))
+        print(paste0("scenario (start): ", Scenarios[sc+1]))
   
           Areas_temp <- Areas %>% filter(Scenario == toString(Scenarios[sc+1])) %>%
                           dplyr::select(-Scenario) %>%
@@ -207,23 +238,23 @@ source("./allocate_impacts.R")
         
         
         ##### COMPUTE THE TOTAL IMPACTS AND THE IMPACTS PER TAXONOMIC GROUP #####
-          
+
           if (BS == FALSE) {
           Slost <- calculate.slost(Total_RemainingNatural_areas = Areas_org_new, Land_use_areas = Areas_lu, param = parameters, CI = FALSE, BS)
             Slost_aggr_matrix <- Slost[["Aggr_matrix"]]
             Slost_taxa_matrix <- Slost[["PerTaxon_matrix"]]
             Slost_aggr2.5_matrix <- Slost[["Aggr2.5_matrix"]]
-            Slost_aggr97.5_matrix <- Slost[["Aggr97.5_matrix"]]  
+            Slost_aggr97.5_matrix <- Slost[["Aggr97.5_matrix"]]
             rm(Slost)
           }
           # Arguments:
-          # 1) Total_RemainingNatural_areas : dataframe with two columns, one with the total original areas, one with the remaining natural areas. The rows correspond to the 
+          # 1) Total_RemainingNatural_areas : dataframe with two columns, one with the total original areas, one with the remaining natural areas. The rows correspond to the
           # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
-          # 2) Land_use_areas : dataframe which contains one column per each land use category. The rows correspond to the 
+          # 2) Land_use_areas : dataframe which contains one column per each land use category. The rows correspond to the
           # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
           # 3) CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated. WARNING: at this step, CI must be FALSE,
           # because here this function is used only to compute the median values. The calculation of the CI is computed at a later step (next if loop)
-          # 5) vulnerability: TRUE or FALSE 
+          # 5) vulnerability: TRUE or FALSE
           # 6) cutoff: TRUE or FALSE
           # 7) BS : TRUE or FALSE
           # Output:
@@ -240,8 +271,8 @@ source("./allocate_impacts.R")
             Slost_aggr97.5_matrix <- Slost_CI[["Aggr97.5_matrix"]]
             rm(Slost_CI)
           }
-          
-          Slost_fin[((necoregions*sc)+1):(necoregions*(sc+1)),4:(3+nlfuse)] = Slost_aggr_matrix
+
+          Slost_fin[((necoregions*sc)+1):(necoregions*(sc+1)),4:(3+nlfuse)] = Slost_aggr_matrix # test_matrix 
           Slost_fin[((necoregions*sc)+1):(necoregions*(sc+1)),(3+nlfuse+1):(3+2*nlfuse)] = Slost_aggr2.5_matrix
           Slost_fin[((necoregions*sc)+1):(necoregions*(sc+1)),(3+2*nlfuse+1):(3+3*nlfuse)] = Slost_aggr97.5_matrix
           
@@ -262,52 +293,76 @@ source("./allocate_impacts.R")
         
         rm(Areas_temp, Areas_lu, Areas_org_new)
         
+        write.csv(Slost_fin, "./species-lost_temp/Slost_fin.csv", row.names = FALSE)
+        write.csv(Slost_fin_plants, "./species-lost_temp/Slost_fin_plants.csv", row.names = FALSE)
+        write.csv(Slost_fin_birds, "./species-lost_temp/Slost_fin_birds.csv", row.names = FALSE)
+        write.csv(Slost_fin_mammals, "./species-lost_temp/Slost_fin_mammals.csv", row.names = FALSE)
+        
+        write.csv(fr_Areas_new, "./species-lost_temp/fr_Areas_new.csv", row.names = FALSE)
+        
+        ptm_endscenario <- Sys.time() - ptm_scenario    
+        
+        print(paste0("Time (one scenario): ", round(ptm_endscenario, 3), units(ptm_endscenario)))
         
       }
       
-        proc.time() - ptm      
-      
       # time = end - start
       #print(paste0("Time: ", time))
-      
+     
       
 ############################# ALLOCATE THE IMPACTS TO THE DISAGGREGATED LAND USE CATEGORIES #############################
       
-      print(paste0("time step (end - before allocation): ", tstep[t]))
+      Slost_fin = read.csv("./species-lost_temp/Slost_fin.csv")
+      Slost_fin_plants = read.csv("./species-lost_temp/Slost_fin_plants.csv")
+      Slost_fin_birds = read.csv("./species-lost_temp/Slost_fin_birds.csv")
+      Slost_fin_mammals = read.csv("./species-lost_temp/Slost_fin_mammals.csv")
+      
+      fr_Areas_new = read.csv("./species-lost_temp/fr_Areas_new.csv")
+      
+      print(paste0("time step (end - before allocation): ", tsteps[tstep]))
       
       Slost_fin_disaggr <- allocate.impacts(Slost_fin, fr_Areas_new)
       Slost_fin_disaggr_plants <-  allocate.impacts(Slost_fin_plants, fr_Areas_new)      
       Slost_fin_disaggr_birds <-   allocate.impacts(Slost_fin_birds, fr_Areas_new)     
       Slost_fin_disaggr_mammals <- allocate.impacts(Slost_fin_mammals, fr_Areas_new)      
       
-      print(paste0("time step (end - after allocation): ", tstep[t]))
+      print(paste0("time step (end - after allocation): ", tsteps[tstep]))
       
       rm(fr_Areas_new)
+      
 ############################# SAVE THE RESULTS ############################# 
       
 
         if (Approach == "AV" && vulnerability == FALSE) {
-          write.csv(Slost_fin, paste0("./species-lost/av/Slost_av_", tstep[t], "noV.csv"), row.names = FALSE)
+          write.csv(Slost_fin, paste0("./species-lost/av/Slost_av_", tsteps[tstep], "noV.csv"), row.names = FALSE)
         } else if (Approach == "AV" && vulnerability == TRUE) {
-          write.csv(Slost_fin, paste0("./species-lost/av/Slost_av_", tstep[t], ".csv"), row.names = FALSE)
+          write.csv(Slost_fin, paste0("./species-lost/av/Slost_av_", tsteps[tstep], ".csv"), row.names = FALSE)
         } else if(Approach == "MG" && vulnerability == FALSE) {
-          write.csv(Slost_fin, paste0("./species-lost/Slost_mg_", tstep[t], "noV.csv"), row.names = FALSE)
+          write.csv(Slost_fin, paste0("./species-lost/Slost_mg_", tsteps[tstep], "noV.csv"), row.names = FALSE)
         } else if (Approach == "MG" && vulnerability == TRUE) {
-          write.csv(Slost_fin_disaggr, paste0("./species-lost/Slost_mg_", tstep[t],  "_", case, ".csv"), row.names = FALSE)
-          write.csv(Slost_fin_disaggr_plants, paste0("./species-lost/Slost_mg_", tstep[t], "_", case, "_plants.csv"), row.names = FALSE)
-          write.csv(Slost_fin_disaggr_birds, paste0("./species-lost/Slost_mg_", tstep[t],  "_", case, "_birds.csv"), row.names = FALSE)
-          write.csv(Slost_fin_disaggr_mammals, paste0("./species-lost/Slost_mg_", tstep[t],  "_", case, "_mammals.csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr, paste0("./species-lost/Slost_mg_", tsteps[tstep],  "_", case, ".csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr_plants, paste0("./species-lost/Slost_mg_", tsteps[tstep], "_", case, "_plants.csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr_birds, paste0("./species-lost/Slost_mg_", tsteps[tstep],  "_", case, "_birds.csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr_mammals, paste0("./species-lost/Slost_mg_", tsteps[tstep],  "_", case, "_mammals.csv"), row.names = FALSE)
         }
       
-      print(paste0("time step (end): ", tstep[t]))
+      print(paste0("time step (end): ", tsteps[tstep]))
+      
+      ptm_endyear <- Sys.time() - ptm_year     
+      
+      print(paste0("Time (one year): ", round(ptm_endyear, 3), units(ptm_endyear)))
+      
 
     }
-    
-    # Stop the cluster
-    stopCluster(cl)
   
-  t = Sys.time()-start.time
-  print(paste('Total time:', round(t, 3), units(t)))
+  run_time = Sys.time() - start.time
+  print(paste('Total time:', round(run_time, 3), units(run_time)))
+  
+      
+      # Stop the cluster
+      stopCluster(cl)
+      
+    
   
 
   

@@ -62,7 +62,7 @@ plot.global.time.series <- function(csv_path, case_subcase, plots_path, case_are
   
     figure1 <-
     ggplot(data, aes(x=Year, y=PDFx100, fill = Category)) +
-      geom_area(alpha=0.85, size= 0.2, color = "gray85") +
+      geom_area(alpha = 0.85, size = 0.2, color = "gray85") +
       #scale_fill_brewer(palette = palette_name, direction = dir, labels =  c("Afforestation", "Regrowth", "Forest", "Energy crops and plantations", "Annual crops", "Pastures", "Permanent crops", "Urban"))+
       #scale_fill_nord(palette = palette_name, reverse = TRUE, labels =  c("Afforestation", "Regrowth", "Forest", "Energy crops and plantations", "Annual crops", "Pastures", "Permanent crops", "Urban"))+
       scale_fill_manual(values = palette, labels =  c("Afforestation", "Regrowth", "Managed forests", "Energy crops and plantations", "Annual crops", "Pastures", "Permanent crops", "Urban"))+

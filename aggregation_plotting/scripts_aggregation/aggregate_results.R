@@ -59,9 +59,9 @@
         results = lapply(results, function(x) data.frame(x))
         
         # sum over land uses 
-        sums <- lapply(results, function(x) mutate(x, Sum_median = rowSums(select(x, contains("median")))) %>%            # sum the columns, except the ones describing the scenario                       
-                                              mutate(Sum_lower95 =  rowSums(select(x, contains("lower95")))) %>%
-                                                mutate(Sum_upper95 = rowSums(select(x, contains("upper95"))))  %>%
+        sums <- lapply(results, function(x) mutate(x, Sum_median = rowSums(select(x, contains("median")), na.rm = TRUE)) %>%            # sum the columns, except the ones describing the scenario                       
+                                              mutate(Sum_lower95 =  rowSums(select(x, contains("lower95")), na.rm = TRUE)) %>%
+                                                mutate(Sum_upper95 = rowSums(select(x, contains("upper95")), na.rm = TRUE))  %>%
                                                   select(Group, Forest_use, Management, Sum_median, Sum_lower95, Sum_upper95))       # select only the useful columns
         sums = lapply(sums, function(x) data.frame(x))
   
@@ -75,21 +75,21 @@
         # test ====
         y <- sample(1:11, 1)                        # random year
         r <- sample(1:nrow(results[[1]]), 1)        # random row
-        if ((rowSums(results[[y]][r, 4:31]) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
+        if ((rowSums(results[[y]][r, 4:31], na.rm = TRUE) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
           if(length(results[[y]]) > 31) { 
-            if ((rowSums(results[[y]][r, 32:59]) - sums[[y]][r,5] > 1e-16) |
-                (rowSums(results[[y]][r, 60:87]) - sums[[y]][r,6] > 1e-16))  {stop("ERROR in the calculation of the sums (CI)")}
+            if ((rowSums(results[[y]][r, 32:59], na.rm = TRUE) - sums[[y]][r,5] > 1e-16) |
+                (rowSums(results[[y]][r, 60:87], na.rm = TRUE) - sums[[y]][r,6] > 1e-16))  {stop("ERROR in the calculation of the sums (CI)")}
           }
   
         # ====
           
         results_median <- lapply(results, function(x)  select(x, -contains("upper95"), -contains("lower95")))             # focus on median values
-        sums_median <- lapply(results_median, function(x) mutate(x, Sum = rowSums(x[4:length(x)])) %>%                    # sum the columns, except the ones describing the scenario
+        sums_median <- lapply(results_median, function(x) mutate(x, Sum = rowSums(x[4:length(x)], na.rm = TRUE)) %>%                    # sum the columns, except the ones describing the scenario
                                        select(Group, Forest_use, Management, Sum))                                         # select only the interesting columns
     
         results_CI <- lapply(results, function(x)  select(x, -contains("median")))                                        # focus on CI values
-        sums_CI <- lapply(results_CI, function(x) mutate(x, Sum_upper = rowSums(select(x, contains("upper95")))) %>%      # sum the columns for the upper CI, except the ones describing the scenario
-                                                      mutate(Sum_lower = rowSums(select(x, contains("lower95")))) %>%
+        sums_CI <- lapply(results_CI, function(x) mutate(x, Sum_upper = rowSums(select(x, contains("upper95")), na.rm = TRUE)) %>%      # sum the columns for the upper CI, except the ones describing the scenario
+                                                      mutate(Sum_lower = rowSums(select(x, contains("lower95")), na.rm = TRUE)) %>%
                                                          select(Group, Forest_use, Management, Sum_upper, Sum_lower))     # select only the interesting columns
     
         rm(myfiles, results_in, for_management)
