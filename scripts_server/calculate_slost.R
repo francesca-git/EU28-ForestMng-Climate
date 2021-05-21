@@ -51,6 +51,8 @@ source("./parameters_calculation.R")
         Slost = Slost_h_a_suit[[3]]   # A single dataframe containing the impacts per taxonomin group (columns) and per ecoregion (rows, in alphabetical order according to the ecoregion code, AA0101, AA0102, etc).
                                       # The number of columns is the number of taxonomic groups multiplied by the number of n
 
+        rm(Total_RemainingNatural_areas, Slost_h_a_suit)
+        
       #### ALLOCATION FACTOR FOR LAND USE CATEGORIES ####
         
       # allocation_sim calculates the allocation factors used to allocate the impacts to the land use categories
@@ -59,7 +61,7 @@ source("./parameters_calculation.R")
         )                                                           # Ecoregions are in alphabetical order according to the ecoregion code, AA0101, AA0102, etc. Taxa are "Plants"  "Birds"   "Mammals".
         
       # remove what is not needed anymore
-        rm(h, Land_use_areas, Total_RemainingNatural_areas, Slost_h_a_suit)      
+        rm(h, Land_use_areas)      
       
       #### ALLOCATION AND WEIGHTING ####
         

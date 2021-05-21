@@ -225,7 +225,7 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
     } else{
       
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_newleg.png"),  width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_bottomleg.png"),  width = 6, height = 6, res = 600, units = "in")
   
     }
   
@@ -235,17 +235,17 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
       li <- c(0, 0.0125)
       br <- c(0, 0.003, 0.006, 0.009, 0.012)
     }
-  
+
     if(id == "EUForest" & case_subcase != "_cutoff_mammals") {
       li <- c(0, 0.008)
       br <- c(0, 0.002, 0.004, 0.006, 0.008)
     }
-  
-    if(case_subcase == "_cutoff_mammals") {
-      li <- c(0, max(df$Values))
-      br <- round(seq(0, max(df$Values), length = 6), digits = 4)
-    }
-  
+
+    # if(case_subcase == "_cutoff_mammals") {
+    #   li <- c(0, max(df$Values))
+    #   br <- round(seq(0, max(df$Values), length = 6), digits = 4)
+    # }
+    # 
     # if(id = "EUForest" & (case_subcase == "_cutoff" | case_subcase == "_Chaudhary2015" | 
     #    case_subcase == "_Chaudhary2018" | case_subcase == "_LCImpact")) {
     #   li <- c(0, 0.014)
@@ -272,7 +272,7 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
                   #theme(plot.title = element_text(size = 10, face = "bold.italic")) +
                   #facet_wrap(~Scenario, nrow = 4, ncol = 2) +
                   labs(fill = legend) +
-                  theme(text = element_text(size = 7)) +
+                  theme(text = element_text(size = 7), legend.position = "bottom") +
                   theme(strip.background = element_rect(color = NULL, fill = "white", size = 1.5, linetype = "solid"),
                         strip.text = element_text(size = 8)) +
                   theme(panel.background = element_blank(),

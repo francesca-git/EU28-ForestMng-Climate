@@ -60,21 +60,21 @@ plot.EU.barplot <- function(data, data_top, palette_name) {
     data_top$Group <- factor(data_top$Group, levels = c("RCP6.5 (REF) - Multifunctional", "RCP6.5 (REF) - Set-aside", "RCP2.6 - Multifunctional", "RCP2.6 - Set-aside")) 
 
     # set the maximum value of the y axis according to the max value of the PDF 
-# 
-#       max_data_top <- max(max(data_top$PDFx100), max(data_top$upper95))
-#       min_data_top <- min(min(data_top$PDFx100), min(data_top$upper95))
-#   
-#       if((round(max_data_top, digits = 3) - max_data_top) < 0.005)
-#         { ymax_value <- (round(max_data_top, digits = 2) + 0.01)
-#             } else { ymax_value <- round(max_data_top, digits = 2) }
-#   
-#       if (min_data_top >= 0) {ymin_value = 0}else{
-#       if((min_data_top - round(min_data_top, digits = 3)) > -0.005)
-#         { ymin_value <- (round(min_data_top, digits = 2) - 0.01)
-#       } else { ymin_value <- round(min_data_top, digits = 2) }}
 
-    ymin_value = 0
-    ymax_value = 0.3
+      max_data_top <- max(max(data_top$PDFx100), max(data_top$upper95))
+      min_data_top <- min(min(data_top$PDFx100), min(data_top$upper95))
+
+      if((round(max_data_top, digits = 3) - max_data_top) < 0.005)
+        { ymax_value <- (round(max_data_top, digits = 2) + 0.01)
+            } else { ymax_value <- round(max_data_top, digits = 2) }
+
+      if (min_data_top >= 0) {ymin_value = 0}else{
+      if((min_data_top - round(min_data_top, digits = 3)) > -0.005)
+        { ymin_value <- (round(min_data_top, digits = 2) - 0.01)
+      } else { ymin_value <- round(min_data_top, digits = 2) }}
+
+    # ymin_value = 0
+    # ymax_value = 0.3
 
     # plot
     
@@ -82,7 +82,7 @@ plot.EU.barplot <- function(data, data_top, palette_name) {
       ggplot(data)+
       geom_bar(aes(x = Scenario, y = PDFx100, fill = Category), colour = "black",  size = 0.3, width = 0.6, stat = "identity", position = position_stack(reverse = FALSE)) +
       theme_minimal(base_size = 13) + # select the theme of the plot
-      theme(legend.position="right", 
+      theme(legend.position="bottom", 
            legend.text = element_text(size = 10),
            axis.text = element_text(size = 8),
            axis.text.x = element_text(angle = 90),
@@ -146,7 +146,7 @@ plot.EU.barplot <- function(data, data_top, palette_name) {
       figure <- plot.EU.barplot(data, data_top, palette_name)
       figure
       # save as pdf
-      ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, case_subcase, "_EP.pdf"), width = 20, height = 16, units = "cm")
+      ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, case_subcase, "_EP_bottomleg.pdf"), width = 20, height = 16, units = "cm")
       
   }
   
@@ -223,7 +223,7 @@ plot.EU.barplot <- function(data, data_top, palette_name) {
     figure <- plot.EU.barplot(data, data_top, palette_name)
     figure
     
-    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, case_subcase, "_EPnoex.pdf"), width = 20, height = 16, units = "cm")
+    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, case_subcase, "_EPnoex_bottomleg.pdf"), width = 20, height = 16, units = "cm")
     
   }
 

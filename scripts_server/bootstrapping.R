@@ -46,7 +46,7 @@ calculate.RR.bs <- function(uncertainties, n, cutoff) {
   
   if (missing(uncertainties)) {uncertainties = TRUE}
   if (missing(cutoff)) {cutoff = TRUE}
-  if (missing(n)) {n = 100000}
+  if (missing(n)) {n = 10000}
 
   check_mean_median = FALSE
   
