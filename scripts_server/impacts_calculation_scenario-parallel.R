@@ -77,7 +77,7 @@ source("./allocate_impacts.R")
                          n = 2
       } else if (CI == TRUE){ uncertainties = TRUE
             distribution = "Weibull"
-              if (BS == TRUE) {n = 100000
+              if (BS == TRUE) {n = 10000
               } else if (BS == FALSE) {n = 1000}
                 }
       
@@ -134,17 +134,21 @@ source("./allocate_impacts.R")
   
   # Setup parallel computation (setting up a cluster that needs to be stopped later)
   
-  UseCores = round(detectCores() / 5 * 3)  # Number of cores (parallel "workers") to be used
-  cl = makeCluster(UseCores)
-  registerDoParallel(cl)
   
+  # !!!!!!!!!!!!!!!!!!!!!!!
+  
+  # UseCores = 5 # round(detectCores() / 2)  # Number of cores (parallel "workers") to be used
+  # cl = makeCluster(UseCores)
+  # registerDoParallel(cl)
+  # 
   initial.time = Sys.time()
-  
+  # 
   
     ################### LOOPS OVER THE YEARS ################### 
     
-  
-    for (tstep in 3:3) {#ntsteps) {
+  tstep = 2
+  tstep_areas = 6
+  #  for (tstep in 3:3) {#ntsteps) {
       #tstep = 3
       #test_matrix <- matrix(1, nrow = necoregions, ncol = 17)
       ptm_year <- Sys.time()
@@ -153,8 +157,8 @@ source("./allocate_impacts.R")
       ############  PREPARATION OF AREAS ############
           
         print(paste0("time step (start): ", tsteps[tstep]))
-        Areas <- myfiles[[tstep]]
-        fr_Areas <- myfiles_fr[[tstep]]
+        Areas <- myfiles[[tstep_areas]]
+        fr_Areas <- myfiles_fr[[tstep_areas]]
         
         Areas <- Areas %>% rename(Eco_code = Ecoregion)
         fr_Areas <- fr_Areas %>% rename(Eco_code = Ecoregion)
@@ -169,45 +173,26 @@ source("./allocate_impacts.R")
         
         ################### PARALLEL LOOPS OVER THE SCENARIOS - FRACTION OF AREAS ################### 
         
-        start.time = Sys.time()
-        
-        # fr_Areas_new <- data.frame(matrix(NA, nrow = necoregions*nscenarios, ncol = ncol(fr_Areas)))
-        # 
-        # names(fr_Areas_new) = names(fr_Areas)
-        #   
-        # # This loop is needed to add the ecoregions which are not included in GLOBIOM
-        # 
-        #   results_fr_areas <- foreach(sc = 1:nscenarios, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 
-        #                                                              'fitdistrplus', 'truncdist', 'foreach', 
-        #                                                              'MASS', 'triangle')) %dopar% {
-        
-        for(sc in 1:nscenarios) {
-                                                                       
-             fr_Areas_new <- data.frame(matrix(NA, nrow = 0, ncol = 0))
-             
-             
-             fr_temp <- fr_Areas %>% filter(Scenario == toString(Scenarios[sc])) %>%
-               full_join(Ecoregions) %>%
-                mutate(Eco_code = as.character(Eco_code)) %>%
-                  arrange(Eco_code) %>%
-                    mutate(Scenario = toString(Scenarios[sc]))
-             
-             fr_temp
-             
-             fr_Areas_new <- fr_Areas_new %>% bind_rows(fr_temp)
-             
-           } 
-
-          t = Sys.time()-start.time
-          print(paste('Time - preparation of the fractions of areas:', round(t, 3), units(t)))
+          start.time = Sys.time()
           
+          fr_Areas_new <- data.frame(matrix(NA, nrow = 0, ncol = 0))
+  
           for(sc in 1:nscenarios) {
-            fr_Areas_new[((necoregions*(sc-1))+1):(necoregions*((sc))), ] = results_fr_areas[[sc]]
-          }
-          
-          fr_Areas_new <- fr_Areas_new %>% mutate(Eco_code = as.factor(Eco_code))
-          
-          rm(results_fr_areas)
+                                                                         
+            fr_temp <- fr_Areas %>% filter(Scenario == toString(Scenarios[sc])) %>%
+                full_join(Ecoregions) %>%
+                  mutate(Eco_code = as.character(Eco_code)) %>%
+                    arrange(Eco_code) %>%
+                      mutate(Eco_code = as.factor(Eco_code)) %>%
+                        mutate(Scenario = toString(Scenarios[sc]))
+  
+            fr_Areas_new <- fr_Areas_new %>% bind_rows(fr_temp)
+               
+             } 
+  
+            t = Sys.time()-start.time
+            print(paste('Time - preparation of the fractions of areas:', round(t, 3), units(t)))
+            
         
       ############ CALCULATION OF SPECIES LOSS ############
         
@@ -233,10 +218,16 @@ source("./allocate_impacts.R")
         # scenario_in
       
         start.time = Sys.time()
+          
+        results <- list()
         
-        results = foreach(sc = 1:1, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 
-                                                 'fitdistrplus', 'truncdist', 'foreach', 
-                                                 'MASS', 'triangle')) %dopar% {
+        for(sc in 1:nscenarios) {
+            
+        # !!!!!!!!!!!!!!!!!
+          
+        #results = foreach(sc = 1:2, .packages=c('dplyr', 'tidyr', 'abind', 'tidyverse', 
+         #                                        'fitdistrplus', 'truncdist', 'foreach', 
+          #                                       'MASS', 'triangle')) %dopar% {
                                                    
                   ##### PREPARE THE AREAS #####
                   
@@ -292,20 +283,21 @@ source("./allocate_impacts.R")
                     }
 
                     
-                    Slost_aggr_matrix <- test_matrix
-                    Slost_aggr2.5_matrix <- test_matrix
-                    Slost_aggr97.5_matrix <- test_matrix
-                    Slost_taxa_matrix <- list("Plants" = test_matrix, "Birds" =  test_matrix, "Mammals" = test_matrix)
-  
+                    # Slost_aggr_matrix <- test_matrix
+                    # Slost_aggr2.5_matrix <- test_matrix
+                    # Slost_aggr97.5_matrix <- test_matrix
+                    # Slost_taxa_matrix <- list("Plants" = test_matrix, "Birds" =  test_matrix, "Mammals" = test_matrix)
+                    # 
                     Slost_list <- list("Total_impacts" = Slost_aggr_matrix, "Total_impacts_2.5q" = Slost_aggr2.5_matrix, "Total_impacts_97.5q" = Slost_aggr97.5_matrix,
                                        "Plants" = Slost_taxa_matrix[["Plants"]], "Birds" = Slost_taxa_matrix[["Birds"]], "Mammals" = Slost_taxa_matrix[["Mammals"]])
                     
-                    Slost_list
+                    results[[sc]] <- Slost_list
+                    
                     
                     }
         
         
-          t = Sys.time()-start.time
+          t = Sys.time() - start.time
           print(paste('Time - calculation of species loss over all scenarios:', round(t, 3), units(t)))
       
       
@@ -313,15 +305,15 @@ source("./allocate_impacts.R")
         
           start.time = Sys.time()
         
-            for(sc in 1:3) {
+            for(sc in 1:nscenarios) {
               
-              Slost_fin[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Total_impacts"]] # test_matrix 
-              Slost_fin[((necoregions*(sc-1))+1):(necoregions*(sc)), (3+nlfuse+1):(3+2*nlfuse)] = results[[sc]][["Total_impacts_2.5q"]]
-              Slost_fin[((necoregions*(sc-1))+1):(necoregions*(sc)), (3+2*nlfuse+1):(3+3*nlfuse)] = results[[sc]][["Total_impacts_97.5q"]]
+              Slost_fin[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Total_impacts"]] # Slost_aggr_matrix # 
+              Slost_fin[((necoregions*(sc-1))+1):(necoregions*(sc)), (3+nlfuse+1):(3+2*nlfuse)] = results[[sc]][["Total_impacts_2.5q"]] # Slost_aggr2.5_matrix # 
+              Slost_fin[((necoregions*(sc-1))+1):(necoregions*(sc)), (3+2*nlfuse+1):(3+3*nlfuse)] = results[[sc]][["Total_impacts_97.5q"]] # Slost_aggr97.5_matrix # 
               
-              Slost_fin_plants[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Plants"]]
-              Slost_fin_birds[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Birds"]]
-              Slost_fin_mammals[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Mammals"]]
+              Slost_fin_plants[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Plants"]] # Slost_taxa_matrix[["Plants"]] # 
+              Slost_fin_birds[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Birds"]] # Slost_taxa_matrix[["Birds"]] # 
+              Slost_fin_mammals[((necoregions*(sc-1))+1):(necoregions*(sc)), 4:(3+nlfuse)] = results[[sc]][["Mammals"]] # Slost_taxa_matrix[["Mammals"]] # 
             
             }
           
@@ -369,14 +361,14 @@ source("./allocate_impacts.R")
       print(paste0("Time (one year): ", round(ptm_endyear, 3), units(ptm_endyear)))
       
 
-    }
+    #}
   
   run_time = Sys.time() - initial.time
   print(paste('Total time:', round(run_time, 3), units(run_time)))
   
       
       # Stop the cluster
-      stopCluster(cl)
+      # stopCluster(cl)
       
     
   

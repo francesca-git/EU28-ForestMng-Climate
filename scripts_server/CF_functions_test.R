@@ -79,7 +79,7 @@ select <- dplyr::select
       temp2 <- lapply(temp1, function(x,y) {(1-x)*y}, y = data.matrix(Aij)) # multiply the dataframe Aij (after converting it to a matrix) with each element of the list (so Aij is multiplied with each element of temp1[i,j,])
       
       a_suit_prod <- array(sapply(temp2, function(x){x}), dim = dim(h)) # convert the list into an array 
-      a_suit_prod_t <- apply(a_suit_prod, MARGIN = c(3,2), FUN = t)
+      a_suit_prod_t <- apply(a_suit_prod, MARGIN = c(3,2), FUN = t) 
       
       a_suit_sum <- apply(a_suit_prod, MARGIN = c(1,3), FUN = sum)# sum over the land use classes, matrix necoregions x ntaxa
       
@@ -124,15 +124,15 @@ select <- dplyr::select
       
     # product of hgij and Aij starting from h and Aij
     
-    h_A_product = function (h, Aij) { #h = one matrix from the list h containing all the simulation results, Aij = 2d dataframe of Aij
+    h_A_product = function (h, Aij) { # h = one matrix from the list h containing all the simulation results, Aij = 2d dataframe of Aij
         
-        temp1 <- lapply(1:dim(h)[3], function(x) {h[,,x]}) #create a list which has a number of elements equal to the dimension along which we want to multiply (in this case the taxa)
+        temp1 <- lapply(1:dim(h)[3], function(x) {h[,,x]}) # create a list which has a number of elements equal to the dimension along which we want to multiply (in this case the taxa)
         
         temp2 <- lapply(temp1, function(x,y) {x*y}, y = data.matrix(Aij)) # multiply the dataframe Aij (after converting it to a matrix) with each element of the list (so Aij is multiplied with each element of temp1[i,j,])
         
         a_suit_prod <- array(sapply(temp2, function(x){x}), dim = dim(h)) # convert the list into an array 
         
-        a_suit <- apply(a_suit_prod, MARGIN = c(1,3), FUN = sum)# sum oover the land use classes, matrix necoregions x ntaxa
+        a_suit <- apply(a_suit_prod, MARGIN = c(1,3), FUN = sum) # sum over the land use classes, matrix necoregions x ntaxa
         
         return(a_suit)
       
