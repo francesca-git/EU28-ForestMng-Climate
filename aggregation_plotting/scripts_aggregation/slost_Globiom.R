@@ -28,7 +28,8 @@ calculate.slost.Globiom <- function(folder_slost, csv_path, case_subcase) {
   
   # convert the list into a single dataframe
   df <- reduce(results_in, full_join) %>%
-          mutate(Year = as.character(Year))
+          mutate(Year = as.character(Year)) %>%
+            mutate_if(is.numeric, ~.*100)
   
   # classify according to GLIOBIOM region
   Globiom_eco_org <- read.csv("./grouped_land_use_files/GLOBIOM_Ecoregion.csv", header = TRUE)
@@ -47,19 +48,20 @@ calculate.slost.Globiom <- function(folder_slost, csv_path, case_subcase) {
   df_regions <- data.frame(df_regions)
   
   ## test
-    
+    # test to check that the sum over all ecoregions per scenario and year remains the same after the reallocation to Globiom regions
     test_df <- data.frame(df %>% group_by(Scenario, Year) %>%
                     summarise_if(is.numeric, sum, na.rm = TRUE))
     test_df_regions <- data.frame(df_regions %>% group_by(Scenario, Year) %>%
                     summarise_if(is.numeric, sum, na.rm = TRUE))
     if (all.equal(test_df, test_df_regions) == FALSE) {stop("Error in the aggregation of impacts at Globiom level")}
     
-    test_year = sample(tstep, 1)
+    # test to check that 
+    test_year = sample(tstep[8:11], 1)
     test_scenario = sample(unique(df$Scenario), 1)
     print(paste0("Test on year ", test_year, " and on scenario ", test_scenario))
     test1 = df_regions %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Globiom_Reg, -Year)
-    test2 = results_in[[11]] %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Ecoregion, -Year)
-    if (abs(sum(test1, na.rm = TRUE) - sum(test2, na.rm = TRUE)) > 1e-10) {stop("Error in the aggregation of impacts at Globiom level")}
+    test2 = results_in[[11]] %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Ecoregion, -Year) %>% mutate_if(is.numeric, ~.*100)
+    if (abs(sum(test1, na.rm = TRUE) - sum(test2, na.rm = TRUE)) > 1e-8) {stop("Error in the aggregation of impacts at Globiom level")}
 
   rm(test_df, test_df_regions, test_year, test_scenario, test1, test2)  
   

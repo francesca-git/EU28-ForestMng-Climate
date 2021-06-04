@@ -1,22 +1,9 @@
-
-#############################################################################################################################################################################
-
-                                                                  # IMPACTS - PREPARATION OF THE DATA FOR PLOTTING #
-
-#############################################################################################################################################################################
-
-# General task: group and sum the output of the model or put it in a single file instead of having one separate file per each year
-# Date: September 2020
-# Author: Francesca Rosa
+# Francesca Rosa
+# 04/06/2021
+# Merging of the files with the results calculated from the real data and the files with the bootstrapped CI.
 
 
-#############################################################################################################################################################################
-
-# WARNING: The functions defined in this file are called in the file csv_and_plotting.R. The loading/saving paths, the libraries and the working directory are defined in that file.
-
-#############################################################################################################################################################################
-  
-  aggregate.results <- function(folder_slost, rdata_path, case_subcase) {
+  aggregate.results.CI <- function(folder_slost, rdata_path, case_subcase) {
       # folder_slost = folder with the output of the model (character vector)
       # rdata_path = folder where the output of the function will be saved (character vector)
       # case_subcase = key identifying to which subgroup the results belong (character vector), e.g. whether the cutoff was applied or a specific taxa is considered 
@@ -26,16 +13,26 @@
     myfiles = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
     rm(temp)
     
+    temp = list.files(path = paste0(folder_slost) , pattern = paste0("*", case_subcase, "_CI.csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    myfiles_CI = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
+    rm(temp)
+    
     tstep = seq(from = 2000, to = 2100, by = 10)    # time steps
     
     names(myfiles) = sapply(tstep, FUN = toString)  # rename each element of the list with the corresponding time step
-    
+    names(myfiles_CI) = sapply(tstep, FUN = toString)  # rename each element of the list with the corresponding time step
+
     for_management = c("noAFM", "AFMfree", "AFM25", "AFM50", "AFM75", "AFM100")                                                                                     # new names for management scenarios
     # forests = c("ClearCut_EU_median","ClearCut_im_median", "ClearCut_ex_median", "Retention_EU_median", "PlantationFuel_im_median", "SelectionSystem_EU_median")    # columns to be renamed to be handled easier
         
-      # Prepare the data to start aggregating or tidying up
-        results_in <- lapply(myfiles, function(x) data.frame(x)) 
-    
+      # Join medians and CI
+        results_median <- lapply(myfiles, function(x) select(x, Scenario, Ecoregion, Year, contains("median"))) 
+        results_CI <- lapply(myfiles_CI, function(x) select(x, contains("lower95") | contains("upper95")))
+        results_in <- mapply(c, results_median, results_CI, SIMPLIFY = FALSE)
+        results_in <- lapply(results_in, function(x) data.frame(x))
+        
+        results_in <- lapply(results_in, function(x) mutate(x, ))
+        
       # Sum species lost over the ecoregions, such that there is a single value per Scenario and land use. The result is a list of dataframes, one for each year.
     
         # rename columns and factors 
@@ -73,7 +70,7 @@
         #   }
   
         # test ====
-        y <- sample(x = c(11,11), 1)                        # random year
+        y <- sample(1:11, 1)                        # random year
         r <- sample(1:nrow(results[[1]]), 1)        # random row
         if ((rowSums(results[[y]][r, 4:31], na.rm = TRUE) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
           if(length(results[[y]]) > 31) { 

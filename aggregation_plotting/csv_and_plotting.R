@@ -25,13 +25,14 @@ source("./aggregation_plotting/scripts_charts/EU_barplots.R")                   
 source("./aggregation_plotting/scripts_charts/map_PDF.R")                                       # functions to plot the impacts on a map
 source("./aggregation_plotting/scripts_aggregation/slost_Globiom.R")
 source("./aggregation_plotting/scripts_aggregation/wood.R")
+source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
 
 ############################ SET THE PATH ##############################
 
 # identify the results to access 
   type_of_data <- "impacts"       # "impacts" or "areas"
 
-  case <- "cutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact, Chaudhary2015 or Chaudhary2018
+  case <- "nocutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact, Chaudhary2015 or Chaudhary2018
   subcase <- ""                   # e.g. plants, mammals or birds (end of the csv files)
   case_areas <- "notimber"        # "notimber" or "timber" 
   energy_exports <- "EPnoex"    # "ex" (Footprint includes energy plantations, Internal EU does not include energy crops but includes exports) 
@@ -133,7 +134,7 @@ source("./aggregation_plotting/scripts_aggregation/wood.R")
               }else if(energy_exports == "noEPnoex") { EUinternal.barplot.noEPnoex(csv_path, case_subcase, plots_path, year)}
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
-          id = "EUFootprint"
+          id = "EUForest"
           map = "PDF"
           plot.map(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports) # map_PDF.R
          # id = can be "EUFootprint", "EUForest" or "Global"

@@ -23,11 +23,11 @@ source("./allocate_impacts.R")
     Timber = FALSE  # TRUE (part of clear cut areas have been allocated to Timber plantations). !! This option is valid only if approach == "MG"
     
   # Calculation of the response ratio
-    CI = TRUE                            # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+    CI = FALSE                            # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
     cutoff = TRUE # TRUE (all raw RR > 1 are set to 1) or FALSE
-    case = "cutoff" # cutoff cutoff_timber nocutoff nocutoff_timber
+    case = "nocutoff" # cutoff cutoff_timber nocutoff nocutoff_timber
     vulnerability = TRUE
-    BS = TRUE
+    BS = FALSE
     
 
 ############################# INITIAL SETTINGS ############################# 
@@ -86,14 +86,21 @@ source("./allocate_impacts.R")
       # response ratios (all .Rdata which are loaded here below contain a 4-dimension array called rr_ecoregion. 1dim: ecoregions;
       # 2dim: land use categories; 3dim: taxa; 4dim: either twice the median of the raw values or the monte carlo simulations or 
       # the bootstrsapped medians)
-      
+      if(cutoff == TRUE){
       if (BS == TRUE) {   # if bootstrapping is TRUE, the response ratios come from the bootstrapping process (boostrapping.R)
         load("./rr_z/rr_ecoregion_bs.Rdata") 
       } else if (BS == FALSE & uncertainties == TRUE) {  # if BS == FALSE and uncertainties == TRUE, the response ratios come from the monte carlo simulations
         load("./rr_z/rr_ecoregion_mc.Rdata")
       } else if (BS == FALSE & uncertainties == FALSE) { # if BS == FALSE and uncertainties == FALSE, the response ratios are the medians of the raw values
         load("./rr_z/rr_ecoregion_static.Rdata")
-      }
+      }} else if (cutoff == FALSE) {
+        if (BS == TRUE) {   # if bootstrapping is TRUE, the response ratios come from the bootstrapping process (boostrapping.R)
+          load("./rr_z/rr_ecoregion_bs_nocutoff.Rdata") 
+        } else if (BS == FALSE & uncertainties == TRUE) {  # if BS == FALSE and uncertainties == TRUE, the response ratios come from the monte carlo simulations
+          load("./rr_z/rr_ecoregion_mc_nocutoff.Rdata")
+        } else if (BS == FALSE & uncertainties == FALSE) { # if BS == FALSE and uncertainties == FALSE, the response ratios are the medians of the raw values
+          load("./rr_z/rr_ecoregion_static_nocutoff.Rdata")
+      }}
       
       ratio_eco <- rr_ecoregion
       rm(rr_ecoregion)
@@ -113,7 +120,7 @@ source("./allocate_impacts.R")
       if(BS == TRUE) {
         load("./rr_z/zvalues_ecoregion_bs.Rdata")  # load the 
       } else if(BS == FALSE) {
-        load("./rr_z/zvalues.Rdata")
+        load("./rr_z/zvalues_static.Rdata")
       }
       
       parameters = list("ratio_eco" = ratio_eco, "weight_tx" = weight_tx, "Sorg_VS" = Sorg_VS, "zvalues" = zvalues)
@@ -126,9 +133,14 @@ source("./allocate_impacts.R")
           
 ############################# CALCULATE THE IMPACTS ############################# 
         
-  tsteps = c(2020, 2050, 2100) # seq(from = 2000, to = 2100, by = 10)  
-  ntsteps = length(tsteps) #time steps: 2000 -> 2100
-
+  # tsteps = c(2030, 2040, 2060, 2070, 2080, 2090) # seq(from = 2000, to = 2100, by = 10)  
+  # ntsteps = length(tsteps) #time steps: 2000 -> 2100
+  # tstep_areas = c(4,5,7,8,9,10)
+  
+  tsteps = seq(from = 2000, to = 2100, by = 10)  
+  ntsteps = length(tsteps)
+  tstep_areas = seq(from = 1, to = 11, by = 1)
+  
   # Parallel for-loop
   # Packages need to be passed on to each core
   
@@ -146,9 +158,8 @@ source("./allocate_impacts.R")
   
     ################### LOOPS OVER THE YEARS ################### 
     
-  tstep = 2
-  tstep_areas = 6
-  #  for (tstep in 3:3) {#ntsteps) {
+
+  for (tstep in 1:ntsteps) {#ntsteps) {
       #tstep = 3
       #test_matrix <- matrix(1, nrow = necoregions, ncol = 17)
       ptm_year <- Sys.time()
@@ -157,8 +168,8 @@ source("./allocate_impacts.R")
       ############  PREPARATION OF AREAS ############
           
         print(paste0("time step (start): ", tsteps[tstep]))
-        Areas <- myfiles[[tstep_areas]]
-        fr_Areas <- myfiles_fr[[tstep_areas]]
+        Areas <- myfiles[[tstep_areas[tstep]]]
+        fr_Areas <- myfiles_fr[[tstep_areas[tstep]]]
         
         Areas <- Areas %>% rename(Eco_code = Ecoregion)
         fr_Areas <- fr_Areas %>% rename(Eco_code = Ecoregion)
@@ -361,7 +372,7 @@ source("./allocate_impacts.R")
       print(paste0("Time (one year): ", round(ptm_endyear, 3), units(ptm_endyear)))
       
 
-    #}
+    }
   
   run_time = Sys.time() - initial.time
   print(paste('Total time:', round(run_time, 3), units(run_time)))

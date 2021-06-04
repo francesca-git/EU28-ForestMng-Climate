@@ -86,7 +86,7 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
       year = c(2100)
       focus = "European internal forest"
       climate = "REF-RCP"
-      Zoom = F
+      Zoom = FALSE
       group = c("RCP6.5-REF","RCP2.6")
       scenario = c("Multifunctional", "Set-aside")
       level = c("Baseline","25%", "100%")
@@ -139,6 +139,9 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
           mutate(Global = rowSums(select(., contains("median"))),
                   EUFootprint = case_when((energy_exports == "ex" | energy_exports == "EPnoex") 
                                           ~ rowSums(select(., contains("median") & ((contains("EP") & contains("EU"))|(starts_with("For") & contains("EU"))|(contains("EP") & contains("im"))|(starts_with("For_") & contains("im")))), na.rm = TRUE),
+                                          # For_ClearCut_EU_median + For_ClearCut_im_median + For_Retention_EU_median + For_Plantation_im_median + For_TimberPlant_EU_median + 
+                                          #   + For_SelectionSystem_EU_median + For_Selective_im_median + EP_EU_median + EP_conv_EU_median + EP_conv_im_median + ForOther_Extensive_EU_median + 
+                                          #   + ForOther_Intensive_EU_median,
                                           (energy_exports == "noEPnoex")
                                           ~ rowSums(select(., contains("median") & ((starts_with("For") & contains("EU"))|(starts_with("For_") & contains("im")))), na.rm = TRUE)),
                   EUForest = case_when((energy_exports == "ex") 
@@ -221,24 +224,27 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
   if (length(year) > 1) {
     
     #pdf(file = paste0("./plotting/no_cutoff/", map, "_", climate, "_", region, "_", test,"lr.pdf"), width = 8, height = 15)
-    png(file = paste0(plots_path, map, "_", climate, "_", region, case_subcase, "_", energy_exports , ".png"), width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "_", climate, "_", region, case_subcase, "_", energy_exports , ".png"), width = 14, height = 24, res = 600, units = "in")
     } else{
       
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_bottomleg.png"),  width = 6, height = 6, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, ".png"),  width = 14, height = 24, res = 600, units = "in")
   
     }
   
   print(id)
   
-    if(id == "EUFootprint" & case_subcase != "_cutoff_mammals") {
-      li <- c(0, 0.0125)
-      br <- c(0, 0.003, 0.006, 0.009, 0.012)
+  # max for EUForest: 0.006180501
+  # max for EUFootprint: 0.007033453
+  
+    if(id == "EUFootprint")  {# & case_subcase != "_cutoff_mammals") {
+      li <- c(0, 0.007033453)
+      br <- c(0, 0.002, 0.004, 0.006)
     }
 
-    if(id == "EUForest" & case_subcase != "_cutoff_mammals") {
-      li <- c(0, 0.008)
-      br <- c(0, 0.002, 0.004, 0.006, 0.008)
+    if(id == "EUForest") { # & case_subcase != "_cutoff_mammals") {
+      li <- c(0, 0.006180501)
+      br <- c(0, 0.002, 0.004, 0.006)
     }
 
     # if(case_subcase == "_cutoff_mammals") {
@@ -272,19 +278,24 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
                   #theme(plot.title = element_text(size = 10, face = "bold.italic")) +
                   #facet_wrap(~Scenario, nrow = 4, ncol = 2) +
                   labs(fill = legend) +
-                  theme(text = element_text(size = 7), legend.position = "bottom") +
+                  theme(text = element_text(size = 30), 
+                        axis.text = element_blank(),
+                        legend.title = element_text(size = 30),
+                        legend.text = element_text(size = 30),
+                        legend.key.size = unit(2, "cm"), legend.key.width = unit(1,"cm"),
+                        legend.position = "right") +
                   theme(strip.background = element_rect(color = NULL, fill = "white", size = 1.5, linetype = "solid"),
-                        strip.text = element_text(size = 8)) +
+                        strip.text = element_text(size = 35)) +
                   theme(panel.background = element_blank(),
                         panel.border = element_rect(colour = "grey", fill = "transparent", size = 0.5),
                         plot.title = element_text(hjust = 0.5))
   
   if( region == "global") {figure <- figure + facet_wrap( ~ Scenario, ncol = 1) } 
   
-  if(length(year) > 1 && region == "global") {figure <- figure + facet_wrap(vars(Scenario))}
+  #if(length(year) > 1 && region == "global") {figure <- figure + facet_wrap(vars(Scenario))}
   
   if (region != "global") {
-    figure <- figure + facet_grid(Group ~ Scenario) 
+    figure <- figure + facet_grid(Scenario ~ Group) 
     figure <- figure + coord_sf(xlim=c(-15, 45), ylim=c(30, 75)) 
     }
   

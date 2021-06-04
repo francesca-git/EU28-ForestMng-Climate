@@ -50,7 +50,7 @@ calculate.RR.bs <- function(uncertainties, n, cutoff) {
 
   check_mean_median = FALSE
   
-  rr <- prepare.RR(uncertainties, n, cutoff)
+  rr <- prepare.RR(uncertainties, n)
   
   # this function provides
   # rr_land_use = list containing the grouped response ratios. Order of grouping: biome, land use, taxon. This means that the first element will be
@@ -137,8 +137,9 @@ calculate.RR.bs <- function(uncertainties, n, cutoff) {
     
   proc.time() - ptm 
   
-  save(rr_land_use_bs, file = "./rr_z/rr_land_use_bs.Rdata")
-  
+  if(cutoff == TRUE) {
+    save(rr_land_use_bs, file = "./rr_z/rr_land_use_bs.Rdata")
+  } else if (cutoff == FALSE) {save(rr_land_use_bs, file = "./rr_z/rr_land_use_bs_nocutoff.Rdata")}
   
   ##### FOREST MANAGEMENT #####
   
@@ -173,8 +174,9 @@ calculate.RR.bs <- function(uncertainties, n, cutoff) {
   
   proc.time() - ptm  
   
+  if(cutoff == TRUE) {
   save(rr_forest_mng_bs, file = "./rr_z/rr_forest_mng_bs.Rdata")
-  
+  } else if (cutoff = FALSE) {  save(rr_forest_mng_bs, file = "./rr_z/rr_forest_mng_bs_nocutoff.Rdata")}
 
   rr_landuse_ecoregion <- array(data = NA, dim = c(necoregions, nlanduse, ntaxa, n), dimnames = list(unique(Ecoregions$Eco_code), land_use_types, taxa, c(1:n)))
   for (i in 1:necoregions) {
@@ -198,7 +200,9 @@ calculate.RR.bs <- function(uncertainties, n, cutoff) {
   rr_ecoregion <- abind(rr_landuse_ecoregion, rr_forest_ecoregion, along = 2)
   rr_ecoregion_backup = rr_ecoregion
   
+  if(cutoff == TRUE){
   save(rr_ecoregion, file = "./rr_z/rr_ecoregion_bs.Rdata")
+  } else if (cutoff == FALSE) {  save(rr_ecoregion, file = "./rr_z/rr_ecoregion_bs_nocutoff.Rdata")}
   
   return(rr_ecoregion)   
   

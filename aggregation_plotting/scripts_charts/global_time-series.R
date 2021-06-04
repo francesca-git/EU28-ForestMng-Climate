@@ -161,19 +161,20 @@ plot.global.time.series.CI <- function(csv_path, case_subcase, plots_path) {
     
     #jpg(file = "./plotting/noAF_CI.jpg", width = 900, height = 700)
     figure <-
-    ggplot(data, aes(x = Year, y = PDFx100, color = Scenario, linetype = Scenario, fill = Scenario)) +
-      geom_line(size = 1.3) +
+    ggplot(data, aes(x = Year, y = PDFx100, linetype = Scenario, fill = Scenario)) +
+      geom_line(size = 1.3, aes(color = Scenario)) +
       geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha = 0.1)+
       theme_minimal(base_size = 17) +
       labs(x = "Years", y = "PDF%") + #, title = "Species loss over time due to global land use under two climate mitigation scenarios", colour = "Scenario", fill = "Scenario") +
       # theme(plot.title = element_text(size = 12, face = "bold.italic")) +
       # scale_fill_grey(start = 0.2, end = 0.8) +
-      ylim(0, max(data$upper95) + 1)+ xlim(2020, 2100) + #+
+      # ylim(0, max(data$upper95) + 1) +
+      xlim(2020, 2100) + #+
       theme(legend.position = "right", legend.text = element_text(size = 13)) 
    
     figure
     
-    ggsave(paste0(plots_path, "noAF_CI_", palette_name, ".pdf"), width = 23, height = 17, units = "cm")
+    ggsave(paste0(plots_path, "noAF_CI_", palette_name, case_subcase, ".pdf"), width = 20, height = 17, units = "cm")
     
 }
 

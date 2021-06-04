@@ -58,7 +58,8 @@ select <- dplyr::select
       
       # from Supplementary materials (Table S2) of De Baan (2013), Use in Life Cycle Assessment: Global Characterization Factors Based on Regional and Global Potential Species Extinction
       
-        z = c(0.258,0.344,0.211)          #z for island, forest and nonforest
+        #z = c(0.258,0.344,0.211)          #z for island, forest and nonforest
+        z = c(0.2825, 0.3290, 0.219)
         z_lower = c(0.242, 0.307, 0.185)
         z_upper = c(0.282, 0.384, 0.247)
       
@@ -169,7 +170,7 @@ select <- dplyr::select
   ############################# PREPARE RR ############################# 
 
   # output: (array)
-  prepare.RR <- function(uncertainties, n, cutoff) { 
+  prepare.RR <- function(uncertainties, n) { 
     # uncertainties -> whether to calculate them or not (TRUE or FALSE)
     # n = number of replicates in the bootstrapping process. 
     # cutoff <- whether to cut off the rr above 1 and covert them to 1 or not (TRUE or FALSE). 
@@ -364,7 +365,7 @@ select <- dplyr::select
     if (uncertainties == TRUE & (missing(n))) {n = 1000}
     simulations = n
     
-    rr <- prepare.RR(uncertainties, n, cutoff)
+    rr <- prepare.RR(uncertainties, n)
     
     # this function provides
     # rr_land_use = list containing the grouped response ratios. Order of grouping: biome, land use, taxon. This means that the first element will be
@@ -501,9 +502,14 @@ select <- dplyr::select
       
       rr_ecoregion <- abind(rr_landuse_ecoregion, rr_forest_ecoregion, along = 2)
       rr_ecoregion_backup = rr_ecoregion
-      
+      if (cutoff == TRUE){
       if(uncertainties == TRUE) {save(rr_ecoregion, file = "./rr_z/rr_ecoregion_mc.Rdata")
-      }else if(uncertainties == FALSE) {save(rr_ecoregion, file = "./rr_z/rr_ecoregion_static.Rdata")}
+      } else if(uncertainties == FALSE) {save(rr_ecoregion, file = "./rr_z/rr_ecoregion_static.Rdata")}
+      } else if (cutoff == FALSE){
+        if(uncertainties == TRUE) {save(rr_ecoregion, file = "./rr_z/rr_ecoregion_mc_nocutoff.Rdata")
+        } else if(uncertainties == FALSE) {save(rr_ecoregion, file = "./rr_z/rr_ecoregion_static_nocutoff.Rdata")}
+      }
+      
       
       
     return(rr_ecoregion)    

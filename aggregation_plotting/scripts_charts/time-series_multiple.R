@@ -1,8 +1,8 @@
 
-setwd("C:/Users/Rosa/Documents/PhD_project/Forest_management/calculation/") 
+setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
 
 #data<-read.csv("./plotting/charts_examples/Global_development_sel.csv", header = TRUE)
-data <- read.csv("./plotting/no_cutoff/data/EUFootprint_time-series_mg-det_CI.csv", header = TRUE)
+data <- read.csv("./aggregation_plotting/results_plots-csv/cutoff/csv/EUFootprint_time-series_cutoff_EP.csv", header = TRUE)
 
 #dev.new()
 library(ggplot2)
@@ -65,5 +65,5 @@ figure
 # plot 
 
 # save as pdf
-ggsave(paste0("./plotting/no_cutoff/EUFootprint_time-series_", palette_name, "_diff-ltype.pdf"), width = 10, height = 8)
+ggsave(paste0("./aggregation_plotting/results_plots-csv/cutoff/plots/EUFootprint_time-series.pdf"), width = 10, height = 8)
 
