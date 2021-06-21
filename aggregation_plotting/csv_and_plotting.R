@@ -32,7 +32,7 @@ source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
 # identify the results to access 
   type_of_data <- "impacts"       # "impacts" or "areas"
 
-  case <- "nocutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact, Chaudhary2015 or Chaudhary2018
+  case <- "cutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact, Chaudhary2015 or Chaudhary2018
   subcase <- ""                   # e.g. plants, mammals or birds (end of the csv files)
   case_areas <- "notimber"        # "notimber" or "timber" 
   energy_exports <- "EPnoex"    # "ex" (Footprint includes energy plantations, Internal EU does not include energy crops but includes exports) 

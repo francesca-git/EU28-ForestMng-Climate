@@ -9,11 +9,14 @@
       # case_subcase = key identifying to which subgroup the results belong (character vector), e.g. whether the cutoff was applied or a specific taxa is considered 
       # output: .Rdata file with the results
     
-    temp = list.files(path = paste0(folder_slost) , pattern = paste0("*", case_subcase, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    temp = list.files(path = paste0(folder_slost, "nobs/") , pattern = paste0("*", case_subcase, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
     myfiles = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
     rm(temp)
     
-    temp = list.files(path = paste0(folder_slost) , pattern = paste0("*", case_subcase, "_CI.csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    temp = list.files(path = paste0(folder_slost, "bs/") , pattern = paste0("*", case_subcase, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    fnames_new <- sub(".csv", "_CI.csv", temp, fixed = TRUE)
+    file.rename(temp, fnames_new)
+    temp <- fnames_new
     myfiles_CI = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
     rm(temp)
     
@@ -31,7 +34,18 @@
         results_in <- mapply(c, results_median, results_CI, SIMPLIFY = FALSE)
         results_in <- lapply(results_in, function(x) data.frame(x))
         
-        results_in <- lapply(results_in, function(x) mutate(x, ))
+        for(i in length(results_in)) {
+          results_fin <- results_in[[i]]
+          results_fin[,32:(32+27)] <- 2*results_fin[, 4:31] - results_fin[,(32+28):87]
+          annual_crops_fin <- 2*results_in[[i]]$Annual_RoW_median - results_in[[i]]$Annual_RoW_upper95
+          annual_crops_test <- results_fin$Annual_RoW_lower95
+              if(all.equal(annual_crops_fin, annual_crops_test) != TRUE){stop("Error in the calculation of the CI (lower95)")}
+          results_fin[,(32+28):87] <- 2*results_fin[, 4:31] - results_fin[,32:(32+27)]
+          annual_crops_fin <- 2*results_in[[i]]$Annual_RoW_median - results_in[[i]]$Annual_RoW_upper95
+          annual_crops_test <- results_fin$Annual_RoW_lower95
+              if(all.equal(annual_crops_fin, annual_crops_test) != TRUE){stop("Error in the calculation of the CI (upper95)")}
+        }
+       
         
       # Sum species lost over the ecoregions, such that there is a single value per Scenario and land use. The result is a list of dataframes, one for each year.
     
