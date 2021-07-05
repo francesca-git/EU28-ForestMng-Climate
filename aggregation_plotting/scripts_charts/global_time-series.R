@@ -169,7 +169,8 @@ plot.global.time.series.CI <- function(csv_path, case_subcase, plots_path) {
       # theme(plot.title = element_text(size = 12, face = "bold.italic")) +
       # scale_fill_grey(start = 0.2, end = 0.8) +
       # ylim(0, max(data$upper95) + 1) +
-      xlim(2020, 2100) + #+
+      xlim(2020, 2100) + 
+      ylim(0, 18)
       theme(legend.position = "right", legend.text = element_text(size = 13)) 
    
     figure

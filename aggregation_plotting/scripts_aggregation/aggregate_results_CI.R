@@ -9,16 +9,16 @@
       # case_subcase = key identifying to which subgroup the results belong (character vector), e.g. whether the cutoff was applied or a specific taxa is considered 
       # output: .Rdata file with the results
     
-    temp = list.files(path = paste0(folder_slost, "nobs/") , pattern = paste0("*", case_subcase, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
-    myfiles = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
-    rm(temp)
+    filenames = list.files(path = paste0(folder_slost, "nobs/") , pattern = paste0("*", case_subcase, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    myfiles = lapply(filenames, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
+
+    filenames_CI = list.files(path = paste0(folder_slost, "bs/") , pattern = paste0("*", case_subcase, "_CI.csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    # fnames_new <- sub(".csv", "_CI.csv", temp, fixed = TRUE)
+    # file.rename(temp, fnames_new)
+    # temp <- fnames_new
+    myfiles_CI = lapply(filenames_CI, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
     
-    temp = list.files(path = paste0(folder_slost, "bs/") , pattern = paste0("*", case_subcase, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
-    fnames_new <- sub(".csv", "_CI.csv", temp, fixed = TRUE)
-    file.rename(temp, fnames_new)
-    temp <- fnames_new
-    myfiles_CI = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
-    rm(temp)
+    rm(filenames_CI)
     
     tstep = seq(from = 2000, to = 2100, by = 10)    # time steps
     
@@ -34,25 +34,35 @@
         results_in <- mapply(c, results_median, results_CI, SIMPLIFY = FALSE)
         results_in <- lapply(results_in, function(x) data.frame(x))
         
-        for(i in length(results_in)) {
-          results_fin <- results_in[[i]]
-          results_fin[,32:(32+27)] <- 2*results_fin[, 4:31] - results_fin[,(32+28):87]
+        rm(results_median, results_CI)
+        
+        results_fin <- results_in
+        
+        for(i in 1:length(results_in)) {
+          print(i)
+          results_fin[[i]][,32:(32+27)] <- 2*results_fin[[i]][, 4:31] - results_in[[i]][,(32+28):87]
           annual_crops_fin <- 2*results_in[[i]]$Annual_RoW_median - results_in[[i]]$Annual_RoW_upper95
-          annual_crops_test <- results_fin$Annual_RoW_lower95
+          annual_crops_test <- results_fin[[i]]$Annual_RoW_lower95
               if(all.equal(annual_crops_fin, annual_crops_test) != TRUE){stop("Error in the calculation of the CI (lower95)")}
-          results_fin[,(32+28):87] <- 2*results_fin[, 4:31] - results_fin[,32:(32+27)]
+          results_fin[[i]][,(32+28):87] <- 2*results_fin[[i]][, 4:31] - results_in[[i]][,32:(32+27)]
           annual_crops_fin <- 2*results_in[[i]]$Annual_RoW_median - results_in[[i]]$Annual_RoW_upper95
-          annual_crops_test <- results_fin$Annual_RoW_lower95
+          annual_crops_test <- results_fin[[i]]$Annual_RoW_lower95
               if(all.equal(annual_crops_fin, annual_crops_test) != TRUE){stop("Error in the calculation of the CI (upper95)")}
+          
+          write.csv(results_fin[[i]], paste0(folder_slost, "Slost_mg_", names(results_fin[i]), case_subcase, ".csv"), row.names = FALSE)
+          
         }
        
+        rm(results_in)
+        
+        
         
       # Sum species lost over the ecoregions, such that there is a single value per Scenario and land use. The result is a list of dataframes, one for each year.
     
         # rename columns and factors 
         ## !! the order of the operations in the next block must remain the same                                        
         
-        results_in <- lapply(results_in, function(x) separate(x, Scenario, into = c("Group", "Forest_use", "Management"), sep = "_") %>%                                       # separate the column Scenario into three columns 
+        results_fin <- lapply(results_fin, function(x) separate(x, Scenario, into = c("Group", "Forest_use", "Management"), sep = "_") %>%                                       # separate the column Scenario into three columns 
                                                        mutate(Management = str_replace(Management,"noAF", "noAFM"), Management = str_replace(Management,"AF0", "AFMfree"),  # rename the factors in the column with management information
                                                               Management = str_replace(Management,"AF25", "AFM25"), Management = str_replace(Management,"AF50", "AFM50"),     
                                                               Management = str_replace(Management,"AF75", "AFM75"), Management = str_replace(Management,"AF100", "AFM100"),
@@ -60,7 +70,7 @@
                                                           unite("Scenario", Group:Management, sep = "_"))                                                                   # re-merge the columns describing the scenario to keep it as it was initially
               
         # compute the sum over the ecoregions 
-        results = lapply(results_in, function(x)  select(x, -Ecoregion, -Year) %>%                               
+        results = lapply(results_fin, function(x)  select(x, -Ecoregion, -Year) %>%                               
                                                   group_by(Scenario) %>%                                      
                                                     summarise_if(is.numeric, sum, na.rm = TRUE) %>%                                                          # sum
                                                       mutate_if(is.numeric, ~(.*100)) %>%                                                                    # convert to percentage
@@ -103,7 +113,7 @@
                                                       mutate(Sum_lower = rowSums(select(x, contains("lower95")), na.rm = TRUE)) %>%
                                                          select(Group, Forest_use, Management, Sum_upper, Sum_lower))     # select only the interesting columns
     
-        rm(myfiles, results_in, for_management)
+        rm(myfiles, for_management, results_fin)
         
         save(results, results_CI, results_median, sums, sums_CI, sums_median, tstep, file = paste0(rdata_path)) # this data can then be read by the scripts used to aggregate the land uses
      

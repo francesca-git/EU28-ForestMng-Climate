@@ -134,7 +134,7 @@ source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
               }else if(energy_exports == "noEPnoex") { EUinternal.barplot.noEPnoex(csv_path, case_subcase, plots_path, year)}
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
-          id = "EUForest"
+          id = "EUFootprint"
           map = "PDF"
           plot.map(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports) # map_PDF.R
          # id = can be "EUFootprint", "EUForest" or "Global"

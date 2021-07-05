@@ -238,12 +238,12 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
   # max for EUFootprint: 0.007033453
   
     if(id == "EUFootprint")  {# & case_subcase != "_cutoff_mammals") {
-      li <- c(0, 0.007033453)
-      br <- c(0, 0.002, 0.004, 0.006)
+      li <- c(0, max(data$Values))
+      br <- c(0, 0.002, 0.004, 0.006, 0.008, 0.010, 0.012)
     }
 
     if(id == "EUForest") { # & case_subcase != "_cutoff_mammals") {
-      li <- c(0, 0.006180501)
+      li <- c(0, max(data$Values))
       br <- c(0, 0.002, 0.004, 0.006)
     }
 
