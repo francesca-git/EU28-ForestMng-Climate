@@ -92,13 +92,15 @@ calculate.impacts.pervolume <- function(csv_path, case_subcase) {
     
     # computes PDF/Mm3 per globiom region
     
-    df_ratio <- df_fin %>% transmute(Scenario = Scenario, Region = Region, Year = Year, 
-                                     forest_EU_noex = PDF_forest_EU/Wood_forest_EU,
-                                     forest_im = PDF_forest_im/Wood_forest_im,
-                                     EP_EU = PDF_EP_EU/Wood_EP_EU,
-                                     EP_im = PDF_EP_im/Wood_EP_im,
-                                     forest_ex = PDF_forest_ex/Wood_forest_ex,
-                                     forest_EU_ex = (PDF_forest_EU + PDF_forest_ex)/(Wood_forest_ex + Wood_forest_EU))
+    df_ratio <- df_fin %>% mutate(forest_EU_noex = PDF_forest_EU/Wood_forest_EU,
+                                    forest_im = PDF_forest_im/Wood_forest_im,
+                                    EP_EU = PDF_EP_EU/Wood_EP_EU,
+                                    EP_im = PDF_EP_im/Wood_EP_im,
+                                    forest_ex = PDF_forest_ex/Wood_forest_ex) %>%
+                            rowwise() %>%
+                              mutate(forest_EU_ex = sum(PDF_forest_EU, PDF_forest_ex, na.rm = TRUE)/sum(Wood_forest_ex, Wood_forest_EU, na.rm = TRUE),
+                                    tot_noexport = sum(PDF_forest_EU, forest_im, EP_EU, EP_im, na.rm = TRUE)/sum(Wood_forest_EU, Wood_forest_im, Wood_EP_EU, Wood_EP_im, na.rm = TRUE)) %>%
+                                select(Scenario, Year, Region, forest_EU_noex, forest_ex, forest_EU_ex, forest_im, EP_EU, EP_im, tot_noexport)
                                      
     
     df_ratio[df_ratio == "NaN"] <- NA
@@ -116,13 +118,15 @@ calculate.impacts.pervolume <- function(csv_path, case_subcase) {
                         summarise_if(is.numeric, sum, na.rm = TRUE)) 
     
     df_ratio_sum <- df_ratio_sum %>%
-                          transmute(Scenario = Scenario, Year = Year, 
-                                    forest_EU_noex = PDF_forest_EU/Wood_forest_EU,
+                          mutate(forest_EU_noex = PDF_forest_EU/Wood_forest_EU,
                                     forest_im = PDF_forest_im/Wood_forest_im,
                                     EP_EU = PDF_EP_EU/Wood_EP_EU,
                                     EP_im = PDF_EP_im/Wood_EP_im,
-                                    forest_ex = PDF_forest_ex/Wood_forest_ex,
-                                    forest_EU_ex = (PDF_forest_EU + PDF_forest_ex)/(Wood_forest_ex + Wood_forest_EU))
+                                    forest_ex = PDF_forest_ex/Wood_forest_ex) %>%
+                            rowwise() %>%
+                              mutate(forest_EU_ex = sum(PDF_forest_EU, PDF_forest_ex, na.rm = TRUE)/sum(Wood_forest_ex, Wood_forest_EU, na.rm = TRUE),
+                                    tot_noexport = sum(PDF_forest_EU, forest_im, EP_EU, EP_im, na.rm = TRUE)/sum(Wood_forest_EU, Wood_forest_im, Wood_EP_EU, Wood_EP_im, na.rm = TRUE)) %>%
+                                select(Scenario, Year, forest_EU_noex, forest_ex, forest_EU_ex, forest_im, EP_EU, EP_im, tot_noexport)
     
     write.csv(df_ratio_sum, paste0(csv_path, "PDF_Mm3", case_subcase, ".csv"), row.names = FALSE)
 

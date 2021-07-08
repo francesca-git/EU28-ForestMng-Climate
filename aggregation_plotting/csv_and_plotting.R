@@ -21,7 +21,6 @@ source("./aggregation_plotting/scripts_charts/global_time-series.R")            
 source("./aggregation_plotting/scripts_charts/map_areas.R")                            # functions to plot the impacts of global land use 
 
 source("./aggregation_plotting/scripts_aggregation/EU_Rdata-to-csv.R")                      # functions to convert the .Rdata file to several .csv for EU impacts 
-source("./aggregation_plotting/scripts_charts/EU_barplots.R")                                   # functions to plot the impacts of EU
 source("./aggregation_plotting/scripts_charts/map_PDF.R")                                       # functions to plot the impacts on a map
 source("./aggregation_plotting/scripts_aggregation/slost_Globiom.R")
 source("./aggregation_plotting/scripts_aggregation/wood.R")
@@ -33,7 +32,7 @@ source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
   type_of_data <- "impacts"       # "impacts" or "areas"
 
   case <- "cutoff"              # cutoff, nocutoff, cutoff_timber, nocutoff_timber, LCImpact, Chaudhary2015 or Chaudhary2018
-  subcase <- ""                   # e.g. plants, mammals or birds (end of the csv files)
+  subcase <- ""                    # e.g. plants, mammals or birds (end of the csv files)
   case_areas <- "notimber"        # "notimber" or "timber" 
   energy_exports <- "EPnoex"    # "ex" (Footprint includes energy plantations, Internal EU does not include energy crops but includes exports) 
                                 # "EPnoex" (Footprint includes energy plantations and Internal EU includes energy crop and exports)  
@@ -112,8 +111,6 @@ source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
           convert.PDF.ha(folder_slost, folder_areas, csv_path, case_subcase)          # slost_ha.R
           
           
-          
-          
 ############################ PLOT ##############################
 
 
@@ -121,6 +118,9 @@ source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
   
           plot.global.time.series(csv_path, case_subcase, plots_path, case_areas)  # global_time-series.R
     
+         
+          source("./aggregation_plotting/scripts_charts/EU_barplots.R")                                   # functions to plot the impacts of EU
+
       ################# BARPLOT OF EU FOOTPRINT  #######################
        
           if (energy_exports == "ex") { EUfootprint.barplot.EP(csv_path, case_subcase, plots_path, year) # EU_barplots.R
@@ -134,7 +134,7 @@ source("./aggregation_plotting/scripts_aggregation/slost_ha.R")
               }else if(energy_exports == "noEPnoex") { EUinternal.barplot.noEPnoex(csv_path, case_subcase, plots_path, year)}
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
-          id = "EUFootprint"
+          id = "EUForest"
           map = "PDF"
           plot.map(folder_slost, file_slost, case_subcase, plots_path, id, energy_exports) # map_PDF.R
          # id = can be "EUFootprint", "EUForest" or "Global"

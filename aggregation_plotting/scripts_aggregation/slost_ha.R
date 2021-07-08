@@ -37,35 +37,42 @@ convert.PDF.ha <- function(folder_slost, folder_areas, csv_path, case_subcase) {
                 rename(For_Plantation_im = For_PlantationFuel_im) %>%
                   mutate(For_Plantation_im = For_Plantation_im + For_TimberPlant_im) %>%
                     select(-For_TimberPlant_im)
+  df_Areas$Year <- as.integer(df_Areas$Year)
+  
+  Ecoregions <- df_PDF %>% select(Year, Ecoregion) %>% distinct()
+  Ecoregions$Ecoregion <- as.factor(Ecoregions$Ecoregion)
+  Scenarios <- unique(df_Areas$Scenario)
+  nscenarios <- length(Scenarios)
   
   df_Areas_new <- data.frame(matrix(NA, nrow = 0, ncol = 0)) 
   # the current df_Areas dataframe contains only the ecoregions considered in GLOBIOM, therefore we need to add 
   # those which are in the df_PDF and not in df_Areas.
   
-  Ecoregions <- df_PDF %>% select(Ecoregion) 
-  Scenarios <- unique(df_PDF$Scenario)
-  nscenarios <- length(Scenarios)
-  
       for(sc in 1:nscenarios) {
-                                                                     
+        
+        print(sc)
         Areas_temp <- df_Areas %>% filter(Scenario == toString(Scenarios[sc])) %>%
-            full_join(Ecoregions) %>%
+            right_join(Ecoregions) %>%
               mutate(Ecoregion = as.character(Ecoregion)) %>%
                 arrange(Ecoregion) %>%
                   mutate(Ecoregion = as.factor(Ecoregion)) %>%
                     mutate(Scenario = toString(Scenarios[sc]))
+        print(nrow(Areas_temp))
 
         df_Areas_new <- df_Areas_new %>% bind_rows(Areas_temp)
            
          } 
 
+  df_Areas <- df_Areas_new
+  rm(df_Areas_new)
   df_PDF <- df_PDF %>% arrange(Scenario, Ecoregion, Year)
   df_Areas <- df_Areas %>% arrange(Scenario, Ecoregion, Year) 
   
-  ecoreg_in_Globiom <- unique(df_Areas$Ecoregion)
+  # ecoreg_in_Globiom <- unique(df_Areas$Ecoregion)
   
-  df_PDF <- df_PDF %>% filter(Ecoregion %in% ecoreg_in_Globiom)
+  # df_PDF <- df_PDF %>% filter(Ecoregion %in% ecoreg_in_Globiom)
   
+  ratio <- df_PDF
   ratio <- bind_cols(ratio[1:3], ratio[4:length(ratio)]/df_Areas[4:length(df_Areas)]) %>%
               replace(is.na(.), 0) 
   
@@ -96,6 +103,20 @@ convert.PDF.ha <- function(folder_slost, folder_areas, csv_path, case_subcase) {
           # ====
   
   write.csv(ratio, paste0(csv_path, "PDF-ha.csv"), row.names = FALSE)
+   
+  ratio_tot <- df_PDF
+  df_PDF_sum <- data.frame(df_PDF %>% select(-Ecoregion) %>%
+                group_by(Scenario, Year) %>% 
+                  summarise_all(sum, na.rm = TRUE))
+  
+  df_Areas_sum <- data.frame(df_Areas %>% select(-Ecoregion) %>%
+                group_by(Scenario, Year) %>% 
+                  summarise_all(sum, na.rm = TRUE))
+  
+  ratio_tot <- data.frame(bind_cols(df_PDF_sum[1:3], df_PDF_sum[4:length(df_PDF_sum)]/df_Areas_sum[4:length(df_Areas_sum)]) %>%
+              replace(is.na(.), 0)) 
+                    
+  write.csv(ratio_tot, paste0(csv_path, "PDF-ha_tot.csv"), row.names = FALSE)
 
 }
   

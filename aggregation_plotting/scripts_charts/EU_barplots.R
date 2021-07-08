@@ -99,33 +99,40 @@ plot.EU.barplot <- function(data, data_top, pal) {
       if (min_per_scenario >= 0) {ymin_value = 0} else {
         ymin_value <- min_per_scenario }
 
-    # ymin_value = -0.025
+    # for EU footprint with fixed legend  
+    # ymin_value = -0.02
     # ymax_value = 0.3
+      
+    # for EU internal forest with fixed legend
+    # ymin_value = -0.025
+    # ymax_value = 0.07
 
     # plot
     
     figure <-
       ggplot(data)+
       geom_bar(aes(x = Scenario, y = PDFx100, fill = Category), colour = "black",  size = 0.3, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
-      theme_minimal(base_size = 13) + # select the theme of the plot
+      theme_minimal(base_size = 16) + # select the theme of the plot
       theme(legend.position = "bottom", 
-           legend.text = element_text(size = 9),
-           axis.text = element_text(size = 8),
+           legend.text = element_text(size = 14),
+           axis.text = element_text(size = 12),
            axis.text.x = element_text(angle = 90),
-           axis.title = element_text(size = 10),
-           legend.title = element_text(size = 9),
+           axis.title = element_text(size = 12),
+           legend.title = element_text(size = 13),
            legend.key.size = unit(0.3, "cm")) +
       guides(fill = guide_legend(title = "Land use category", title.position = "top")) +
       scale_x_discrete(labels = label_scenario) + # assign the names to the labels
-      xlab("Scenarios") + ylab("PDF%") +
+      xlab("Scenarios") + ylab("Global PDF%") +
       #scale_fill_brewer(palette = palette_name, direction = -1) +
       scale_fill_manual(values = pal) +
       ylim(ymin_value, ymax_value) + 
       geom_point(data = data_top, aes(x  = Scenario, y = PDFx100), color = "black", size = 1) +
       theme(panel.border = element_rect(color = "grey", fill=NA)) +
       geom_errorbar(data = data_top, aes(x = Scenario, y = PDFx100, ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05) +
-      guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
-      facet_wrap(~ Group, ncol = 2) 
+      # guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
+      # facet_wrap(~ Group, ncol = 2) 
+      facet_grid(. ~ Group) 
+
     
     return(figure)
     
@@ -175,8 +182,9 @@ plot.EU.barplot <- function(data, data_top, pal) {
       figure <- plot.EU.barplot(data, data_top, pal)
       figure
       # save as pdf
-      ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, case_subcase, "_EP.pdf"), width = 15, height = 15, units = "cm")
-      
+      ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, case_subcase, "_EP_or.pdf"), width = 30, height = 11, units = "cm")
+      # ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, case_subcase, "_EP.pdf"), width = 15, height = 15, units = "cm")
+
   }
   
 
@@ -255,8 +263,9 @@ plot.EU.barplot <- function(data, data_top, pal) {
     figure <- plot.EU.barplot(data, data_top, pal)
     figure
     
-    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, case_subcase, "_EPnoex.pdf"), width = 15, height = 15, units = "cm")
-    
+    # ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, case_subcase, "_EPnoex.pdf"), width = 15, height = 15, units = "cm")
+    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, case_subcase, "_EPnoex_or.pdf"), width = 30, height = 11, units = "cm")
+
   }
 
 

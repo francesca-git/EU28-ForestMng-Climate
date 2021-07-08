@@ -8,6 +8,7 @@ RR_distributions/*
 R-files/*
 aggregation_plotting/Mapping_GLOBIOM/*
 aggregation_plotting/WWF_Ecoregions/*
+aggregation_plotting/Map_EU_dissolved/*
 aggregation_plotting/results_plots-csv/*
 aggregation_plotting/Figure_assembling.pptx
 aggregation_plotting/wetransfer-dd95f2

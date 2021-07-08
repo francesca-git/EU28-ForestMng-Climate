@@ -76,9 +76,9 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
       focus = "European forest biomass"
       climate = "RCP"
       Zoom = F
-      group = c("RCP2.6")
+      group = c("RCP6.5-REF", "RCP2.6")
       scenario = c("Multifunctional", "Set-aside")
-      level = c("Free", "100%")
+      level = c("Baseline", "Free", "50%", "100%")
       title = "Global loss of species - Impacts of EU forest biomass demand in 2100 (RCP2.6)"
   
   } else if (id == "EUForest"){
@@ -89,7 +89,7 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
       Zoom = FALSE
       group = c("RCP6.5-REF","RCP2.6")
       scenario = c("Multifunctional", "Set-aside")
-      level = c("Baseline","25%", "100%")
+      level = c("Baseline", "Free", "50%", "100%")
       title = "Global loss of species - Impacts of EU internal forest management in 2100"
   
   } else {stop("Define id")}
@@ -164,20 +164,22 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
         }
       
           if(id == "EUFootprint") {
-          data <- data %>% filter(Level == "100%" | (Level == "Free" & Scenario == "Multifunctional")) %>%
-                            select(-Group) %>%
+          data <- data %>% filter((Level == "50%" | Level == "100%" | Level == "Baseline" & Scenario == "Multifunctional") | (Level == "Free" & Scenario == "Multifunctional")) %>%
                               unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-                                mutate(Scenario = str_replace(Scenario, "Multifunctional-Free", "AFM-Free"))
-          data$Scenario = factor(data$Scenario, levels = c("AFM-Free", "Multifunctional-100%", "Set-aside-100%"))
+                                mutate(Scenario = str_replace(Scenario, "Multifunctional-Baseline", "Baseline")) %>%
+                                  mutate(Scenario = str_replace(Scenario, "Multifunctional-Free", "AFM-Free"))
+                                    data$Group = factor(data$Group, levels = c("RCP6.5-REF", "RCP2.6"), labels = c("RCP6.5 (REF)", "RCP2.6"))
+          data$Scenario = factor(data$Scenario, levels = c("Baseline", "Multifunctional-50%", "Multifunctional-100%", "AFM-Free", "Set-aside-50%", "Set-aside-100%"))
         }
       
       
         if(id == "EUForest") {
-          data <- data %>% filter(Scenario == "Set-aside" | (Scenario == "Multifunctional" & Level == "100%")) %>%
+          data <- data %>% filter(Level == "50%" | Level == "100%" | (Level == "Baseline" & Scenario == "Multifunctional") | (Level == "Free" & Scenario == "Multifunctional")) %>%
                               unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-                                mutate(Scenario = str_replace(Scenario, "Set-aside-Baseline", "Baseline"))
-          data$Scenario = factor(data$Scenario, levels = c("Baseline", "Multifunctional-100%", "Set-aside-25%", "Set-aside-100%"))
-          data$Group = factor(data$Group, levels = c("RCP6.5-REF", "RCP2.6"), labels = c("RCP6.5 (REF)", "RCP2.6"))
+                                mutate(Scenario = str_replace(Scenario, "Multifunctional-Baseline", "Baseline")) %>%
+                                  mutate(Scenario = str_replace(Scenario, "Multifunctional-Free", "AFM-Free"))
+           data$Group = factor(data$Group, levels = c("RCP6.5-REF", "RCP2.6"), labels = c("RCP6.5 (REF)", "RCP2.6"))
+          data$Scenario = factor(data$Scenario, levels = c("Baseline", "AFM-Free", "Multifunctional-50%", "Set-aside-50%", "Multifunctional-100%", "Set-aside-100%"))
         }
 
   data_backup <- data
@@ -249,7 +251,7 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
     } else{
       
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_multi.png"),  width = 14, height = 24, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_multi_2rows.png"),  width = 40, height = 20, res = 600, units = "in")
   
     }
   
@@ -286,12 +288,12 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
     # }
     # 
   figure <- ggplot() +
-              geom_sf(data = shp, fill = "transparent", colour = "darkgrey") +
+              geom_sf(data = shp, fill = "transparent", colour = "darkgrey", lwd = 0.2) +
                 geom_sf(data = df, aes(fill = Values), colour = NA) + 
                   #scale_fill_viridis(option = test, na.value = "grey50", direction = -1) + # for PDF
                   #scale_fill_continuous_diverging(test, c1 = 70, na.value = "white", rev = TRUE) +
                   #scale_fill_scico(palette = test, direction = 1) + #, begin = 0.5, end = 1) +
-                  scale_fill_gradientn(colors = pal, na.value = "white", limits = li, breaks = br) + ################################ this is the line to keep
+                  scale_fill_gradientn(colors = pal, na.value = "white") + #, limits = li, breaks = br) + ################################ this is the line to keep
                   #labs(fill = "", x = "", y = "", title = title) +
                   #theme_minimal() +
                   #scale_fill_distiller(palette = test, direction = 1, na.value = "grey90") +
@@ -299,31 +301,29 @@ plot.map <- function(folder_slost, file_slost, case_subcase, plots_path, id, ene
                   #theme(plot.title = element_text(size = 10, face = "bold.italic")) +
                   #facet_wrap(~Scenario, nrow = 4, ncol = 2) +
                   labs(fill = legend) +
-                  theme(text = element_text(size = 30), 
+                  theme(text = element_text(size = 36), 
                         axis.text = element_blank(),
-                        legend.title = element_text(size = 30),
-                        legend.text = element_text(size = 30),
+                        legend.title = element_text(size = 36),
+                        legend.text = element_text(size = 36),
                         legend.key.size = unit(2, "cm"), legend.key.width = unit(1,"cm"),
                         legend.position = "right") +
                   theme(strip.background = element_rect(color = NULL, fill = "white", size = 1.5, linetype = "solid"),
-                        strip.text = element_text(size = 35)) +
+                        strip.text = element_text(size = 43)) +
                   theme(panel.background = element_blank(),
                         panel.border = element_rect(colour = "grey", fill = "transparent", size = 0.5),
                         plot.title = element_text(hjust = 0.5))
   
-  if( region == "global") {figure <- figure + facet_wrap( ~ Scenario, ncol = 1) } 
+  if( region == "global") {figure <- figure + facet_wrap(~ Group + Scenario, nrow = 4) } 
   
   #if(length(year) > 1 && region == "global") {figure <- figure + facet_wrap(vars(Scenario))}
   
   if (region != "global") {
     figure <- figure + geom_sf(data = EU_map, fill = "transparent", colour = "black")
-    figure <- figure + facet_grid(Scenario ~ Group) 
-    figure <- figure + coord_sf(xlim=c(-15, 45), ylim=c(30, 75)) 
+    figure <- figure + facet_grid(Group ~ Scenario) 
+    figure <- figure + coord_sf(xlim=c(-15, 40), ylim=c(30, 75)) 
     }
   
   figure
-  
-  
   
   dev.off()
   

@@ -55,8 +55,8 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
   #test = "PuRd"
   #test = "Purple-Yellow"
   #pal <- c("#F1F1F1", "#E1EDC9", "#C0E7BB", "#98DEB6", "#6BD1B9", "#3CC2BE", "#1CAEC3", "#3797C3", "#5B7BBD", "#775BAF", "#833993", "#80146E")
-      id = "EUFootprint"
 
+ 
       print(id)
       region = "global"
       year = c(2100)
@@ -64,7 +64,7 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
       focus = "European forest biomass"
       climate = "RCP"
       Zoom = F
-      group = c("RCP6.5-REF", "RCP2.6")
+      group = c("RCP2.6")
       scenario = c("Multifunctional", "Set-aside")
       level = c("Baseline", "Free", "50%", "100%")
       title = "Global loss of species - Impacts per unit of volume of EU forest biomass demand in 2100 (RCP2.6)"
@@ -101,25 +101,53 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
   # Sum the rows which should be aggregated ====
       data <- data %>%  
         mutate_if(is.numeric, ~.*100) %>%
-          mutate(EUFootprint = tot_noexport) %>% 
+          mutate(EUFootprint = case_when((energy_exports == "ex" | energy_exports == "EPnoex") 
+                                          ~ rowSums(select(., forest_EU_noex, forest_im, EP_EU, EP_im), na.rm = TRUE),
+                                          (energy_exports == "noEPnoex") 
+                                          ~ rowSums(select(., forest_EU_noex, forest_im), na.rm = TRUE))) %>%
+            mutate(EUForest = case_when((energy_exports == "EPnoex") ~ rowSums(select(., forest_EU_noex, EP_EU), na.rm = TRUE),
+                                                      (energy_exports == "ex") ~ pull(., forest_EU_ex),
+                                                      (energy_exports == "noEPnoex") ~ pull(., forest_EU_noex))) %>%
               select(Group, Scenario, Level, Region, Year, contains(id)) %>%
                 dplyr::rename_at(vars(all_of(id)), ~ "Values") %>%
                   rename(GLO_reg = Region)
 
         if(id == "EUFootprint") {
-         data <- data %>% filter((Level == "50%" | Level == "100%" | Level == "Baseline" & Scenario == "Multifunctional") | (Level == "Free" & Scenario == "Multifunctional")) %>%
+          data <- data %>% filter(Level == "100%" | (Level == "Baseline" & Scenario == "Multifunctional")) %>%
+                            select(-Group) %>%
                               unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-                                mutate(Scenario = str_replace(Scenario, "Multifunctional-Baseline", "Baseline")) %>%
-                                  mutate(Scenario = str_replace(Scenario, "Multifunctional-Free", "AFM-Free"))
-                                    data$Group = factor(data$Group, levels = c("RCP6.5-REF", "RCP2.6"), labels = c("RCP6.5 (REF)", "RCP2.6"))
-          data$Scenario = factor(data$Scenario, levels = c("Baseline", "AFM-Free", "Multifunctional-50%", "Set-aside-50%", "Multifunctional-100%", "Set-aside-100%"))
+                                mutate(Scenario = str_replace(Scenario, "Multifunctional-Baseline", "AFM-Baseline"))
+          data$Scenario = factor(data$Scenario, levels = c("AFM-Baseline", "Multifunctional-100%", "Set-aside-100%"))
         }
       
       
-  #==== 
+        if(id == "EUForest") {
+          data <- data %>% filter(Scenario == "Set-aside" | (Scenario == "Multifunctional" & Level == "100%")) %>%
+                              unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
+                                mutate(Scenario = str_replace(Scenario, "Set-aside-Baseline", "Baseline"))
+          data$Scenario = factor(data$Scenario, levels = c("Baseline", "Multifunctional-100%", "Set-aside-25%", "Set-aside-100%"))
+          data$Group = factor(data$Group, levels = c("RCP6.5-REF", "RCP2.6"), labels = c("RCP6.5 (REF)", "RCP2.6"))
+        }
       
+  #==== 
+  #write.csv(data, paste0("./plotting/no_cutoff/Global_PDF_REF-RCP_", id ,"_ecoregion.csv"), row.names = FALSE)
+  
   df <- left_join(shp, data)
- 
+      
+  # Zoom ====
+    if (Zoom == TRUE) {
+      
+    Globiom_eco_org <- read.csv("./grouped_land_use_files/GLOBIOM_Ecoregion.csv", header = TRUE)
+      # rearrange data in Globiom_eco
+      Globiom_eco_org <- filter(Globiom_eco_org, Ecoregion!="Lake", Ecoregion != "Rock and Ice") %>%
+                          dplyr::rename(eco_code = Ecoregion) 
+      Globiom_eco_org = droplevels(Globiom_eco_org, "Lake", "Rock and Ice")  #erase these two names from the list of factors
+    
+    df <- join_regions(df, Globiom_eco_org) %>%
+            filter(Globiom_Reg == region)
+    }
+  #====
+  
   df <- df %>% filter(Scenario != "NA")
   df$Values <- log10(df$Values)
   df$Values[is.infinite(df$Values)] <- NA
@@ -140,7 +168,7 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
     png(file = paste0(plots_path, map, "Mm3_", climate, "_", region, case_subcase, "_", energy_exports , ".png"), width = 6, height = 6, res = 600, units = "in")
     } else{
     #pdf(file = paste0("./plotting/no_cutoff/", map, "-", id,"_", climate, "_", year[1], "_", region, "_", test,"lr.pdf"), width = 8, height = 4)
-    png(file = paste0(plots_path, map, "Mm3-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_multi.png"),  width = 20, height = 27, res = 600, units = "in")
+    png(file = paste0(plots_path, map, "Mm3-", id,"_", climate, "_", year[1], "_", region, case_subcase, "_",energy_exports, "_newleg.png"),  width = 6, height = 6, res = 600, units = "in")
   
     }
   
@@ -150,7 +178,7 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
   
   print(id)
   figure <- ggplot() +
-              geom_sf(data = shp, fill = "transparent", colour = "darkgrey", lwd = 0.2) +
+              geom_sf(data = shp, fill = "transparent", colour = NA) +
                 geom_sf(data = df, aes(fill = Values), colour = NA) + 
                   #scale_fill_viridis(option = test, na.value = "grey50", direction = -1) + # for PDF
                   #scale_fill_continuous_diverging(test, c1 = 70, na.value = "white", rev = TRUE) +
@@ -163,16 +191,21 @@ plot.map.unitvolume <- function(folder_slost, file_slost, case_subcase, plots_pa
                   #theme(plot.title = element_text(size = 10, face = "bold.italic")) +
                   #facet_wrap(~Scenario, nrow = 4, ncol = 2) +
                   labs(fill = legend) +
-                  theme(text = element_text(size = 27)) +
+                  theme(text = element_text(size = 7)) +
                   theme(strip.background = element_rect(color=NULL, fill="white", size=1.5, linetype="solid"),
-                        strip.text = element_text(size = 27)) +
+                        strip.text = element_text(size = 8)) +
                   theme(panel.background = element_blank(),
                         panel.border = element_rect(colour = "grey", fill = "transparent", size = 0.5),
                         plot.title = element_text(hjust = 0.5))
   
-  if( region == "global") {figure <- figure + facet_grid(Scenario ~ Group)} 
+  if( region == "global") {figure <- figure + facet_wrap(~Scenario, ncol = 1) } 
   
   #if(length(year) > 1 && region == "global") {figure <- figure + facet_wrap(vars(Scenario))}
+  
+  if (region != "global") {
+    figure <- figure + facet_grid(Group ~ Scenario) 
+    figure <- figure + coord_sf(xlim=c(-15, 45), ylim=c(30, 75)) 
+    }
   
   figure
   
