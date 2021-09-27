@@ -55,8 +55,8 @@ plot.global.time.series <- function(csv_path, file_label, plots_path, label_timb
     data <- read.csv(paste0(csv_path, "global_time-series", file_label, ".csv"), header = TRUE)
     
     data$Category <- factor(data$Category, levels=unique(data$Category))
-    data <- data %>% mutate(Group = str_replace(Group, "REF", "RCP6.5 (REF)"))
-    data$Group = factor(data$Group, levels = c("RCP6.5 (REF)", "RCP2.6"))
+    data <- data %>% mutate(Group = str_replace(Group, "REF", "RCP6.5 (BAU)"))
+    data$Group = factor(data$Group, levels = c("RCP6.5 (BAU)", "RCP2.6"))
   
   # plot the impacts
   
@@ -97,8 +97,8 @@ plot.global.time.series <- function(csv_path, file_label, plots_path, label_timb
     palette = c("#000820", "#09143d", "#264b5a", "#4F7B66", "#B1A557", "#E3A65A", "#F8AA88", "#fecace", "#FFE6FF")
     #9e8f2e
     data$Category <- factor(data$Category, levels=unique(data$Category))
-    data <- data %>% mutate(Group = str_replace(Group, "REF", "RCP6.5 (REF)"))
-    data$Group = factor(data$Group, levels = c("RCP6.5 (REF)", "RCP2.6"))
+    data <- data %>% mutate(Group = str_replace(Group, "REF", "RCP6.5 (BAU)"))
+    data$Group = factor(data$Group, levels = c("RCP6.5 (BAU)", "RCP2.6"))
     
     figure2 <- 
       ggplot(data, aes(x=Year, y=Values, fill = Category)) +
@@ -151,7 +151,7 @@ plot.global.time.series.CI <- function(csv_path, file_label, plots_path) {
   # load the data
   
     data <- read.csv(paste0(csv_path, "/noAF_global_CI", file_label, ".csv"), header = TRUE)
-    data <- data %>% mutate(Group = str_replace(Group, "REF", "RCP6.5 (REF)"))
+    data <- data %>% mutate(Group = str_replace(Group, "REF", "RCP6.5 (BAU)"))
     
     data <- data %>% rename(Scenario = Group)
 
@@ -170,7 +170,7 @@ plot.global.time.series.CI <- function(csv_path, file_label, plots_path) {
       # scale_fill_grey(start = 0.2, end = 0.8) +
       # ylim(0, max(data$upper95) + 1) +
       xlim(2020, 2100) + 
-      ylim(0, 18)
+      ylim(0, 23)
       theme(legend.position = "right", legend.text = element_text(size = 13)) 
    
     figure

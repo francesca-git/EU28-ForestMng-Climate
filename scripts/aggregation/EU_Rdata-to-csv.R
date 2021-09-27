@@ -149,9 +149,9 @@ create.csv.EU.ex <- function(file_rdata_path, csv_path, file_label, year) {
                   
                   if ((abs(test$EU28_Energy_crops - (test_check$EP_EU_median + test_check$EP_conv_EU_median)) > 1e-16) |
                       (abs(test$EU28_Forest_net - (test_check$For_ClearCut_EU_median + test_check$For_Retention_EU_median + 
-                           test_check$For_SelectionSystem_EU_median + test_check$ForOther_Extensive_EU_median + test_check$ForOther_Intensive_EU_median)) > 1e-16) |
+                           test_check$For_SelectionSystem_EU_median + test_check$For_TimberPlant_EU_median + test_check$ForOther_Extensive_EU_median + test_check$ForOther_Intensive_EU_median)) > 1e-16) |
                       (abs(test$Import_Energy_plantations - test_check$EP_conv_im_median) > 1e-16) |
-                      (abs(test$Import_Forest - (test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median)) > 1e-16)) 
+                      (abs(test$Import_Forest - (test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median + test_check$For_Selective_im_median + test_check$For_SelectionSystem_im_median)) > 1e-16)) 
                     {stop("ERROR in the aggregation of land use for EU footprint")}
                     
                   rm(test, test_check)
@@ -215,7 +215,7 @@ create.csv.EU.ex <- function(file_rdata_path, csv_path, file_label, year) {
                     
                     if ((abs(test$Clear_cut - (test_check$For_ClearCut_EU_median + test_check$For_ClearCut_ex_median)) > 1e-16) |
                         (abs(test$Retention - (test_check$For_Retention_EU_median)) > 1e-16) |
-                        (abs(test$Selection - test_check$For_SelectionSystem_EU_median) > 1e-16) |
+                        (abs(test$Selection - (test_check$For_SelectionSystem_EU_median + test_check$For_SelectionSystem_ex_median)) > 1e-16) |
                         (abs(test$Timber - (test_check$For_TimberPlant_EU_median + test_check$For_TimberPlant_ex_median)) > 1e-16) |
                         (abs(test$Other_management - (test_check$ForOther_Extensive_EU_median + test_check$ForOther_Intensive_EU_median)) > 1e-16) |
                         (abs(test_sum$PDFx100 -(test$Clear_cut + test$Retention + test$Selection + test$Other_management)) > 1e-16)) 
@@ -273,7 +273,7 @@ create.csv.EU.ex <- function(file_rdata_path, csv_path, file_label, year) {
               test_check$For_ClearCut_EU_median + test_check$For_Retention_EU_median +
               test_check$For_SelectionSystem_EU_median + test_check$ForOther_Extensive_EU_median + 
               test_check$ForOther_Intensive_EU_median + test_check$EP_conv_im_median + 
-              test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median)) > 1e-15) 
+              test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median + test_check$For_SelectionSystem_im_median + test_check$For_Selective_im_median)) > 1e-15) 
            {stop("ERROR in EU Footprint")}
          
          rm(test, test_check)
@@ -373,10 +373,6 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
         # (grouping criteria are defined according to the scope of the subsequent analysis, either the whole EU, EU forest biomass footprint or EU internal forest impacts) 
 
 
-# focus on 2050 and 2100
-t = c("2050", "2100") 
-year  = t[2]              # select the year
-
   ################## EU #######################
   
     ######## SUMS OF GROUPED LAND USE CLASSES ########  
@@ -465,7 +461,7 @@ year  = t[2]              # select the year
                       (abs(test$EU28_Forest_net - (test_check$For_ClearCut_EU_median + test_check$For_Retention_EU_median + 
                            test_check$For_SelectionSystem_EU_median + test_check$ForOther_Extensive_EU_median + test_check$ForOther_Intensive_EU_median)) > 1e-16) |
                       (abs(test$Import_Energy_plantations - test_check$EP_conv_im_median) > 1e-16) |
-                      (abs(test$Import_Forest - (test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median)) > 1e-16)) 
+                      (abs(test$Import_Forest - (test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median + test_check$For_SelectionSystem_im_median + test_check$For_Selective_im_median)) > 1e-16)) 
                     {stop("ERROR in the aggregation of land use for EU footprint")}
                     
                   rm(test, test_check)
@@ -584,9 +580,9 @@ year  = t[2]              # select the year
          
          if (abs(test$PDFx100 - (test_check$EP_EU_median + test_check$EP_conv_EU_median +
               test_check$For_ClearCut_EU_median + test_check$For_Retention_EU_median +
-              test_check$For_SelectionSystem_EU_median + test_check$ForOther_Extensive_EU_median + 
+              test_check$For_SelectionSystem_EU_median + test_check$For_TimberPlant_EU_median + test_check$ForOther_Extensive_EU_median + 
               test_check$ForOther_Intensive_EU_median + test_check$EP_conv_im_median + 
-              test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median)) > 1e-15) 
+              test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median + test_check$For_SelectionSystem_im_median + test_check$For_Selective_im_median)) > 1e-15) 
            {stop("ERROR in EU Footprint")}
          
          rm(test, test_check)
@@ -766,8 +762,8 @@ create.csv.EU.noEPnoex <- function(file_rdata_path, csv_path, file_label, year) 
                   test_check = results[[year]][nrow(results_temp),]
                   
                   if ((abs(test$EU28_Forest_net - (test_check$For_ClearCut_EU_median + test_check$For_Retention_EU_median + 
-                           test_check$For_SelectionSystem_EU_median + test_check$ForOther_Extensive_EU_median + test_check$ForOther_Intensive_EU_median)) > 1e-16) |
-                      (abs(test$Import_Forest - (test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median)) > 1e-16)) 
+                           test_check$For_SelectionSystem_EU_median + test_check$For_TimberPlant_EU_median + test_check$ForOther_Extensive_EU_median + test_check$ForOther_Intensive_EU_median)) > 1e-16) |
+                      (abs(test$Import_Forest - (test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median + test_check$For_SelectionSystem_im_median + test_check$For_Selective_im_median)) > 1e-16)) 
                     {stop("ERROR in the aggregation of land use for EU footprint")}
                     
                   rm(test, test_check)
@@ -885,8 +881,8 @@ create.csv.EU.noEPnoex <- function(file_rdata_path, csv_path, file_label, year) 
          test_check = results[[i]][nrow(temp),]
          
          if (abs(test$PDFx100 - (test_check$For_ClearCut_EU_median + test_check$For_Retention_EU_median +
-              test_check$For_SelectionSystem_EU_median + test_check$ForOther_Extensive_EU_median + 
-              test_check$ForOther_Intensive_EU_median + test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median)) > 1e-15) 
+              test_check$For_SelectionSystem_EU_median + test_check$For_TimberPlant_EU_median + test_check$ForOther_Extensive_EU_median + 
+              test_check$ForOther_Intensive_EU_median + test_check$For_ClearCut_im_median + test_check$For_Plantation_im_median + test_check$For_SelectionSystem_im_median + test_check$For_Selective_im_median)) > 1e-15) 
            {stop("ERROR in EU Footprint")}
          
          rm(test, test_check)

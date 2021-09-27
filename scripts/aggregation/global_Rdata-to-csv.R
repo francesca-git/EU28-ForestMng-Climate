@@ -83,7 +83,8 @@
                         (abs(test$Energy_crops_and_plantations - (test_check$EP_EU_median + test_check$EP_conv_EU_median + test_check$EP_RoW_median + test_check$EP_conv_im_median)) > 1e-14) |
                         (abs(test$Forest - (test_check$For_ClearCut_EU_median +  test_check$For_ClearCut_im_median + test_check$For_ClearCut_ex_median +
                           test_check$For_Retention_EU_median + test_check$For_SelectionSystem_EU_median + test_check$For_Plantation_im_median + test_check$ForOther_Extensive_EU_median +
-                          test_check$ForOther_Extensive_RoW_median + test_check$ForOther_Intensive_EU_median + test_check$ForOther_Intensive_RoW_median)) > 1e-15) |
+                          test_check$ForOther_Extensive_RoW_median + test_check$ForOther_Intensive_EU_median + test_check$ForOther_Intensive_RoW_median  + 
+                          test_check$For_SelectionSystem_im_median + test_check$For_SelectionSystem_ex_median + test_check$For_Selective_im_median + test_check$For_TimberPlant_EU_median + test_check$For_TimberPlant_ex_median)) > 1e-15) |
                         (abs(test$Pasture - (test_check$Pasture_EU_median + test_check$Pasture_RoW_median)) > 1e-15) |
                         (abs(test$Permanent_crops - (test_check$Permanent_EU_median + test_check$Permanent_RoW_median)) > 1e-15)  |
                         (abs(test$Urban - (test_check$Urban_EU_median + test_check$Urban_RoW_median)) > 1e-15 )) 

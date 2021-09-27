@@ -133,7 +133,7 @@ source("./scripts/model/distributions.R")
     
     if (vulnerability == TRUE) {
       
-      VS_world_pl = 1.00
+      VS_world_pl = 0.50
       VS_world_b = 0.29
       VS_world_m = 0.44
       
@@ -141,18 +141,18 @@ source("./scripts/model/distributions.R")
       colnames(Sorg_VS) = c("Plants", "Birds", "Mammals")
       
       weight_tx <- Sorg_VS
-      weight_tx[,"Plants"] <- (0.5/(Sorg_tot_pl*VS_world_pl))
-      weight_tx[,"Birds"] <- (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b*VS_world_b))
-      weight_tx[,"Mammals"] <- (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m*VS_world_m))
+      weight_tx[,"Plants"] <- 0.33/(Sorg_tot_pl*VS_world_pl) # (0.5/(Sorg_tot_pl*VS_world_pl))
+      weight_tx[,"Birds"] <- 0.33/(Sorg_tot_b*VS_world_b) # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b*VS_world_b))
+      weight_tx[,"Mammals"] <- 0.33/(Sorg_tot_m*VS_world_m) # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m*VS_world_m))
       
     } else if (vulnerability == FALSE) {
       
       Sorg_VS = Sorg
       colnames(Sorg_VS) = c("Plants", "Birds", "Mammals")
       weight_tx <- Sorg_VS
-      weight_tx[,"Plants"] <- (0.5/Sorg_tot_pl)
-      weight_tx[,"Birds"] <- (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b))
-      weight_tx[,"Mammals"] <- (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m))
+      weight_tx[,"Plants"] <- 0.33/Sorg_tot_pl # (0.5/Sorg_tot_pl)
+      weight_tx[,"Birds"] <- 0.33/Sorg_tot_b # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b))
+      weight_tx[,"Mammals"] <- 0.33/Sorg_tot_m # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m))
     }
     
     result = list("Weights" = weight_tx, "Sorg_VS" = Sorg_VS)

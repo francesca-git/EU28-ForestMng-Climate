@@ -34,7 +34,7 @@ select <- dplyr::select
 ############################ INITIAL SETTINGS ######################################
 
   # General settings for the calculation of the impacts
-    marginal = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
+    marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
     timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
     CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
 
@@ -75,6 +75,28 @@ select <- dplyr::select
 
     areas_processed_path <- areas_processed_path_user
     
+
+############################ CALCULATION OF SPECIES LOSS (PDF) ####################################
+
+  # calculate.impacts.R
+  
+    source("./scripts/model/parameters_calculation.R")
+    source("./scripts/model/CF_functions.R")
+    source("./scripts/model/calculate_slost.R")
+    source("./scripts/model/allocate_impacts.R")
+    
+    
+    if (dir.exists(results_path) == TRUE) {file.rename(results_path, paste0(results_path, "_", format(as.Date(Sys.Date()), "%d.%m.%Y") ))} # check if the directory already exists. If it does, rename the older folder appending today's date to its name
+    dir.create(results_path) # create the directory where the files will be saved
+    #dir.create(paste0(results_path, "/by_species-group")) # create the directory where the files with the species-group-specific results will be saved
+    
+    source("./scripts/model/calculate_impacts.R") # calculate.impacts(cutoff, CI, BS, marginal, label, areas_processed_path, results_path, ecodata_path, vulnerability)   
+    
+    
+    
+############################ AGGREGATE THE RESULTS BOTH FOR ANALYSIS AND FOR PLOTTING ##############################
+    
+    
 ############################ AREAS ##############################
 
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
@@ -98,30 +120,9 @@ select <- dplyr::select
           create.csv.global.areas(file_rdata_path_areas, aggr_plot_path_areas, label_timber, year)   # areas_Rdata-to-csv.R
     
     
-  
-############################ CALCULATION OF SPECIES LOSS (PDF) ####################################
 
-  # calculate.impacts.R
-  
-    source("./scripts/model/calculate_impacts.R")            # functions to convert the .Rdata file to several .csv for EU impacts 
-    source("./scripts/model/parameters_calculation.R")
-    source("./scripts/model/CF_functions.R")
-    source("./scripts/model/calculate_slost.R")
-    source("./scripts/model/allocate_impacts.R")
     
-    
-    if (dir.exists(results_path) == TRUE) {file.rename(results_path, paste0(results_path, "_", format(as.Date(Sys.Date()), "%d.%m.%Y") ))} # check if the directory already exists. If it does, rename the older folder appending today's date to its name
-    dir.create(results_path) # create the directory where the files will be saved
-    #dir.create(paste0(results_path, "/by_species-group")) # create the directory where the files with the species-group-specific results will be saved
-    
-    calculate.impacts(cutoff, CI, BS, marginal, areas_processed_path, results_path, ecodata_path, vulnerability)   
-    
-    
-    
-
-############################ AGGREGATE THE RESULTS BOTH FOR ANALYSIS AND FOR PLOTTING ##############################
-    
-   if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr_plot_path, "_", format(as.Date(Sys.Date()), "%d.%m.%Y") ))} # check if the directory already exists. If it does, rename the older folder appending today's date to its name
+if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr_plot_path, "_", format(as.Date(Sys.Date()), "%d.%m.%Y") ))} # check if the directory already exists. If it does, rename the older folder appending today's date to its name
       dir.create(aggr_plot_path) # create the directory
       
       dir.create(plots_path) # create the director
@@ -132,13 +133,15 @@ select <- dplyr::select
     
     source("./scripts/aggregation/aggregate_results.R")          # functions to convert the results of the model in a single .Rdata file
 
-    aggregate.results(results_path, file_rdata_path, file_label)     # aggregate_results.R - this function takes the results of the model calculation for a specific calculation setting
-                                                                  # defined by the code words at the beginning of this file (e.g. applying a cutoff and including timber plantations 
-                                                                  #, bootstrapping approach for the CI) and aggregate them as sum over the ecoregions or as total sums. 
+    aggregate.results(results_path, file_rdata_path)     # aggregate_results.R - this function takes the results of the model calculation for a specific calculation setting
+                                                         # defined by the code words at the beginning of this file (e.g. applying a cutoff and including timber plantations 
+                                                         #, bootstrapping approach for the CI) and aggregate them as sum over the ecoregions or as total sums. 
 
   ################# PREPARE THE FILES WHICH CAN BE PLOTTED #################
     # General task: convert the aggregated .Rdata files to aggregated .csv file, grouping and selecting only the most relevant 
-       
+     
+    year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
+  
     energy_exports = "EPnoex" # "EPex" or "noEPnoex"
     
       ######## EU ##########
@@ -180,7 +183,7 @@ select <- dplyr::select
       ################# GLOBAL TIME SERIES AND AREAS (DISAGGREGATED) #######################
           
           source("./scripts/plotting/plot_global_time-series.R")              # functions to plot the impacts of global land use 
-          plot.global.time.series(csv_path, file_label, plots_path, label_timber, aggr_plot_path_areas)  # global_time-series.R
+          plot.global.time.series(csv_path, file_label, plots_path, label_timber, aggr_plot_path_areas)  # plot_global_time-series.R
     
       ################# BARPLOT OF EU FOOTPRINT  #######################
           
@@ -199,26 +202,31 @@ select <- dplyr::select
           
       ################# GLOBAL TIME SERIES (AGGREGATED, WITH CI) #######################
           
-          plot.global.time.series.CI(csv_path, file_label, plots_path) # global_time-series.R --> noAF
+          plot.global.time.series.CI(csv_path, file_label, plots_path) # plot_global_time-series.R --> noAF
       
       ################# EUROPEAN TIME SERIES (AGGREGATED) #######################
           
           source("./scripts/plotting/plot_EU_time-series.R")            # function to plot the time series of EU internal impacts and footprint 
           id = "EUForest"
-          plot.EU.timeseries(csv_path, file_label, plots_path, id, energy_exports)  # time-series_multiple.R 
+          plot.EU.timeseries(csv_path, file_label, plots_path, id, energy_exports)  # plot_EU_time-series.R 
+          
+          id = "EUFootprint"
+          plot.EU.timeseries(csv_path, file_label, plots_path, id, energy_exports)  # plot_EU_time-series.R 
+          
+          
           
           # WARNING: THE FUNCTIONS TO PLOT THE MAPS DO NOT WORK IF THEY ARE CALLED HERE. THEREFORE, THEY HAVE TO BE RUN MANUALLY, AFTER 
           # SETTING THE id AND THE TYPE OF MAP, AS SHOWN HERE BELOW.
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
           
-          id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
+          id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
           map = "PDF" # "PDF" 
-          graph = "B-100" # "B-100" or "B-F-50-100", to be selected when id == "EUFootprint". "B-100" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                          # "B-F-50-100" = = the map will plot the following scenarios for 2100: Baseline, AFM-free, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+          graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
+                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
           
           source("./scripts/plotting/map_PDF.R")                        
-          # Plots produced with this function: Global - 2020 vs 2100 RCP2.6 vs 2100 REF, EUFootprint - 2100 + RCP2.6 for AFM-free, MFM and SFM100; EUForest - 2100 + RCP2.6 vs REF for Baseline, MFM25%, MFM100%, SFM25%, SFM100% 
+          # Plots produced with this function: Global - 2020 vs 2100 RCP2.6 vs 2100 REF, EUFootprint - 2100 + RCP2.6 for MFM and SFM100; EUForest - 2100 + RCP2.6 vs REF for Baseline, MFM25%, MFM100%, SFM25%, SFM100% 
 
           source("./scripts/plotting/map_PDF_multi.R")                   
           # This other function is meant to be tailored according to what it is needed to be plotted.

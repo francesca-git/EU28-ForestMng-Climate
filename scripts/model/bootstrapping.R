@@ -1,10 +1,18 @@
 
-source("./scripts/model/parameters_calculation.R") # this file is needed because the function load.data and prepare.RR are defined in it
-
-if(!require("pacman")){install.packages("pacman")};require("pacman")
-p_load(dplyr, tidyr, abind, tidyverse, stringr, parallel, doParallel, foreach, arsenal, boot, kernelboot, ggplot2)  # dataframe management and string management
+library("triangle") # triangular distribution -> for the distribution of the z values
+library(dplyr)      # dataframe management
+library(tidyr)      # dataframe management
+library(abind)      # dataframe management
+library(tidyverse)
+library(parallel)
+library(doParallel)
+library(foreach)
+library(arsenal)
+library(boot)
+library(kernelboot)
+library(ggplot2)
 select <- dplyr::select
-
+source("./scripts/model/parameters_calculation.R") # this file is needed because the function load.data and prepare.RR are defined in it
 
 #### Statistic to bootstrap ####
  
@@ -133,8 +141,8 @@ calculate.RR.bs <- function(uncertainties, n, cutoff, ecodata_path) {
   proc.time() - ptm 
   
   if(cutoff == TRUE) {
-    save(rr_land_use_bs, file = paste0(ecodata_path, "rr_z/rr_land_use_bs.Rdata"))
-  } else if (cutoff == FALSE) {save(rr_land_use_bs, file = paste0(ecodata_path, "rr_z/rr_land_use_bs_nocutoff.Rdata"))}
+    save(rr_land_use_bs, file = "./rr_z/rr_land_use_bs.Rdata")
+  } else if (cutoff == FALSE) {save(rr_land_use_bs, file = "./rr_z/rr_land_use_bs_nocutoff.Rdata")}
   
   ##### FOREST MANAGEMENT #####
   
@@ -170,8 +178,8 @@ calculate.RR.bs <- function(uncertainties, n, cutoff, ecodata_path) {
   proc.time() - ptm  
   
   if(cutoff == TRUE) {
-  save(rr_forest_mng_bs, file = paste0(ecodata_path, "rr_z/rr_forest_mng_bs.Rdata"))
-  } else if (cutoff = FALSE) {  save(rr_forest_mng_bs, file = paste0(ecodata_path, "rr_z/rr_forest_mng_bs_nocutoff.Rdata"))}
+  save(rr_forest_mng_bs, file = "./rr_z/rr_forest_mng_bs.Rdata")
+  } else if (cutoff = FALSE) {  save(rr_forest_mng_bs, file = "./rr_z/rr_forest_mng_bs_nocutoff.Rdata")}
 
   rr_landuse_ecoregion <- array(data = NA, dim = c(necoregions, nlanduse, ntaxa, n), dimnames = list(unique(Ecoregions$Eco_code), land_use_types, taxa, c(1:n)))
   for (i in 1:necoregions) {
@@ -196,8 +204,8 @@ calculate.RR.bs <- function(uncertainties, n, cutoff, ecodata_path) {
   rr_ecoregion_backup = rr_ecoregion
   
   if(cutoff == TRUE){
-  save(rr_ecoregion, file = paste0(ecodata_path, "rr_z/rr_ecoregion_bs.Rdata"))
-  } else if (cutoff == FALSE) {  save(rr_ecoregion, file = paste0(ecodata_path, "rr_z/rr_ecoregion_bs_nocutoff.Rdata"))}
+  save(rr_ecoregion, file = "./rr_z/rr_ecoregion_bs.Rdata")
+  } else if (cutoff == FALSE) {  save(rr_ecoregion, file = "./rr_z/rr_ecoregion_bs_nocutoff.Rdata")}
   
   return(rr_ecoregion)   
   
@@ -305,7 +313,7 @@ prepare.zvalues.bs <- function(n, ecodata_path) {
     rm(res_boot, temp_res)
   }
   
-  save(z_bs, file = paste0(ecodata_path, "/rr_z/z_bs.Rdata"))
+  save(z_bs, file = "./rr_z/z_bs.Rdata")
   # load("./ecoregions_data/z_bs.Rdata")
   # assign the corresponding simulation result to each ecoregion according to the habitat type (islands, forests, not forests)
   
@@ -326,7 +334,7 @@ prepare.zvalues.bs <- function(n, ecodata_path) {
   
   rm(z_bs, z_lower, z_upper)
   
-  save(zvalues, file = paste0(ecodata_path, "rr_z/zvalues_ecoregion_bs.Rdata"))
+  save(zvalues, file = "./rr_z/zvalues_ecoregion_bs.Rdata")
   
   return(zvalues)
 }

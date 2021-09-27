@@ -1,11 +1,13 @@
-
-if(!require("pacman")){install.packages("pacman")};require("pacman")
-p_load(MASS, dplyr, tidyr, abind, tidyverse, stringr, foreach, fitdistrplus, truncdist)  # dataframe management and string management
+library(MASS)
+library(dplyr)      # dataframe management
+library(tidyr)      # dataframe management
+library(abind)      # dataframe management
+library(tidyverse)
 select <- dplyr::select
-
 
 # h
      
+  
 
     affinity_CF = function(x, y) { #x = CFloc and y = z
       

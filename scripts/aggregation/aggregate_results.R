@@ -16,13 +16,13 @@
 
 #############################################################################################################################################################################
   
-  aggregate.results <- function(results_dir, file_rdata_path, file_label) {
-      # results_dir = folder with the output of the model (character vector)
+  aggregate.results <- function(results_path, file_rdata_path) {
+      # results_path = folder with the output of the model (character vector)
       # file_rdata_path = file where the output of the function will be saved (character vector)
       # label = specification identifying to which subgroup the results belong (character vector), e.g. whether the cutoff was applied or not
       # output: .Rdata file which contains the aggregated results
     
-    temp = list.files(path = paste0(results_dir) , pattern = paste0("*", label, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    temp = list.files(path = paste0(results_path) , pattern = paste0("*", label, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
     myfiles = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
     rm(temp)
     
@@ -75,10 +75,10 @@
         # test ====
         y <- sample(x = c(11,11), 1)                        # random year
         r <- sample(1:nrow(results[[1]]), 1)        # random row
-        if ((rowSums(results[[y]][r, 4:31], na.rm = TRUE) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
-          if(length(results[[y]]) > 31) { 
-            if ((rowSums(results[[y]][r, 32:59], na.rm = TRUE) - sums[[y]][r,5] > 1e-16) |
-                (rowSums(results[[y]][r, 60:87], na.rm = TRUE) - sums[[y]][r,6] > 1e-16))  {stop("ERROR in the calculation of the sums (CI)")}
+        if ((rowSums(results[[y]][r, 4:33], na.rm = TRUE) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
+          if(length(results[[y]]) > 33) { 
+            if ((rowSums(results[[y]][r, 34:63], na.rm = TRUE) - sums[[y]][r,5] > 1e-16) |
+                (rowSums(results[[y]][r, 64:93], na.rm = TRUE) - sums[[y]][r,6] > 1e-16))  {stop("ERROR in the calculation of the sums (CI)")}
           }
   
         # ====

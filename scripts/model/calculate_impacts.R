@@ -8,12 +8,12 @@ p_load(MASS, dplyr, tidyr, abind, tidyverse, stringr, foreach, fitdistrplus, tru
 select <- dplyr::select
 
 
-#calculate.impacts <- function(cutoff, CI, BS, marginal, areas_processed_path, results_path, ecodata_path, vulnerability) {
-  
-  if(missing(cutoff)) {cutoff = TRUE}
-  if(missing(CI)) {CI = FALSE}
-  if(missing(BS)) {BS = TRUE}
-  if(missing(marginal)) {marginal = TRUE}
+# calculate.impacts <- function(cutoff, CI, BS, marginal, label, areas_processed_path, results_path, ecodata_path, vulnerability) {
+#   
+#   if(missing(cutoff)) {cutoff = TRUE}
+#   if(missing(CI)) {CI = FALSE}
+#   if(missing(BS)) {BS = TRUE}
+#   if(missing(marginal)) {marginal = TRUE}
     
 ############################# INITIAL SETTINGS ############################# 
   
@@ -254,14 +254,14 @@ select <- dplyr::select
             Slost_taxa_matrix <- Slost[["PerTaxon_matrix"]]         # results per taxonomic group
             Slost_aggr2.5_matrix <- Slost[["Aggr2.5_matrix"]]       # 2.5% confidence intervals (in this case it will be all 0s)
             Slost_aggr97.5_matrix <- Slost[["Aggr97.5_matrix"]]     # 97.5% confidence intervals (in this case it will be all 0s)
-            rm(Slost)
                       
           # Arguments:
           # 1) Total_RemainingNatural_areas : dataframe with two columns, one with the total original areas, one with the remaining natural areas. The rows correspond to the
           # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
           # 2) Land_use_areas : dataframe which contains one column per each land use category. The rows correspond to the
           # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
-          # 3) CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated. WARNING: at this step, CI must be FALSE,
+          # 3) param = list with four elements: "ratio_eco" "weight_tx" "Sorg_VS"   "zvalues" 
+          # 4) CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated. WARNING: at this step, CI must be FALSE,
           # because here this function is used only to compute the median values. The calculation of the CI is computed at a later step (next if loop)
           # 5) vulnerability: TRUE or FALSE
           # 6) cutoff: TRUE or FALSE
@@ -289,9 +289,11 @@ select <- dplyr::select
               annual_crops_res <- 2*Slost[["Aggr_matrix"]][ , test_index] - Slost_CI[["Aggr2.5_matrix"]][ , test_index]
               annual_crops_test <- Slost_aggr97.5_matrix[ , test_index]
                 if(all.equal(annual_crops_res, annual_crops_test) != TRUE){stop("Error in the calculation of the confidence intervals with bootstrapping (upper95)")}
+              
+              rm(annual_crops_res, annual_crops_test)
             }
           
-          rm(Slost_CI)
+          rm(Slost_CI, Slost)
               
           }
             
@@ -306,6 +308,7 @@ select <- dplyr::select
           
           results[[sc]] <- Slost_list
           
+          rm(Slost_list)
           
           }
 
@@ -347,24 +350,22 @@ select <- dplyr::select
           
           t = Sys.time()-start.time
           print(paste('Time - allocation of areas:', round(t, 3), units(t))) 
+          
+          rm(t, start.time)
   
-          rm(fr_Areas_new)
+          rm(fr_Areas_new, Slost_fin, Slost_fin_plants, Slost_fin_birds, Slost_fin_mammals)
       
       
         ############################# SAVE THE RESULTS ############################# 
       
        
-        if (marginal == FALSE && vulnerability == FALSE) {
-          write.csv(Slost_fin, paste0(results_path, "/Slost_av_", tsteps[tstep], "noV.csv"), row.names = FALSE)
-        } else if (marginal == FALSE && vulnerability == TRUE) {
-          write.csv(Slost_fin, paste0(results_path, "/Slost_av_", tsteps[tstep], ".csv"), row.names = FALSE)
-        } else if(marginal == TRUE && vulnerability == FALSE) {
-          write.csv(Slost_fin, paste0(results_path, "/Slost_mg_", tsteps[tstep], "noV.csv"), row.names = FALSE)
-        } else if (marginal == TRUE && vulnerability == TRUE) {
-          write.csv(Slost_fin_disaggr, paste0(results_path, "/Slost_mg_", tsteps[tstep],  "_", label, ".csv"), row.names = FALSE)
-          write.csv(Slost_fin_disaggr_plants, paste0(results_path, "/Slost_mg_", tsteps[tstep], "_", label_species_groups, "_plants.csv"), row.names = FALSE)
-          write.csv(Slost_fin_disaggr_birds, paste0(results_path, "/Slost_mg_", tsteps[tstep],  "_", label_species_groups, "_birds.csv"), row.names = FALSE)
-          write.csv(Slost_fin_disaggr_mammals, paste0(results_path, "/Slost_mg_", tsteps[tstep],  "_", label_species_groups, "_mammals.csv"), row.names = FALSE)
+        if(vulnerability == FALSE) {
+          write.csv(Slost_fin_disaggr, paste0(results_path, "/Slost_", tsteps[tstep], "noV.csv"), row.names = FALSE)
+        } else if (vulnerability == TRUE) {
+          write.csv(Slost_fin_disaggr, paste0(results_path, "/Slost_", tsteps[tstep],  "_", label, ".csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr_plants, paste0(results_path, "/Slost_", tsteps[tstep], "_", label, "_plants.csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr_birds, paste0(results_path, "/Slost_", tsteps[tstep],  "_", label, "_birds.csv"), row.names = FALSE)
+          write.csv(Slost_fin_disaggr_mammals, paste0(results_path, "/Slost_", tsteps[tstep],  "_", label, "_mammals.csv"), row.names = FALSE)
         }
       
       print(paste0("time step (end): ", tsteps[tstep]))
@@ -378,6 +379,8 @@ select <- dplyr::select
   
   run_time = Sys.time() - initial.time
   print(paste('Total time:', round(run_time, 3), units(run_time)))
+  
+  rm(ptm_endyear, ptm_year, run_time)
 
       
 #}

@@ -27,6 +27,10 @@ select <- dplyr::select
     Ecoregions = dimnames(ratio_eco)[[1]]
     Ecoregions = data.frame(Ecoregions)
     names(Ecoregions) ="Eco_code"
+    
+    if(CI == TRUE & BS == TRUE) {n = 10000
+    }else if(CI == TRUE & BS == FALSE) {n = 1000
+    }else if (CI == FALSE) {n = 2} 
   
       
     ############################# CALCULATION OF THE IMPACTS ############################# 
@@ -36,10 +40,13 @@ select <- dplyr::select
       # specieslost_sim calculates the affinity (h), the suitable areas (sum(hi*Ai)) and the species lost (no allocation, no weighting, 
       # no aggregation, as in eq. 11.3 of LCImpact method for land stress (Chaudhary, 2016), but multiplied also by the vulnerability scores)
 
+        print("CI = TRUE, in calculate_slost")
         system.time(  
         Slost_h_a_suit <- specieslost_sim(Sorg_VS, Total_RemainingNatural_areas$A_org, Total_RemainingNatural_areas$A_new, Land_use_areas, zvalues, ratio_eco, n = n)
         )
-
+        print("CI = TRUE, in calculate_slost, after Slost_h_a_suit")
+        
+        print
         h = Slost_h_a_suit[[1]]       # list of 3d array. The lenght of the list is equal to the number of n. Each array contains the affinity values per ecoregion (1st dim), land use category (2nd dim) and per taxon (3rd dim) 
                                       # Ecoregions are in alphabetical order according to the ecoregion code, AA0101, AA0102, etc. Taxa are "Plants"  "Birds"   "Mammals".
                                       # If CI are not calculated and number of n = 2, the list contains only two equal dataframes.
@@ -56,7 +63,7 @@ select <- dplyr::select
         system.time(
         a_factor <- allocation_sim(h, Land_use_areas, n)    # list of 3d array. The lenght of the list is equal to the number of n. Each array contains the allocation values per ecoregion (1st dim), land use category (2nd dim) and per taxon (3rd dim) 
         )                                                           # Ecoregions are in alphabetical order according to the ecoregion code, AA0101, AA0102, etc. Taxa are "Plants"  "Birds"   "Mammals".
-        
+        print("a factor calculated")
       # remove what is not needed anymore
         rm(h, Land_use_areas)      
       
@@ -83,6 +90,7 @@ select <- dplyr::select
         }
           proc.time() - ptm      
       
+        print("Weighting performed")
 
        #### RESULTS PER SPECIES GROUP ####
           
@@ -92,57 +100,67 @@ select <- dplyr::select
         ptm <- proc.time()
         
         if (CI == TRUE) { # the CI are calculated only for the species-groups-aggregated results
+          
           Slost_pertaxon <- 0 # apply(Slost_lf, c(1,2,3), mean, na.rm = TRUE)                   # compute the mean of the Slost computed using the bootstrapped values of rr adn z
-          Slost_pertaxon2.5 <- 0 # apply(Slost_lf, c(1,2,3), function(x) quantile(x, 0.025, na.rm = TRUE)[[1]])
-          Slost_pertaxon97.5 <- 0 # apply(Slost_lf, c(1,2,3), function(x) quantile(x, 0.975, na.rm = TRUE)[[1]])
+          Slost_pertaxon2.5 <- apply(Slost_lf, c(1,2,3), function(x) quantile(x, 0.025, na.rm = TRUE)[[1]])
+          Slost_pertaxon97.5 <- apply(Slost_lf, c(1,2,3), function(x) quantile(x, 0.975, na.rm = TRUE)[[1]])
+          
         } else if (CI == FALSE) {
+          
           Slost_pertaxon <- apply(Slost_lf, c(1,2,3), median, na.rm = TRUE)                 # compute the median of the impacts
           Slost_pertaxon2.5 <- 0
-          Slost_pertaxon97.5 <- 0
-        }
+          Slost_pertaxon97.5 <- 0 
           
+          ptm <- proc.time()
+          Slost_df <- data.frame(Slost_pertaxon)    
+          
+            for (i in 1:length(taxa)) {
+              temp <- Slost_df %>% dplyr::select(contains(toString(taxa[i])))                   # select the columns for taxon i
+              Slost_taxa_matrix[[taxa[i]]] <- data.matrix(temp)                                 # fill out the matrix
+              rownames(Slost_taxa_matrix[[taxa[i]]]) <- rownames(temp)                          # give names to the rows of the matrix
+              Slost_taxa_df[[taxa[i]]] <- temp %>%                                              # save it in the list
+                              add_column(Ecoregions, .before = names(temp)[1])                  # create a column with the codes of the ecoregions
+            } 
+          rm(temp)
+              proc.time() - ptm  
+              
+              print("Results per taxon saved in a list")
+          }
+            
+        print("Results per taxon area ready")
+        
         Slost_df <- data.frame(Slost_pertaxon)                                            # convert the matrix to a dataframe
           proc.time() - ptm      
         
-          ptm <- proc.time()
-        for (i in 1:length(taxa)) {
-          temp <- Slost_df %>% dplyr::select(contains(toString(taxa[i])))                   # select the columns for taxon i
-          Slost_taxa_matrix[[taxa[i]]] <- data.matrix(temp)                                 # fill out the matrix
-          rownames(Slost_taxa_matrix[[taxa[i]]]) <- rownames(temp)                          # give names to the rows of the matrix
-          Slost_taxa_df[[taxa[i]]] <- temp %>%                                              # save it in the list
-                          add_column(Ecoregions, .before = names(temp)[1])                  # create a column with the codes of the ecoregions
-            } 
-          proc.time() - ptm      
-        
-        rm(temp, Slost_df)
+         
+        rm(Slost_df)
         
         
        #### AGGREGATED RESULTS ####
-          ptm <- proc.time()     
-        if (CI == TRUE) {
-          Slost_aggr_fin <- apply(Slost_pertaxon, MARGIN = c(1,2), sum, na.rm = TRUE)
+          ptm <- proc.time() 
+        
+        if (CI == TRUE) { # this option is needed only to compute the CI 
           Slost_aggr_2.5 <- apply(Slost_pertaxon2.5, MARGIN = c(1,2), sum, na.rm = TRUE)
           Slost_aggr_97.5 <- apply(Slost_pertaxon97.5, MARGIN = c(1,2), sum, na.rm = TRUE)
-        } else if (CI == FALSE) {
+          Slost_aggr_fin <- 0          
+          Slost_aggr_df <- 0  
+
+        } else if (CI == FALSE) { # when CI = FALSE, only the static results are calculated
         # sum the impacts 
           Slost_aggr <- apply(Slost_lf, MARGIN = c(1,2,4), sum, na.rm = TRUE)
-          Slost_aggr_fin <- apply(Slost_aggr, c(1,2), median)                      # compute the median of the impacts
-        }
-          proc.time() - ptm     
-        
-          ptm <- proc.time()
-        if (CI == FALSE) {
+          Slost_aggr_fin <- apply(Slost_aggr, c(1,2), median)                      # this is only a fake step, as the last dimention of Slost_aggr contains the same value (two columns with the same value were created to maintain constant the number of dimensions of the array for CI = FALSE and CI = TRUE)
+          Slost_aggr_df <- data.frame(Slost_aggr_fin) %>%
+          add_column(Ecoregions, .before = names(Slost_aggr_fin)[1])
           Slost_aggr_2.5 <- 0
           Slost_aggr_97.5 <- 0
-        } else if(CI == TRUE) {
-          Slost_aggr_2.5 <- apply(Slost_aggr, c(1,2), function(x) quantile(x, 0.025)[[1]])
-          Slost_aggr_97.5 <- apply(Slost_aggr, c(1,2), function(x) quantile(x, 0.975)[[1]])
+          
         }
-          proc.time() - ptm      
+        
+          proc.time() - ptm     
         
 
-        Slost_aggr_df <- data.frame(Slost_aggr_fin) %>%
-                      add_column(Ecoregions, .before = names(Slost_aggr_fin)[1])
+
+       
         
         result = list("Aggr_matrix"= Slost_aggr_fin, "Aggr_df"= Slost_aggr_df, "PerTaxon_matrix"= Slost_taxa_matrix, "Pertaxon_df"= Slost_taxa_df,
                         "Aggr2.5_matrix"= Slost_aggr_2.5, "Aggr97.5_matrix"= Slost_aggr_97.5)

@@ -42,13 +42,14 @@ select <- dplyr::select
 
 plot.EU.barplot <- function(data, data_top, pal) {
   
-    #to keep the same order between the scenarios
-    data$Scenario <- factor(data$Scenario, levels=unique(data$Scenario))
-    data_top$Scenario <- factor(data_top$Scenario, levels=unique(data_top$Scenario))
     
+    data <- data %>% filter(Scenario != "AFMfree")
+    data_top <- data_top %>% filter(Scenario != "AFMfree")
+
     # rename the scenarios
-    label_scenario <- c("no AFM (baseline)", "AFM-free", "AFM 25%", "AFM 50%", "AFM 75%", "AFM 100%")  
-    
+    #label_scenario <- c("no AFM (baseline)", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+    label_scenario <- c("no AFM (baseline)", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+
     data_bu <- data
     data <- data_bu
     # rename the groups
@@ -63,8 +64,8 @@ plot.EU.barplot <- function(data, data_top, pal) {
     #                         Management = str_replace(Management, "REF_SFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree")) %>%
     #                     separate(Management, c("Group", "Scenario"), sep = "!")
     # 
-    data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 (REF) - Multifunctional"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (REF) - Set-aside"),
-                            Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Multifunctional"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside")) 
+    data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 (BAU) - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (BAU) - Set-aside"),
+                            Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside")) 
 
     # data_top <- data_top %>% unite("Management", Group:Scenario, sep = "!", remove = TRUE)
     # data_top <- data_top %>% mutate(Management = str_replace(Management, "RCP2.6_MFM!noAFM", "RCP2.6 - Baseline!noAFM"),
@@ -76,12 +77,21 @@ plot.EU.barplot <- function(data, data_top, pal) {
     #                         Management = str_replace(Management, "REF_MFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree"),
     #                         Management = str_replace(Management, "REF_SFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree")) %>%
     #                     separate(Management, c("Group", "Scenario"), sep = "!")
-    data_top <- data_top %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 (REF) - Multifunctional"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (REF) - Set-aside"),
-                             Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Multifunctional"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
+    data_top <- data_top %>% mutate(Group = str_replace(Group,  "REF_MFM", "RCP6.5 (BAU) - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (BAU) - Set-aside"),
+                             Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
+    
+    data <- data %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
+                            Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50")) 
+    data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
+                            Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50"))
+    
+    #to keep the same order between the scenarios
+    data$Scenario <- factor(data$Scenario, levels=unique(data$Scenario))
+    data_top$Scenario <- factor(data_top$Scenario, levels=unique(data_top$Scenario))
     
     # set the order of the groups
-    data$Group <- factor(data$Group, levels = c("RCP2.6 - Baseline", "RCP2.6 - Free model",  "RCP6.5 (REF) - Baseline", "RCP6.5 (REF) - Free model", "RCP6.5 (REF) - Multifunctional", "RCP6.5 (REF) - Set-aside", "RCP2.6 - Multifunctional", "RCP2.6 - Set-aside"))   
-    data_top$Group <- factor(data_top$Group, levels = c("RCP2.6 - Baseline", "RCP2.6 - Free model",  "RCP6.5 (REF) - Baseline", "RCP6.5 (REF) - Free model", "RCP6.5 (REF) - Multifunctional", "RCP6.5 (REF) - Set-aside", "RCP2.6 - Multifunctional", "RCP2.6 - Set-aside")) 
+    data$Group <- factor(data$Group, levels = c("RCP6.5 (BAU) - Close-to-nature", "RCP6.5 (BAU) - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
+    data_top$Group <- factor(data_top$Group, levels = c("RCP6.5 (BAU) - Close-to-nature", "RCP6.5 (BAU) - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
 
     # set the maximum value of the y axis according to the max value of the PDF 
 
@@ -99,22 +109,23 @@ plot.EU.barplot <- function(data, data_top, pal) {
       if (min_per_scenario >= 0) {ymin_value = 0} else {
         ymin_value <- min_per_scenario }
 
+    #ymax_value = 0.3
     # for EU footprint with fixed legend  
     # ymin_value = -0.02
     # ymax_value = 0.3
       
     # for EU internal forest with fixed legend
-    # ymin_value = -0.025
-    # ymax_value = 0.07
+    ymin_value = -0.05
+    ymax_value = 0.1
 
     # plot
     
     figure <-
       ggplot(data)+
       geom_bar(aes(x = Scenario, y = PDFx100, fill = Category), colour = "black",  size = 0.3, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
-      theme_minimal(base_size = 16) + # select the theme of the plot
+      theme_minimal(base_size = 15) + # select the theme of the plot
       theme(legend.position = "bottom", 
-           legend.text = element_text(size = 14),
+           legend.text = element_text(size = 12),
            axis.text = element_text(size = 12),
            axis.text.x = element_text(angle = 90),
            axis.title = element_text(size = 12),
@@ -172,12 +183,12 @@ plot.EU.barplot <- function(data, data_top, pal) {
       palette_name = "YlGn"
       
       # arrange the data ====
-      data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Energy crops"), 
-                              Category = str_replace(Category, "EU28_Forest_net", "EU28 Managed forests (for internal use)"),
+      data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops (domestic use)"), 
+                              Category = str_replace(Category, "EU28_Forest_net", "EU28 Managed forests (domestic use)"),
                               Category = str_replace(Category, "Import_Energy_plantations", "Import - Energy plantations"), 
                               Category = str_replace(Category, "Import_Forest", "Import - Managed forests"))
       # set the order of the categories
-      data$Category <- factor(data$Category, levels = c("EU28 Managed forests (for internal use)", "Import - Managed forests", "EU28 Energy crops", "Import - Energy plantations"))
+      data$Category <- factor(data$Category, levels = c("Import - Energy plantations", "Import - Managed forests", "EU28 Managed forests (domestic use)", "EU28 Lignocel. energy crops (domestic use)"))
       
       figure <- plot.EU.barplot(data, data_top, pal)
       figure
@@ -251,11 +262,11 @@ plot.EU.barplot <- function(data, data_top, pal) {
     palette_name = "Greens"
     
      if(grepl("timber", file_label, fixed = TRUE)) {
-        data$Category <- factor(data$Category, levels = c("Timber", "Clear_cut", "Retention", "Selection", "Other_management", "EP_EU"), labels = c("Timber", "Clear cut", "Retention", "Selection", "Other management", "Energy crops"))
+        data$Category <- factor(data$Category, levels = c("Timber", "Clear_cut", "Retention", "Selection", "Other_management", "EP_EU"), labels = c("Timber", "Clear cut", "Retention", "Selection", "Other management", "Lignocellulosic energy crops"))
                 pal = rev(c("#EDF8E9", "#BAE4B3", "#74C476", "#31A354", "#006D2C", "#003b18"))
         } else { 
         data <- data %>% filter(Category != "Timber")
-        data$Category <- factor(data$Category, levels = c("Clear_cut", "Retention", "Selection", "Other_management", "EP_EU"), labels = c("Clear cut", "Retention", "Selection", "Other management", "Energy crops"))
+        data$Category <- factor(data$Category, levels = c("Clear_cut", "Retention", "Selection", "Other_management", "EP_EU"), labels = c("Clear cut", "Retention", "Selection", "Other management", "Lignocel. energy crops"))
       }
     
     labs = c("Clear cut", "Retention", "Selection", "Other management", "Energy crops")
@@ -297,11 +308,11 @@ plot.EU.barplot <- function(data, data_top, pal) {
       palette_name = "YlGn"
       
       # arrange the data ====
-      data <- data %>% mutate(Category = str_replace(Category, "EU28_Forest_net", "EU28 Forests (for internal use)"),
+      data <- data %>% mutate(Category = str_replace(Category, "EU28_Forest_net", "EU28 Forests (for domestic use)"),
                               Category = str_replace(Category, "Import_Forest", "Import Forests"))
       
       # set the order of the categories
-      data$Category <- factor(data$Category, levels = c("EU28 Forests (for internal use)", "Import Forests"))
+      data$Category <- factor(data$Category, levels = c("EU28 Forests (for domestic use)", "Import Forests"))
       
       figure <- plot.EU.barplot(data, data_top, pal)
       figure

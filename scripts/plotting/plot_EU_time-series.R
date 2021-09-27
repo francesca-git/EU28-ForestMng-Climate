@@ -30,20 +30,22 @@ plot.EU.timeseries <- function(csv_path, file_label, plots_path, id, energy_expo
   
   data <- read.csv(paste0(csv_path, file_name), header = TRUE)
   
+  data <- data %>% filter(Scenario != "AFMfree")
   # factorize the forest management scenarios and rename the elements 
   data$Scenario <- factor(data$Scenario, levels = unique(data$Scenario))
   
-  label_scenario <- c("no AFM", "AFM-free", "AFM 25%", "AFM 50%", "AFM 75%", "AFM 100%")  
-  data <- data %>% mutate(Scenario = str_replace(Scenario, "noAFM", "no AFM"), Scenario = str_replace(Scenario, "AFMfree", "AFM-free"),
-                          Scenario = str_replace(Scenario, "AFM25", "AFM 25%"), Scenario = str_replace(Scenario, "AFM50", "AFM 50%"),
-                          Scenario = str_replace(Scenario, "AFM75", "AFM 75%"), Scenario = str_replace(Scenario, "AFM100", "AFM 100%"))
+  
+  label_scenario <- c("no AFM", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+  data <- data %>% mutate(Scenario = str_replace(Scenario, "noAFM", "no AFM"),
+                          Scenario = str_replace(Scenario, "AFM25", "AFM 12.5%"), Scenario = str_replace(Scenario, "AFM50", "AFM 25%"),
+                          Scenario = str_replace(Scenario, "AFM75", "AFM 37.5%"), Scenario = str_replace(Scenario, "AFM100", "AFM 50%"))
   # set the order of the Scenarios
   
   # rename the groups
-  data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 (REF) - Multifunctional"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (REF) - Set-aside"),
-                          Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Multifunctional"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
+  data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 (BAU) - Close-to-naure"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (BAU) - Set-aside"),
+                          Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-naure"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
   # set the order of the groups
-  data$Group <- factor(data$Group, levels = c("RCP6.5 (REF) - Multifunctional", "RCP6.5 (REF) - Set-aside", "RCP2.6 - Multifunctional", "RCP2.6 - Set-aside")) 
+  data$Group <- factor(data$Group, levels = c("RCP6.5 (BAU) - Close-to-naure", "RCP6.5 (BAU) - Set-aside", "RCP2.6 - Close-to-naure", "RCP2.6 - Set-aside")) 
   
   data$Scenario <- factor(data$Scenario, levels=unique(data$Scenario))
   
@@ -53,10 +55,11 @@ plot.EU.timeseries <- function(csv_path, file_label, plots_path, id, energy_expo
   
   #jpg(file = "./plotting/noAF_CI.jpg", width = 900, height = 700)
   figure <-
-  ggplot(data, aes(x=Year, y=PDFx100, group = Scenario, col = Scenario, linetype = Scenario)) +
+  ggplot(data, aes(x = Year, y = PDFx100, group = Scenario, col = Scenario, linetype = Scenario)) +
     geom_line(size = 0.8) +
     scale_colour_viridis(discrete = TRUE)+
     theme_minimal() +
+    ylim(0, max(data$PDFx100)) +
     xlim(2020, 2100)+
     xlab("Years") + ylab("PDF%") +
     theme(plot.title = element_text(size = 12, face = "bold.italic")) +

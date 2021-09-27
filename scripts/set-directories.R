@@ -8,18 +8,17 @@
     
     if (CI == FALSE) {label_CI = "static"
       } else if (CI == TRUE) {if (BS == FALSE) {label_CI = "mc"
-                              } else if (BS == TRUE) {label_CI = "bs"}}
+      } else if (BS == TRUE) {label_CI = "bs"}}
     
-    if (label_timber == "notimber") { 
-      label = paste0(label_cutoff, "_", label_CI)  
-      label_species_groups = paste0(label_cutoff, "_static")
-    } else if (label_timber != "") { 
-      label = paste0(label_cutoff, "_", label_timber, "_", label_CI) 
-      label_species_groups = paste0(label_cutoff, "_", label_timber,"_static")
-    } 
-    
+        
     if (marginal == TRUE) { label_approach = "mg"
       } else if (marginal == FALSE) {label_approach = "av"}
+    
+    if (label_timber == "notimber") { 
+      label = paste0(label_cutoff, "_", label_CI, "_", label_approach)  
+    } else if (label_timber != "") { 
+      label = paste0(label_cutoff, "_", label_timber, "_", label_CI, "_", label_approach) 
+    } 
 
 
 ############################# SETTING THE LOCATION OF THE DIRECTORIES NEEDED TO RUN THE MODEL  ############################# 
@@ -48,11 +47,11 @@
     
     if(subcase == "") {
       file_label <- paste0("_", label)
-      } else {file_label <- paste0("_", label, "_", subcase)}
+      } else {file_label <- paste0("_", label, subcase)}
 
 # access the results obtained directly from the model
     
-   result_files = "Slost_mg_"     # in the call of the file the year and the subcase are added
+   result_files = "Slost_"     # in the call of the file the year and the subcase are added
   
 ############################ ACCESS THE FOLDER WHERE RESULTS ARE AGGREGATED AND PLOTTED ##############################
 
@@ -68,10 +67,16 @@
 
       file_rdata_path <- paste0(aggr_plot_path, file_rdata_name)
 
-      aggr_plot_path_areas <- paste0( "./aggregation_plotting/areas/", label_timber, "/") # set the name of the directory where the aggregated files will be saved 
+      aggr_plot_path_areas <- paste0( "./aggregation_plotting/areas/", label_timber, "/", label_approach, "/") # set the name of the directory where the aggregated files will be saved 
       
       file_rdata_path_areas <- paste0(aggr_plot_path_areas, "areas.Rdata")
         
       file_rdata_name_areas <- paste0("areas_", label_timber, ".Rdata")
 
+      
+      
+      
+      
+      
+      
     
