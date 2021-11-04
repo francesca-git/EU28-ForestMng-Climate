@@ -38,7 +38,7 @@ select <- dplyr::select
 #https://iiasa.github.io/globiomvis/articles/example2.html
 # ====
 
-  ratio = TRUE
+  ratio = FALSE
   difference = FALSE
   
   shp_original <- st_read(dsn = "./scripts/plotting/maps_shapefiles/WWF_Ecoregions", layer = "wwf_terr_ecos")
@@ -319,7 +319,7 @@ select <- dplyr::select
     } else{
       
     #png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff.png"),  width = 5, height = 9, res = 600, units = "in") # 10, 18
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_ratio.png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, ".png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
   
     }
   
