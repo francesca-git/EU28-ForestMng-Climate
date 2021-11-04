@@ -42,10 +42,10 @@ plot.EU.timeseries <- function(csv_path, file_label, plots_path, id, energy_expo
   # set the order of the Scenarios
   
   # rename the groups
-  data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 (BAU) - Close-to-naure"), Group = str_replace(Group, "REF_SFM", "RCP6.5 (BAU) - Set-aside"),
+  data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 - Close-to-naure"), Group = str_replace(Group, "REF_SFM", "RCP6.5 - Set-aside"),
                           Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-naure"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
   # set the order of the groups
-  data$Group <- factor(data$Group, levels = c("RCP6.5 (BAU) - Close-to-naure", "RCP6.5 (BAU) - Set-aside", "RCP2.6 - Close-to-naure", "RCP2.6 - Set-aside")) 
+  data$Group <- factor(data$Group, levels = c("RCP6.5 - Close-to-naure", "RCP6.5 - Set-aside", "RCP2.6 - Close-to-naure", "RCP2.6 - Set-aside")) 
   
   data$Scenario <- factor(data$Scenario, levels=unique(data$Scenario))
   
@@ -62,12 +62,12 @@ plot.EU.timeseries <- function(csv_path, file_label, plots_path, id, energy_expo
     ylim(0, max(data$PDFx100)) +
     xlim(2020, 2100)+
     xlab("Years") + ylab("PDF%") +
-    theme(plot.title = element_text(size = 12, face = "bold.italic")) +
+    theme(plot.title = element_text(size = 1, face = "bold.italic")) +
     theme(panel.border = element_rect(color="grey", fill=NA)) +
     facet_wrap(~ Group) +
-    theme(legend.position="bottom", legend.text = element_text(size = 11),
-          strip.text.x = element_text(size = 11), axis.title = element_text(size = 11), 
-          axis.text = element_text(size = 9), 
+    theme(legend.position="bottom", legend.text = element_text(size = 14),
+          strip.text.x = element_text(size = 14), axis.title = element_text(size = 14), 
+          axis.text = element_text(size = 11), 
           legend.key.width = unit(1.5,"cm")) 
 
   figure

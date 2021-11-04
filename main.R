@@ -36,7 +36,7 @@ select <- dplyr::select
   # General settings for the calculation of the impacts
     marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
     timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-    CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+    CI = TRUE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
 
   # Settings to define which .Rdata file to load for the response ratios and the z values 
     cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
@@ -48,7 +48,7 @@ select <- dplyr::select
 
 ############################# SETTING THE LOCATION OF THE DIRECTORIES NEEDED TO RUN THE MODEL, AGGREGATE THE RESULTS AND PLOT THEM  ############################# 
 
-  source("./scripts/set-directories.R")
+  source("./scripts/set_directories.R")
 
     
     
@@ -222,7 +222,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
           
           id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
           map = "PDF" # "PDF" 
-          graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
+          graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
                           # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
           
           source("./scripts/plotting/map_PDF.R")                        
