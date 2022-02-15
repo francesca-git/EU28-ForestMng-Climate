@@ -38,7 +38,7 @@ select <- dplyr::select
 #https://iiasa.github.io/globiomvis/articles/example2.html
 # ====
 
-  ratio = TRUE
+  ratio = FALSE
   difference = FALSE
   
   shp_original <- st_read(dsn = "./scripts/plotting/maps_shapefiles/WWF_Ecoregions", layer = "wwf_terr_ecos")
@@ -92,7 +92,7 @@ select <- dplyr::select
   # Load the data ====
   
   if(map == "PDF") {
-      legend = "PDF (%)"
+      legend = "global PDF (%)"
       data <- read.csv(paste0(results_path, "/", result_files, year[1], file_label, ".csv"))
     
       if (length(year) > 1) {
@@ -102,7 +102,7 @@ select <- dplyr::select
   }
   
   if(map == "PDFha") {
-      legend = "PDF(%)/ha (logarithmic scale)"
+      legend = "global PDF(%)/ha (logarithmic scale)"
       data <- read.csv(paste0(csv_path, "PDF-ha.csv"), header = TRUE)
       
         if(id == "Global") {data <- data %>% filter(Year == "2100" | Year == "2020")
@@ -175,7 +175,7 @@ select <- dplyr::select
                                     unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
                                       mutate(Scenario = str_replace(Scenario, "Close-to-nature-Baseline", "Baseline"))
                 data$Group = factor(data$Group, levels = c("RCP6.5", "RCP2.6"), labels = c("RCP6.5", "RCP2.6"))
-                data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline", "Close-to-nature 50%", "Set-aside 50%"))
+                data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline (noAFM)", "Close-to-nature 50%", "Set-aside 50%"))
                 
           
       }} else if(id == "EUForest") {
@@ -184,7 +184,7 @@ select <- dplyr::select
                               unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
                                 mutate(Scenario = str_replace(Scenario, "Close-to-nature-Baseline", "Baseline"))
            data$Group = factor(data$Group, levels = c("RCP6.5", "RCP2.6"), labels = c("RCP6.5", "RCP2.6"))
-          data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Set-aside-25%", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline", "Close-to-nature 25%", "Close-to-nature 50%", "Set-aside 25%" , "Set-aside 50%"))
+          data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Set-aside-25%", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline (noAFM)", "Close-to-nature 25%", "Close-to-nature 50%", "Set-aside 25%" , "Set-aside 50%"))
 
           # data <- data %>% filter(Level == "50%" | (Level == "Baseline" & Scenario == "Close-to-nature") | (Level == "Free" & Scenario == "Close-to-nature")) %>%
           #                     unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
@@ -198,8 +198,8 @@ select <- dplyr::select
   if (ratio == TRUE) {
     
     data_wide <- data.frame(data %>% mutate(Scenario = str_replace(Scenario, "Close-to-nature 50%", "CFM50"),
-                                            #Scenario = str_replace(Scenario, "Close-to-nature 25%", "CFM25"),
-                                            #Scenario = str_replace(Scenario, "Set-aside 25%", "SFM25"),
+                                            Scenario = str_replace(Scenario, "Close-to-nature 25%", "CFM25"),
+                                            Scenario = str_replace(Scenario, "Set-aside 25%", "SFM25"),
                                             Scenario = str_replace(Scenario, "Set-aside 50%", "SFM50")) %>%
                     unite("Scenario", c(Group, Scenario), sep = "_") %>%
                       arrange(Scenario, Year, eco_code) %>%
@@ -208,14 +208,14 @@ select <- dplyr::select
     data_wide <- data_wide %>% mutate(reference = RCP6.5_Baseline) %>% mutate_if(is.numeric, ~./reference)
 
     data_wide <- data_wide %>% transmute(eco_code = eco_code, Year = Year, RCP6.5_Baseline = RCP6.5_Baseline, 
-                                         #RCP6.5_CFM25 = RCP6.5_CFM25, 
+                                         RCP6.5_CFM25 = RCP6.5_CFM25, 
                                          RCP6.5_CFM50 = RCP6.5_CFM50, 
-                                         #RCP6.5_SFM25 = RCP6.5_SFM25, 
+                                         RCP6.5_SFM25 = RCP6.5_SFM25, 
                                          RCP6.5_SFM50 = RCP6.5_SFM50, 
                                          RCP2.6_Baseline = RCP2.6_Baseline, 
-                                         #RCP2.6_CFM25 = RCP2.6_CFM25,
+                                         RCP2.6_CFM25 = RCP2.6_CFM25,
                                          RCP2.6_CFM50 = RCP2.6_CFM50, 
-                                         #RCP2.6_SFM25 = RCP2.6_SFM25, 
+                                         RCP2.6_SFM25 = RCP2.6_SFM25, 
                                          RCP2.6_SFM50 = RCP2.6_SFM50) 
     
     data_wide[is.na(data_wide)] <- 0
@@ -226,15 +226,15 @@ select <- dplyr::select
                         arrange(Group, Year, Scenario, eco_code))
 
     data_long <- data_long %>%  
-                #mutate(Scenario = str_replace(Scenario, "CFM25", "Close-to-nature-25%")) %>%
+                 mutate(Scenario = str_replace(Scenario, "CFM25", "Close-to-nature-25%")) %>%
                     mutate(Scenario = str_replace(Scenario, "CFM50", "Close-to-nature-50%")) %>%
-                        #mutate(Scenario = str_replace(Scenario, "SFM25", "Set-aside-25%")) %>%
+                        mutate(Scenario = str_replace(Scenario, "SFM25", "Set-aside-25%")) %>%
                           mutate(Scenario = str_replace(Scenario, "SFM50", "Set-aside-50%")) 
           data_long$Group = factor(data_long$Group, levels = c("RCP6.5", "RCP2.6"))
-          data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
-          #data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Close-to-nature-50%", "Set-aside-25%", "Set-aside-50%"))
+          #data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
+          data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Close-to-nature-50%", "Set-aside-25%", "Set-aside-50%"))
 
-    #data_long[data_long$eco_code == "NA0616", "Values"] = NaN
+    data_long[data_long$eco_code == "PA1212", "Values"] = NaN
 
     data <- data_long
     
@@ -243,8 +243,8 @@ select <- dplyr::select
    if (difference == TRUE) {
     
      data_wide <- data.frame(data %>% mutate(Scenario = str_replace(Scenario, "Close-to-nature 50%", "CFM50"),
-                                            #Scenario = str_replace(Scenario, "Close-to-nature 25%", "CFM25"),
-                                            #Scenario = str_replace(Scenario, "Set-aside 25%", "SFM25"),
+                                            Scenario = str_replace(Scenario, "Close-to-nature 25%", "CFM25"),
+                                            Scenario = str_replace(Scenario, "Set-aside 25%", "SFM25"),
                                             Scenario = str_replace(Scenario, "Set-aside 50%", "SFM50")) %>%
                     unite("Scenario", c(Group, Scenario), sep = "_") %>%
                       arrange(Scenario, Year, eco_code) %>%
@@ -253,14 +253,14 @@ select <- dplyr::select
     data_wide <- data_wide %>% mutate(reference = RCP6.5_Baseline) %>% mutate_if(is.numeric, ~.-reference)
 
     data_wide <- data_wide %>% transmute(eco_code = eco_code, Year = Year, RCP6.5_Baseline = RCP6.5_Baseline, 
-                                         #RCP6.5_CFM25 = RCP6.5_CFM25, 
+                                         RCP6.5_CFM25 = RCP6.5_CFM25, 
                                          RCP6.5_CFM50 = RCP6.5_CFM50, 
-                                         #RCP6.5_SFM25 = RCP6.5_SFM25, 
+                                         RCP6.5_SFM25 = RCP6.5_SFM25, 
                                          RCP6.5_SFM50 = RCP6.5_SFM50, 
                                          RCP2.6_Baseline = RCP2.6_Baseline, 
-                                         #RCP2.6_CFM25 = RCP2.6_CFM25,
+                                         RCP2.6_CFM25 = RCP2.6_CFM25,
                                          RCP2.6_CFM50 = RCP2.6_CFM50, 
-                                         #RCP2.6_SFM25 = RCP2.6_SFM25, 
+                                         RCP2.6_SFM25 = RCP2.6_SFM25, 
                                          RCP2.6_SFM50 = RCP2.6_SFM50) 
     
     data_wide[is.na(data_wide)] <- 0
@@ -271,13 +271,13 @@ select <- dplyr::select
                         arrange(Group, Year, Scenario, eco_code))
 
     data_long <- data_long %>%  
-                  #mutate(Scenario = str_replace(Scenario, "CFM25", "Close-to-nature-25%")) %>%
+                  mutate(Scenario = str_replace(Scenario, "CFM25", "Close-to-nature-25%")) %>%
                     mutate(Scenario = str_replace(Scenario, "CFM50", "Close-to-nature-50%")) %>%
-                        #mutate(Scenario = str_replace(Scenario, "SFM25", "Set-aside-25%")) %>%
+                      mutate(Scenario = str_replace(Scenario, "SFM25", "Set-aside-25%")) %>%
                           mutate(Scenario = str_replace(Scenario, "SFM50", "Set-aside-50%")) 
           data_long$Group = factor(data_long$Group, levels = c("RCP6.5", "RCP2.6"))
-          data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
-          #data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Close-to-nature-50%", "Set-aside-25%", "Set-aside-50%"))
+          #data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
+          data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Close-to-nature-50%", "Set-aside-25%", "Set-aside-50%"))
 
     #data_long[data_long$eco_code == "NA0616", "Values"] = NaN
 
@@ -335,7 +335,7 @@ select <- dplyr::select
     } else{
       
     #png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff.png"),  width = 5, height = 9, res = 600, units = "in") # 10, 18
-    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_ratio.png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
+    png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_or.png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
   
     }
   
@@ -372,9 +372,9 @@ select <- dplyr::select
                   #scale_fill_viridis(option = test, na.value = "grey50", direction = -1) + # for PDF
                   #scale_fill_continuous_diverging(test, c1 = 70, na.value = "white", rev = TRUE) +
                   #scale_fill_scico(palette = test, direction = 1) + #, begin = 0.5, end = 1) +
-                  #scale_fill_gradientn(colors = pal, na.value = "white") + # , limits = li, breaks = br) + ################################ this is the line to keep
+                  scale_fill_gradientn(colors = pal, na.value = "white") + # , limits = li, breaks = br) + ################################ this is the line to keep
                   #scale_fill_distiller(palette = "RdYlGn", na.value = "white")  +   
-                  scale_fill_gradient2(low = "darkgreen", mid = "white",high = "red", midpoint = 0, na.value = "grey98") +
+                  #scale_fill_gradient2(low = "darkgreen", mid = "white",high = "red", midpoint = 0, na.value = "grey98") +
                   #labs(fill = "", x = "", y = "", title = title) +
                   #theme_minimal() +
                   #scale_fill_distiller(palette = test, direction = 1, na.value = "grey90") +
@@ -384,9 +384,9 @@ select <- dplyr::select
                   labs(fill = legend) +
                   theme(text = element_text(size = 14), 
                         axis.text = element_blank(),
-                        #legend.title = element_text(size = 17),
+                        legend.title = element_text(size = 11),
                         #legend.text = element_text(size = 17),
-                        legend.key.size = unit(0.5, "cm"), legend.key.width = unit(0.5,"cm"),
+                        legend.key.size = unit(0.5, "cm"), legend.key.width = unit(0.5,"cm"), legend.key.height = unit(1, "cm"),
                         legend.position = "right") +
                   theme(strip.background = element_rect(color = NULL, fill = "white", size = 1.5, linetype = "solid")) + #strip.text = element_text(size = 17)) +
                   theme(panel.background = element_blank(),
@@ -401,7 +401,7 @@ select <- dplyr::select
   #if(length(year) > 1 && region == "global") {figure <- figure + facet_wrap(vars(Scenario))}
   
   if (id == "EUForest") {
-    figure <- figure + geom_sf(data = EU_map, size = 0.1, fill = "transparent", colour = "black")
+    figure <- figure + geom_sf(data = EU_map, size = 0.3, fill = "transparent", colour = "black")
     figure <- figure + facet_grid(Group ~ Scenario) 
     figure <- figure + coord_sf(xlim = c(-15, 40), ylim = c(30, 75)) 
     }

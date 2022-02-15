@@ -220,7 +220,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
           
-          id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
+          id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
           map = "PDF" # "PDF" 
           graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
                           # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%

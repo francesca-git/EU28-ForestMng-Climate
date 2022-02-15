@@ -48,7 +48,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
 
     # rename the scenarios
     #label_scenario <- c("no AFM (baseline)", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
-    label_scenario <- c("no AFM (baseline)", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+    label_scenario <- c("Baseline (noAFM)", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
 
     data_bu <- data
     data <- data_bu
@@ -133,7 +133,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
            legend.key.size = unit(0.6, "cm")) +
       guides(fill = guide_legend(title = "Land use category", title.position = "top")) +
       scale_x_discrete(labels = label_scenario) + # assign the names to the labels
-      xlab("Scenarios") + ylab("Global PDF%") +
+      xlab("Scenarios") + ylab("global PDF (%)") +
       #scale_fill_brewer(palette = palette_name, direction = -1) +
       scale_fill_manual(values = pal) +
       ylim(ymin_value, ymax_value) + 

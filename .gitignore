@@ -1,13 +1,6 @@
-./test_formula.xlsx
-data/*
 temporary_old/*
-ecoregions_data/*
-results/*
 RR_distributions/*
 R-files/*
-scripts/plotting/maps_shapefiles/*
+scripts/plotting/maps_shapefiles/WWF_Ecoregions/*
 scripts/plotting/for_SETAC/*
-results/*
-aggregation_plotting/*
-additional_analyses/*
 
