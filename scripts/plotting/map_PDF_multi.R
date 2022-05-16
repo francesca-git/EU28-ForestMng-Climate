@@ -406,7 +406,7 @@ select <- dplyr::select
     figure <- figure + coord_sf(xlim = c(-15, 40), ylim = c(30, 75)) 
     }
   
-  figure
+  print(figure)
   
   dev.off()
   
