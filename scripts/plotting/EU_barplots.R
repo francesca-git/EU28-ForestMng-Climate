@@ -10,6 +10,8 @@
 ### 3a) EU FOOTPRINT - BARPLOT (energy plantations excluded, exports excluded) - EUfootprint.barplot.noEP
 ### 3b) IMPACTS OF EU INTERNAL FORESTS - BARPLOT (energy crops excluded, exports excluded) - EUinternal.barplot.noEPnoex
 
+### 4) EU FOOTPRINT - BARPLOT (energy plantations included, imported forest disaggregated) - EUfootprint.barplot.EP.fordis
+
 #############################################################################################################################################################################
 
 # WARNING: The functions defined in this file are called in the file csv_and_plotting.R. The loading/saving paths and the working directory are defined in that file.
@@ -28,6 +30,7 @@ library(gridExtra)
 library(nord)
 library(ggpubr)
 library(stringr)
+library(rcartocolor)
 select <- dplyr::select
   
 
@@ -113,6 +116,9 @@ plot.EU.barplot <- function(data, data_top, pal) {
     # for EU footprint with fixed legend  
     # ymin_value = -0.02
     # ymax_value = 0.3
+    # # for EU footprint with fixed legend
+    # ymin_value = 0
+    # ymax_value = 0.5
       
     # for EU internal forest with fixed legend
     # ymin_value = -0.05
@@ -122,8 +128,9 @@ plot.EU.barplot <- function(data, data_top, pal) {
     
     figure <-
       ggplot(data)+
-      geom_bar(aes(x = Scenario, y = PDFx100, fill = Category), colour = "black",  size = 0.3, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
-      theme_minimal(base_size = 15) + # select the theme of the plot
+      geom_bar(aes(x = Scenario, y = PDFx100, fill = Category), size = 0.2, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
+      theme_classic() + # select the theme of the plot
+      #theme_minimal(base_size = 15) + # select the theme of the plot
       theme(legend.position = "right", 
            legend.text = element_text(size = 12),
            axis.text = element_text(size = 12),
@@ -138,7 +145,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
       scale_fill_manual(values = pal) +
       ylim(ymin_value, ymax_value) + 
       geom_point(data = data_top, aes(x  = Scenario, y = PDFx100), color = "black", size = 1) +
-      theme(panel.border = element_rect(color = "grey", fill=NA)) +
+      #theme(panel.border = element_rect(color = "black", fill = NA)) +
       geom_errorbar(data = data_top, aes(x = Scenario, y = PDFx100, ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05) +
       # guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
       facet_wrap(~ Group, ncol = 2) 
@@ -357,5 +364,59 @@ plot.EU.barplot <- function(data, data_top, pal) {
     ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_noEPnoex.pdf"), width = 20, height = 16, units = "cm")
     
   }
+
+
+#############################################################################################################################################################################
+                                                                                # 4 #
+#############################################################################################################################################################################
+
+
+#############################################################################################################################################################################
+
+                                                                  # 4) EU FOOTPRINT - BARPLOT #
+
+#############################################################################################################################################################################
+
+# General task: plot a figure with four barplots (one for each combination of climate mitigation scenario and forest use scenario) 
+# Date: May 2022
+# Author: Francesca Rosa
+
+  
+  EUfootprint.barplot.EP.dis <- function(csv_path, file_label, plots_path, year) {
+      # csv_path = path of the .csv files where the data to plot are stored (character vector)
+      # file_label = identification words which selects the file (character vector)
+      # plots_path = folder where the plots will be saved (character vector)
+      # year = year that will be plotted (number)
+
+      data <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_EP_im-for-disaggr.csv"), header = TRUE)
+      data_top <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_top_EP.csv"), header = TRUE)
+      
+      #data <- read.csv(paste0("./plotting/cutoff_timber/EUFootprint_", year, "_mg-det_cutoff_timber.csv"), header = TRUE)
+          
+      # choose the palette
+      pal = carto_pal(7, "Safe")
+      palette_name = "Carto-Safe"
+      
+      # arrange the data ====
+      data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops (domestic use)"), 
+                              Category = str_replace(Category, "EU28_Forest_net", "EU28 Managed forests (domestic use)"),
+                              Category = str_replace(Category, "Import_Energy_plantations", "Import - Energy plantations"), 
+                              Category = str_replace(Category, "Pulp_Timber_Plantation_im", "Import - Timber and pulp plantations"),
+                              Category = str_replace(Category, "Clear_cut_im", "Import - Clear cut"),
+                              Category = str_replace(Category, "Selection_im", "Import - Selection system"),
+                              Category = str_replace(Category, "Selective_im", "Import - Selective logging"))
+      
+      # set the order of the categories
+      data$Category <- factor(data$Category, levels = c("EU28 Lignocel. energy crops (domestic use)", "EU28 Managed forests (domestic use)", "Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection system", "Import - Selective logging"))
+      
+      figure <- plot.EU.barplot(data, data_top, pal)
+      figure
+      # save as pdf
+      #ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_EP_or.pdf"), width = 30, height = 11, units = "cm")
+      ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_EP_im-for-disaggr.pdf"), width = 27, height = 15, units = "cm")
+
+  }
+  
 
 
