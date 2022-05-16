@@ -5,12 +5,16 @@
 # March 2021
 # Author: Francesca Rosa
 
-# working directory set with the script in /forest-management/set-wd.R
+############################ SET WORKING DIRECTORY ################################
+
+setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
+
+############################ LOAD LIBRARIES ################################
 
 library(pacman)
 p_load(dplyr, tidyr, abind, tidyverse, stringr)  # dataframe management and string management
 
-p_load(ggplot2, colorspace, scico, viridis, RColorBrewer, gridExtra, nord, ggpubr, sf, sp, rgdal) # plotting
+p_load(ggplot2, colorspace, scico, viridis, RColorBrewer, gridExtra, nord, ggpubr, sf, sp, rgdal, rcartocolor) # plotting
 
 p_load(dplyr, tidyr, compare, readr, purrr, tibble, stringr, rgdal)  
 
@@ -26,17 +30,13 @@ library(MASS)
 
 select <- dplyr::select
 
-############################ SET TEH WORKING DIRECTORY ################################
-
-  setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
-
 
 ############################ INITIAL SETTINGS ######################################
 
   # General settings for the calculation of the impacts
-    marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
+    marginal = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
     timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-    CI = TRUE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+    CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
 
   # Settings to define which .Rdata file to load for the response ratios and the z values 
     cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
@@ -129,6 +129,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
       dir.create(csv_path)
       
   ################# AGGREGATE DATA OVER THE ECOREGIONSAND/OR LAND USES #######################
+      
     # General task: convert .csv model results to an aggregated .Rdata file
     
     source("./scripts/aggregation/aggregate_results.R")          # functions to convert the results of the model in a single .Rdata file
@@ -137,7 +138,8 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
                                                          # defined by the code words at the beginning of this file (e.g. applying a cutoff and including timber plantations 
                                                          #, bootstrapping approach for the CI) and aggregate them as sum over the ecoregions or as total sums. 
 
-  ################# PREPARE THE FILES WHICH CAN BE PLOTTED #################
+  ################# PREPARE THE FILES TO BE PLOTTED #################
+    
     # General task: convert the aggregated .Rdata files to aggregated .csv file, grouping and selecting only the most relevant 
      
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
@@ -178,7 +180,11 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
           
           
 ############################ PLOT ##############################
-    # Select the year to be plotted
+          
+    # Select the year to be plotted and if the exports are included or not 
+          
+    year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
+    energy_exports = "EPnoex" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
 
       ################# GLOBAL TIME SERIES AND AREAS (DISAGGREGATED) #######################
           
@@ -191,7 +197,8 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
           
           if (energy_exports == "ex") { EUfootprint.barplot.EP(csv_path, file_label, plots_path, year) # EU_barplots.R
             }else if(energy_exports == "EPnoex") { EUfootprint.barplot.EP(csv_path, file_label, plots_path, year)
-              }else if(energy_exports == "noEPnoex") { EUfootprint.barplot.noEP(csv_path, file_label, plots_path, year) }
+              }else if(energy_exports == "noEPnoex") { EUfootprint.barplot.noEP(csv_path, file_label, plots_path, year)
+                }else if(energy_exports == "EPnoex-dis") { EUfootprint.barplot.EP.dis(csv_path, file_label, plots_path, year)}
   
       ################# BARPLOT OF EU INTERNAL FOREST IMPACTS #######################
           
@@ -220,7 +227,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
 
       ################# MAP OF GLOBAL/EU IMPACTS #######################
           
-          id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
+          id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
           map = "PDF" # "PDF" 
           graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
                           # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
