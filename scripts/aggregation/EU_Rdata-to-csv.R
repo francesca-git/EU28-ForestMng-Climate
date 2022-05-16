@@ -441,6 +441,31 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
           # this csv has the following columns: 
           # Group (climatic and forest use scenario), Scenario (forest management scenario), Category (land use category), PDFx100 (impact)
 
+  ######## SUMS OF GROUPED LAND USE CLASSES (IMPORTED FOREST MANAGEMENT DISAGGREGATED) ########
+
+        # group the land use classes in: EU28_Energy_crops, EU_Forest_net, Import_Energy_plantations, Import_Forest
+
+          results_temp_dis <- results_median[[year]] %>%
+                            unite("Group", Group:Forest_use, remove = TRUE) %>%   # convert the columns containing the climatic scenarios and the forest use scenarios in a single column called "Group"
+                              rename(Scenario = Management) %>%                   # rename the column containing the forest management scenarios
+                                transmute(Group = Group, Scenario = Scenario, EU28_Energy_crops = rowSums(select(., contains("EP") & contains("EU"))),
+                                          EU28_Forest_net = rowSums(select(., (starts_with("For") & contains("EU")))),
+                                          Import_Energy_plantations = rowSums(select(., contains("EP") & contains("im"))),
+                                          Clear_cut_im = For_ClearCut_im_median,
+                                          Pulp_Timber_Plantation_im = For_Plantation_im_median,
+                                          Selection_im = For_SelectionSystem_im_median,
+                                          Selective_im = For_Selective_im_median)
+
+          # change the format (before: one column per each land use class; after the change: one single column with al the values and one with the corresponding Category)
+            results_oneyear <- results_temp_dis %>%
+              pivot_longer(cols = 3:(length(results_temp_dis)), names_to = "Category", values_to = "PDFx100")
+
+          write.csv(results_oneyear, paste0(csv_path, "EUFootprint_", year, file_label, "_EP_im-for-disaggr.csv"), row.names = FALSE)
+          # this csv has the following columns:
+          # Group (climatic and forest use scenario), Scenario (forest management scenario), Category (land use category), PDFx100 (impact)
+          rm(results_temp_dis)
+
+          
     ######## TOTAL SUMS ########
       
         sums_oneyear = results[[year]] %>% 
