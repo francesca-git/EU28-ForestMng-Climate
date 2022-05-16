@@ -18,17 +18,19 @@ tidy.match.areas <- function(timber, marginal, not_rel_wet, areas_base_path, are
         
         # ARGUMENTS OF THE FUNCTIONS 
         # timber can be FALSE or TRUE (default = FALSE)
-        # FALSE = excluding timber plantations from EU forest managements
-        # TRUE = including timber plantations in EU forest managements for the sensitivity 
-        
-         # not_rel_wet can be FALSE or TRUE (default = FALSE)
-         # FALSE = excluding not relevant lands and wetlands 
-         # TRUE = including not relevant lands and wetlands 
-         # The default setting is false because wetlands and not relevant lands have
-         # no matching land use classes in the biodiversity model
-         # The option TRUE is used to produce the .csv files (available in data/land_use_data/areas_processed/NotRel-Wet) 
-         # needed to plot the maps with the future land use according to the GLOBIOM model.
-        
+                # FALSE = excluding timber plantations from EU forest managements
+                # TRUE = including timber plantations in EU forest managements for the sensitivity 
+        # marginal
+        # not_rel_wet can be FALSE or TRUE (default = FALSE)
+                # FALSE = excluding not relevant lands and wetlands 
+                # TRUE = including not relevant lands and wetlands 
+                # The default setting is false because wetlands and not relevant lands have
+                # no matching land use classes in the biodiversity model
+                # The option TRUE is used to produce the .csv files (available in data/land_use_data/areas_processed/NotRel-Wet) 
+                # needed to plot the maps with the future land use according to the GLOBIOM model.
+        # areas_base_path: directory path where the original areas .csv files are stored (e.g., "User/Document/Project/data/land_use_data/data_raw/")
+        # areas_processed_path: directory path where the .csv files output of tidy.areas have been stored after they have been cleaned (e.g., "User/Document/Project/data/land_use_data/processed_data/")
+
         tidy.areas(timber, areas_base_path)                          # from the file tidy_areas.R
         # Task: Clean the input areas and put them in a suitable structure. 
         # The output of this script is a .Rdata file meant to be used as input in match.areas().  
