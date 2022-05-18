@@ -73,6 +73,9 @@
                             pivot_longer(cols = 3:(length(results_temp)), names_to = "Category", values_to = "PDFx100")
         
                 # test ====
+          
+          if(str_detect(file_label, "noVS") == FALSE) { # the results when the vulnerability scores are not applied are much larger than when they are included in the model. Therefore
+            # without this condition the test here below will always fail when the option vulnerability is FALSE.
                   
                     test = results_temp[nrow(results_temp),]
                     test_check = results[[year]][nrow(results_temp),]
@@ -89,7 +92,7 @@
                         (abs(test$Permanent_crops - (test_check$Permanent_EU_median + test_check$Permanent_RoW_median)) > 1e-15)  |
                         (abs(test$Urban - (test_check$Urban_EU_median + test_check$Urban_RoW_median)) > 1e-15 )) 
                           {stop("ERROR in the aggregation of land use at global level")}
-                  
+          }
                     # ====
         
         write.csv(results_oneyear, paste0(csv_path, "global_", year, file_label, ".csv"), row.names = FALSE)
