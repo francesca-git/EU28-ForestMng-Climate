@@ -116,7 +116,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
     # for EU footprint with fixed legend  
     # ymin_value = -0.02
     # ymax_value = 0.3
-    # # for EU footprint with fixed legend
+    # for EU footprint with fixed legend
     # ymin_value = 0
     # ymax_value = 0.5
       
