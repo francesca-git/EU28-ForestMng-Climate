@@ -20,6 +20,9 @@
       label = paste0(label_cutoff, "_", label_timber, "_", label_CI, "_", label_approach) 
     } 
 
+    if(vulnerability == FALSE) {
+      label = paste0(label, "_noVS")
+    }
 
 ############################# SETTING THE LOCATION OF THE DIRECTORIES NEEDED TO RUN THE MODEL  ############################# 
 

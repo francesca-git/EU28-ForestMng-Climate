@@ -71,6 +71,10 @@ select <- dplyr::select
         } else if (cutoff == FALSE) { load(paste0(ecodata_path, "rr_z/rr_ecoregion_static_nocutoff.Rdata"))}
       
       ratio_eco_static <- rr_ecoregion
+########################################################################################################################################################################     
+     # ratio_eco_static[,"SelectiveLogging",,] <- ratio_eco_static [,"ReducedImpactLogging",,]
+########################################################################################################################################################################     
+
 
         if (CI == TRUE) {
           if(cutoff == TRUE){
@@ -129,7 +133,8 @@ select <- dplyr::select
       }
       
       rm(ratio_eco_static, weight_tx, Sorg_VS, zvalues)
-        
+      
+      
       proc.time() - ptm      
         
     
@@ -161,7 +166,7 @@ select <- dplyr::select
         
         Areas <- Areas %>% rename(Eco_code = Ecoregion)         # Original natural areas, new natural areas, other land use areas
         fr_Areas <- fr_Areas %>% rename(Eco_code = Ecoregion)   # Given each land use group (e.g. Annual crop or permanent crop), there may be multiple 
-        # land use sub-groups  (e.g., Annual crop in EU and Annual crop outside EU), which belong to the same ecoregion and have the same respose ratio. 
+        # land use sub-groups  (e.g., Annual crop in EU and Annual crop outside EU), which belong to the same ecoregion and have the same response ratio. 
         # fr_Areas is the share of each sub-group per land use. It is used to disaggregate the aggregated land use classes into the sub-classes.
         
         Scenarios = unique(Areas$Scenario)
@@ -357,17 +362,12 @@ select <- dplyr::select
       
       
         ############################# SAVE THE RESULTS ############################# 
-      
-       
-        if(vulnerability == FALSE) {
-          write.csv(Slost_fin_disaggr, paste0(results_path, "/Slost_", tsteps[tstep], "noV.csv"), row.names = FALSE)
-        } else if (vulnerability == TRUE) {
+ 
           write.csv(Slost_fin_disaggr, paste0(results_path, "/Slost_", tsteps[tstep],  "_", label, ".csv"), row.names = FALSE)
           write.csv(Slost_fin_disaggr_plants, paste0(results_path, "/Slost_", tsteps[tstep], "_", label, "_plants.csv"), row.names = FALSE)
           write.csv(Slost_fin_disaggr_birds, paste0(results_path, "/Slost_", tsteps[tstep],  "_", label, "_birds.csv"), row.names = FALSE)
           write.csv(Slost_fin_disaggr_mammals, paste0(results_path, "/Slost_", tsteps[tstep],  "_", label, "_mammals.csv"), row.names = FALSE)
-        }
-      
+        
       print(paste0("time step (end): ", tsteps[tstep]))
       
       ptm_endyear <- Sys.time() - ptm_year     

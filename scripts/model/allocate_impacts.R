@@ -132,8 +132,10 @@ allocate.impacts <- function(df, fraction_of_areas) {
         select(Scenario, Eco_code, sum_test2)
       compare_df <- full_join(test1, test2, by = c("Scenario", "Eco_code")) %>%
         mutate(diff = abs(sum_test1 - sum_test2))
-      if(max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (median)")}
-      rm(test1, test2, compare_df)
+      
+      if(vulnerability == TRUE && max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (median)")
+        } else if(vulnerability == FALSE && max(compare_df$diff, na.rm = TRUE) > 1e-12) {stop("ERROR in the allocation of disaggregated areas (median)")}
+       rm(test1, test2, compare_df)
 
       test1 <- df_disaggr %>% mutate(sum_test1 = rowSums(select(., contains("lower95")), na.rm = TRUE)) %>%
         select(Scenario, Eco_code, sum_test1)
@@ -141,18 +143,21 @@ allocate.impacts <- function(df, fraction_of_areas) {
         select(Scenario, Eco_code, sum_test2)
       compare_df <- full_join(test1, test2, by = c("Scenario", "Eco_code")) %>%
         mutate(diff = abs(sum_test1 - sum_test2))
-      if(max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (lower95)")}
-      rm(test1, test2, compare_df)
-
+      
+      if(vulnerability == TRUE && max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (lower 95)")
+        } else if(vulnerability == FALSE && max(compare_df$diff, na.rm = TRUE) > 1e-12) {stop("ERROR in the allocation of disaggregated areas (lower 95)")}
+       rm(test1, test2, compare_df)
+      
       test1 <- df_disaggr %>% mutate(sum_test1 = rowSums(select(., contains("upper95")), na.rm = TRUE)) %>%
         select(Scenario, Eco_code, sum_test1)
       test2 <- df %>% mutate(sum_test2 = rowSums(select(.,contains("upper95")), na.rm = TRUE)) %>%
         select(Scenario, Eco_code, sum_test2)
       compare_df <- full_join(test1, test2, by = c("Scenario", "Eco_code")) %>%
         mutate(diff = abs(sum_test1 - sum_test2))
-      if(max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (upper95)")}
-      rm(test1, test2, compare_df)
-
+      
+       if(vulnerability == TRUE && max(compare_df$diff, na.rm = TRUE) > 1e-15) {stop("ERROR in the allocation of disaggregated areas (upper 95)")
+        } else if(vulnerability == FALSE && max(compare_df$diff, na.rm = TRUE) > 1e-12) {stop("ERROR in the allocation of disaggregated areas (uppper 95)")}
+       rm(test1, test2, compare_df)
       
       df_disaggr <- df_disaggr %>% rename(Ecoregion = Eco_code)
 

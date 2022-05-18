@@ -476,8 +476,11 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
                                          (contains("EP") & contains("EU")) | 
                                          (contains("EP") & contains("im")))) %>%
                 transmute(Group, Scenario, PDFx100 = rowSums(select(., contains("median"))), lower95 =  rowSums(select(., contains("lower"))), upper95 = rowSums(select(., contains("upper")))) 
-      
-                  # test ====
+              
+          # test ====
+          
+          if(str_detect(file_label, "noVS") == FALSE) { # the results when the vulnerability scores are not applied are much larger than when they are included in the model. Therefore
+            # without this condition the test here below will always fail when the option vulnerability is FALSE.
                   
                   test = results_temp[nrow(results_temp),]
                   test_check = results[[year]][nrow(results_temp),]
@@ -491,7 +494,7 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
                     
                   rm(test, test_check)
                   # ====
-      
+          }
       # prepare and save the file with the total sums for the given year 
 
           write.csv(sums_oneyear, paste0(csv_path, "EUFootprint_", year, file_label, "_top_EP.csv"), row.names = FALSE) 
@@ -541,8 +544,11 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
           # this csv has the following columns: 
           # Group (climatic and forest use scenario), Scenario (forest management scenario), PDFx100 (impact), lower95 (lower CI interval), upper95 (upper CI interval)
           # If columns lower95 and upper95 are all 0 it means that CI have not been calculated
-           
-                    # test ====
+          
+          # test ====
+
+          if(str_detect(file_label, "noVS") == FALSE) { # the results when the vulnerability scores are not applied are much larger than when they are included in the model. Therefore
+            # without this condition the test here below will always fail when the option vulnerability is FALSE.
                     
                     test = results_temp[nrow(results_temp),]
                     test_check = results[[year]][nrow(results_temp),]
@@ -558,8 +564,10 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
                     
                     rm(test, test_check)
                     # ====
-                    
+          }
+          
         rm(sums_oneyear, results_temp)
+
                   
 
 ##################################################### TIME SERIES OF IMPACTS ##################################################### 
@@ -599,7 +607,10 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
                                                                       (contains("EP") & contains("im"))|(starts_with("For_") & contains("im"))))))
           
          # test ====
-       
+          
+        if(str_detect(file_label, "noVS") == FALSE) { # the results when the vulnerability scores are not applied are much larger than when they are included in the model. Therefore
+            # without this condition the test here below will always fail when the option vulnerability is FALSE.
+                  
          test = temp[nrow(temp),]
          test_check = results[[i]][nrow(temp),]
          
@@ -613,7 +624,8 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
          rm(test, test_check)
          # ====
          
-      
+        }
+          
         df = df %>% bind_rows(temp)                     # bind columns together
       }
       
