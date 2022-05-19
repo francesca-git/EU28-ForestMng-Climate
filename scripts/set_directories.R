@@ -48,9 +48,15 @@
    
 ############################ RESULTS DIRECTLY FROM THE MODEL ##############################
     
+  if(vulnerability == TRUE) {
     if(subcase == "") {
       file_label <- paste0("_", label)
-      } else {file_label <- paste0("_", label, subcase)}
+    } else {file_label <- paste0("_", label, "_", subcase)}
+  } else if(vulnerability == FALSE) {
+     if(subcase == "") {
+      file_label <- paste0("_", label)
+    } else {file_label <- paste0("_", label, "_", subcase)}
+  }
 
 # access the results obtained directly from the model
     
@@ -66,7 +72,8 @@
       plots_path <- paste0(aggr_plot_path, "plots/")  # path used to save the plots (generated using the .csv data)
       csv_path <- paste0(aggr_plot_path,"csv/")      # path used to save csv (generated using the .Rdata)
   
-      file_rdata_name <- paste0("sums_", label, subcase, ".Rdata")
+      file_rdata_name <- paste0("sums_", label, ".Rdata")
+      if(subcase != "") {file_rdata_name <- paste0("sums_", label, "_", subcase, ".Rdata")}
 
       file_rdata_path <- paste0(aggr_plot_path, file_rdata_name)
 
@@ -75,9 +82,8 @@
       file_rdata_path_areas <- paste0(aggr_plot_path_areas, "areas.Rdata")
         
       file_rdata_name_areas <- paste0("areas_", label_timber, ".Rdata")
-
       
-      
+    
       
       
       

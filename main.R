@@ -40,11 +40,11 @@ select <- dplyr::select
 
   # Settings to define which .Rdata file to load for the response ratios and the z values 
     cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
-    vulnerability = FALSE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
+    vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
     BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
                             # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
     
-    subcase = "mammals" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)
+    subcase = "" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)
 
 ############################# SETTING THE LOCATION OF THE DIRECTORIES NEEDED TO RUN THE MODEL, AGGREGATE THE RESULTS AND PLOT THEM  ############################# 
 
@@ -184,7 +184,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
     # Select the year to be plotted and if the exports are included or not 
           
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
-    energy_exports = "EPnoex" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
+    energy_exports = "EPnoex-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
 
       ################# GLOBAL TIME SERIES AND AREAS (DISAGGREGATED) #######################
           

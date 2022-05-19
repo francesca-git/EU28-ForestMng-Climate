@@ -16,13 +16,13 @@
 
 #############################################################################################################################################################################
   
-  aggregate.results <- function(results_path, file_rdata_path) {
+  aggregate.results <- function(results_path, file_rdata_path, file_label) {
       # results_path = folder with the output of the model (character vector)
       # file_rdata_path = file where the output of the function will be saved (character vector)
-      # label = specification identifying to which subgroup the results belong (character vector), e.g. whether the cutoff was applied or not
+      # file_label = specification identifying to which subgroup the results belong (character vector), e.g. whether the species-group-specific results should be used
       # output: .Rdata file which contains the aggregated results
     
-    temp = list.files(path = paste0(results_path) , pattern = paste0("*", label, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
+    temp = list.files(path = paste0(results_path) , pattern = paste0("*", file_label, ".csv"), full.names = TRUE)   # save as list the paths of all .csv files in the selected folder
     myfiles = lapply(temp, read.csv)            # read the files, create a list where in each element is loaded one of the file as df
     rm(temp)
     
