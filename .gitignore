@@ -4,5 +4,4 @@ R-files/*
 scripts/plotting/maps_shapefiles/WWF_Ecoregions/*
 scripts/plotting/for_SETAC/*
 data/model_parameters/ecoregions_data/rr_z*
-results/*
 .Rhistory
