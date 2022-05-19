@@ -154,9 +154,9 @@ source("./scripts/model/distributions.R")
       # weight_tx[,"Birds"] <- 0.33/Sorg_tot_b # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b))
       # weight_tx[,"Mammals"] <- 0.33/Sorg_tot_m # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m))
       
-      weight_tx[,"Plants"] <- 1 # (0.5/Sorg_tot_pl)
-      weight_tx[,"Birds"] <- 1 # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b))
-      weight_tx[,"Mammals"] <- 1 # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m))
+      weight_tx[,"Plants"] <- Sorg_tot_pl/sum(Sorg_VS[,"Plants"], na.rm = TRUE)# (0.5/Sorg_tot_pl)
+      weight_tx[,"Birds"] <- Sorg_tot_b/sum(Sorg_VS[,"Birds"], na.rm = TRUE) # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_b))
+      weight_tx[,"Mammals"] <- Sorg_tot_m/sum(Sorg_VS[,"Mammals"], na.rm = TRUE) # (0.5/((dim(Sorg)[2]-1)*Sorg_tot_m))
     }
     
     result = list("Weights" = weight_tx, "Sorg_VS" = Sorg_VS)
