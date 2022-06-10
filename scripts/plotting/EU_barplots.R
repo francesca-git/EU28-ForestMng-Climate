@@ -121,8 +121,9 @@ plot.EU.barplot <- function(data, data_top, pal) {
     # ymax_value = 0.5
       
     # for EU internal forest with fixed legend
-    # ymin_value = -0.05
-    # ymax_value = 0.1
+    ymin_value = -0.05
+    ymin_value = 0
+    ymax_value = 0.1
 
     # plot
     
