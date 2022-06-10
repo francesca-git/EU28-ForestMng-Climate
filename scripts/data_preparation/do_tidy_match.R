@@ -36,10 +36,15 @@ tidy.match.areas <- function(timber, marginal, not_rel_wet, areas_base_path, are
         # The output of this script is a .Rdata file meant to be used as input in match.areas().  
         # The results of this function are saved as .Rdata in the folder: /results/areas
         
+        print("Areas have been tidied up")
+        
 
         match.areas(timber, marginal, not_rel_wet, areas_processed_path)
         # Task: Take as input the areas tided up in tidy.areas and match the different datasets 
         # The results of this function are saved as .csv data in the folders: 
         # /data/land_use_data/areas_processed/notimber or /data/land_use_data/areas_processed/timber
+        
+        print("Areas have been matched")
+
         
    }
