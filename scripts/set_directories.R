@@ -32,6 +32,7 @@
     ### LAND USE AREAS ###
     areas_path = "./data/land_use_data/"
     areas_base_path = paste0(areas_path, "areas_base/")
+    if(lowintensity_imports == TRUE) {areas_base_path = paste0(areas_path, "areas_base/alternative/")}
     areas_processed_path =  paste0(areas_path, "areas_processed/", label_timber, "/", label_approach, "/")
     
     areas_processed_path_user =  paste0("./data/land-use/areas_user/")
