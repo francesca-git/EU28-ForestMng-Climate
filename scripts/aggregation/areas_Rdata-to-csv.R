@@ -98,7 +98,18 @@
                               
                             # ====
                             
-            
+          ### Save the results keeping the forest management categories disaggregated
+                            
+          results_disaggr <- data.frame(results[[year]] %>%
+                              unite("Group", Group:Forest_use, remove = TRUE) %>%
+                                rename(Scenario = Management) %>% 
+                                  select(Group, Scenario, starts_with("For") & contains("EU"), contains("EP") & contains("EU"),
+                                            contains("EP") & contains("im"), starts_with("For_") & contains("im")))
+                            
+          results_oneyear_disaggr <- data.frame(results_disaggr %>% 
+                pivot_longer(cols = 3:(length(results_disaggr)), names_to = "Category", values_to = "Values"))
+        
+          write.csv(results_oneyear_disaggr, paste0(aggr_plot_path_areas, "areas_EUFootprint_", year, "_" , label_timber, "_disaggr.csv"), row.names = FALSE)
           
         ################## EU INTERNAL #######################
             
