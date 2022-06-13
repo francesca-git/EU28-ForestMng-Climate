@@ -578,7 +578,7 @@ library(compare)
     
     Subset_allocation = function(Df, Df_in, Area, Area_subset, Receiving_area, scenario_exclusion) {
       # This function considers the following elements: a column (Area) in the input dataframe (Df), a subset of that column (Area_subset), a refence dataframe (Df_in -> referring to a previous year),
-      # another column in Df (Receiving_area) to which part of Area should be allocated, the indication about which scenarios are not concerned (scenario_sxclusion).
+      # another column in Df (Receiving_area) to which part of Area should be allocated, the indication about which scenarios are not concerned (scenario_exclusion).
       # The aim is to subtract from Area the corresponding subset area in the reference Df_if, and allocate the difference between the two subset areas 
       # (the one in Df and the one in Df_in) to Receiving_area
       # ! scenario_exclusion is a string vector with three elements, one for each aspect of the scenario (climate, forest use and management). If no restriction is needed for either of them,
