@@ -34,7 +34,7 @@ select <- dplyr::select
 ############################ INITIAL SETTINGS ######################################
 
   # General settings for the calculation of the impacts
-    marginal = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
+    marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
     timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
     CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
 
@@ -43,7 +43,7 @@ select <- dplyr::select
     vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
     BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
                             # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-    lowintensity_imports = TRUE   
+    lowintensity_imports = FALSE   
 
     subcase = "" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)
 
@@ -175,6 +175,10 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
           source("./scripts/aggregation/convert_to_PDFha.R")
           convert.to.PDFha(results_path, areas_processed_path, csv_path, file_label)    # convert_to_PDFha.R --> calculate the impacts per hectar (ecoregion resolution)
           
+      ################# CALCULATE VOLUME OF WOOD PER CATEGORY (Mm3) #################
+          
+          source("./scripts/aggregation/volume_per_category.R")
+          calculate.volume.per.category(csv_path, file_label, areas_base_path)    # convert_to_PDFha.R --> calculate the impacts per hectar (ecoregion resolution)
           
           
           
@@ -184,7 +188,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
     # Select the year to be plotted and if the exports are included or not 
           
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
-    energy_exports = "EPnoex-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
+    energy_exports = "EPnoex" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
 
       ################# GLOBAL TIME SERIES AND AREAS (DISAGGREGATED) #######################
           
