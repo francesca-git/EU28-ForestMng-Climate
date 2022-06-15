@@ -89,13 +89,13 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
 
     if(grepl("bs", file_label, fixed = TRUE)) {
 
-          data_top <- data_top %>% filter(Scenario == "noAFM" | Scenario == "AFM100") %>%
+          data_top <- data_top %>% filter(Scenario == "noAFM" | Scenario == "AFM75") %>%
               unite("Scenario", Group:Scenario, sep = "_") %>%
                 filter(Scenario != "RCP2.6_SFM_noAFM" & Scenario != "RCP2.6_MFM_noAFM" & Scenario != "REF_SFM_noAFM")
 
-          data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "REF_MFM_noAFM", "Baseline"), Scenario = str_replace(Scenario, "REF_MFM_AFM100", "RCP6.5 Close-to-nature"),
-                            Scenario = str_replace(Scenario, "REF_SFM_AFM100", "RCP6.5 Set-aside"), Scenario = str_replace(Scenario, "RCP2.6_MFM_AFM100", "RCP2.6 Close-to-nature"),
-                            Scenario = str_replace(Scenario, "RCP2.6_SFM_AFM100", "RCP2.6 Set-aside"))
+          data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "REF_MFM_noAFM", "Baseline"), Scenario = str_replace(Scenario, "REF_MFM_AFM75", "RCP6.5 Close-to-nature"),
+                            Scenario = str_replace(Scenario, "REF_SFM_AFM75", "RCP6.5 Set-aside"), Scenario = str_replace(Scenario, "RCP2.6_MFM_AFM75", "RCP2.6 Close-to-nature"),
+                            Scenario = str_replace(Scenario, "RCP2.6_SFM_AFM75", "RCP2.6 Set-aside"))
 
           # set the order of the scenarios
           data_top$Scenario <- factor(data_top$Scenario, levels = c("Baseline", "RCP6.5 Close-to-nature", "RCP6.5 Set-aside", "RCP2.6 Close-to-nature", "RCP2.6 Set-aside"))
@@ -278,7 +278,9 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       data_other_manag <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE)
       data_other_manag <- data_other_manag %>% filter(Category == "Other_management")
       
-      data <- data %>% full_join(data_other_manag) %>% pivot_wider(names_from = Category, values_from = PDFx100) %>% 
+      data <- data %>% full_join(data_other_manag) %>% pivot_wider(names_from = Category, values_from = PDFx100)
+      data_wide <- data
+      data <- data %>%
         mutate(EU28_Forest_net = EU28_Forest_net - Other_management) %>%
           select(-Other_management) %>%
             pivot_longer(cols = contains("EU") | contains("_im"), names_to = "Category", values_to = "PDFx100") %>% data.frame()
@@ -287,7 +289,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       data_top <- data_top %>% full_join(data_other_manag) %>% 
         mutate(ratio = Values/PDFx100, 
             PDFx100 = PDFx100 - Values)
-      data_top <- data_top %>% mutate(lower95 = lower95 - lower95*(1-ratio), upper95 = upper95 - upper95*(1-ratio)) %>%
+      data_top <- data_top %>% mutate(lower95 = lower95 - lower95*ratio, upper95 = upper95 - upper95*ratio) %>%
         select(-ratio, -Values, -Category)
 
       rm(data_other_manag)
