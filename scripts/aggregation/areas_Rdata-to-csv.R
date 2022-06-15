@@ -73,8 +73,8 @@
                                   transmute(Group = Group, Scenario = Scenario, 
                                             EU_Forest_net = rowSums(select(., (starts_with("For") & contains("EU")))), 
                                             EU_Energy_crops = rowSums(select(., contains("EP") & contains("EU"))) ,
-                                            Import_Energy_plantations = rowSums(select(., contains("EP") & contains("im"))), 
-                                            Import_Forest = rowSums(select(., starts_with("For_") & contains("im"))))
+                                            Import_Energy_plantations = rowSums(select(., contains("EP") & contains("_im"))), 
+                                            Import_Forest = rowSums(select(., starts_with("For_") & contains("_im"))))
             
             # change the format (before: one column per each land use class; after the change: one single column with al the values and one with the corresponding Category)
               results_oneyear <- results_temp %>% 
@@ -87,29 +87,56 @@
                             # test ====
                             
                             test = results_temp[nrow(results_temp),]
-                            test_check = results[[year]][nrow(results_temp),]
+                            test_check <- results[[year]][nrow(results_temp),] %>% data.frame()
                             
                             if (abs(test$EU_Energy_crops - (test_check$EP_EU + test_check$EP_conv_EU)) > 1e-16 |
                                 abs(test$EU_Forest_net - (test_check$For_ClearCut_EU + test_check$For_Retention_EU + test_check$For_TimberPlant_EU +
                                                         test_check$For_SelectionSystem_EU + test_check$ForOther_Extensive_EU + test_check$ForOther_Intensive_EU)) > 1e-16  |
                                 abs(test$Import_Energy_plantations - test_check$EP_conv_im) > 1e-16  |
-                                abs(test$Import_Forest - (test_check$For_ClearCut_im + test_check$For_PlantationFuel_im +  test_check$For_TimberPlant_im)) > 1e-16 )
+                                abs(test$Import_Forest - (test_check$For_ClearCut_im + test_check$For_PlantationFuel_im +  test_check$For_TimberPlant_im + test_check$For_SelectionSystem_im)) > 1e-16 )
                               {stop("ERROR in the aggregation of land use for EU footprint")}
                               
                             # ====
                             
-          ### Save the results keeping the forest management categories disaggregated
+        ### Save the results keeping the forest management categories disaggregated
                             
           results_disaggr <- data.frame(results[[year]] %>%
                               unite("Group", Group:Forest_use, remove = TRUE) %>%
                                 rename(Scenario = Management) %>% 
-                                  select(Group, Scenario, starts_with("For") & contains("EU"), contains("EP") & contains("EU"),
-                                            contains("EP") & contains("im"), starts_with("For_") & contains("im")))
+                                  select(Group, Scenario, starts_with("For") & contains("_EU"), contains("EP") & contains("_EU"),
+                                            contains("EP") & contains("_im"), starts_with("For_") & contains("_im")))
                             
           results_oneyear_disaggr <- data.frame(results_disaggr %>% 
                 pivot_longer(cols = 3:(length(results_disaggr)), names_to = "Category", values_to = "Values"))
         
           write.csv(results_oneyear_disaggr, paste0(aggr_plot_path_areas, "areas_EUFootprint_", year, "_" , label_timber, "_disaggr.csv"), row.names = FALSE)
+          
+          rm(results_disaggr, results_oneyear_disaggr)
+          
+         ### Save the total sums
+
+          sums_oneyear = results[[year]] %>% 
+            unite("Group", Group:Forest_use, remove = TRUE) %>%
+              rename(Scenario = Management) %>% 
+                select(Group, Scenario, ((starts_with("For") & contains("EU")) | 
+                                           (starts_with("For") & contains("_im")) | 
+                                           (contains("EP") & contains("EU")) | 
+                                           (contains("EP") & contains("_im")))) %>%
+                  transmute(Group, Scenario, Values = rowSums(select_if(.,is.numeric))) %>%
+                    data.frame() %>%
+                      add_column(lower95 = 0, upper95 = 0)
+                      
+          
+          
+      # prepare and save the file with the total sums for the given year 
+
+          write.csv(sums_oneyear, paste0(aggr_plot_path_areas, "areas_EUFootprint_", year,"_", label_timber, "_top_EP.csv"), row.names = FALSE) 
+          # this csv has the following columns: 
+          # Group (climatic and forest use scenario), Scenario (forest management scenario), PDFx100 (impact), lower95 (lower CI interval), upper95 (upper CI interval)
+          # If columns lower95 and upper95 are all 0 it means that CI have not been calculated
+                  
+            rm(sums_oneyear)
+                
           
         ################## EU INTERNAL #######################
             
@@ -157,6 +184,44 @@
                               {stop("ERROR in the aggregation of land use for EU internal")}
                             
                             # ====
+                            
+                            
+          ### Save the results keeping the forest management categories disaggregated
+                            
+          results_disaggr <- data.frame(results[[year]] %>%
+                              unite("Group", Group:Forest_use, remove = TRUE) %>%
+                                rename(Scenario = Management) %>% 
+                                  select(Group, Scenario, starts_with("For") & contains("_EU"), contains("EP") & contains("_EU")))
+                            
+          results_oneyear_disaggr <- data.frame(results_disaggr %>% 
+                pivot_longer(cols = 3:(length(results_disaggr)), names_to = "Category", values_to = "Values"))
+        
+          write.csv(results_oneyear_disaggr, paste0(aggr_plot_path_areas, "areas_EUForest_", year, "_" , label_timber, "_disaggr.csv"), row.names = FALSE)
+          
+          rm(results_disaggr, results_oneyear_disaggr)
+          
+         ### Save the total sums
+
+          sums_oneyear = results[[year]] %>% 
+            unite("Group", Group:Forest_use, remove = TRUE) %>%
+              rename(Scenario = Management) %>% 
+                select(Group, Scenario, ((starts_with("For") & contains("EU")) | 
+                                           (contains("EP") & contains("EU")))) %>%
+                  transmute(Group, Scenario, Values = rowSums(select_if(.,is.numeric))) %>%
+                    data.frame() %>%
+                      add_column(lower95 = 0, upper95 = 0)
+                      
+          
+          
+      # prepare and save the file with the total sums for the given year 
+
+          write.csv(sums_oneyear, paste0(aggr_plot_path_areas, "areas_EUForest_", year,"_", label_timber, "_top_EP.csv"), row.names = FALSE) 
+          # this csv has the following columns: 
+          # Group (climatic and forest use scenario), Scenario (forest management scenario), PDFx100 (impact), lower95 (lower CI interval), upper95 (upper CI interval)
+          # If columns lower95 and upper95 are all 0 it means that CI have not been calculated
+                  
+            rm(sums_oneyear)
+                
             
         }
       

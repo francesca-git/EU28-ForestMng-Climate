@@ -36,7 +36,7 @@ select <- dplyr::select
   # General settings for the calculation of the impacts
     marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
     timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-    CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+    CI = TRUE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
 
   # Settings to define which .Rdata file to load for the response ratios and the z values 
     cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
@@ -274,5 +274,19 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
                             # sums_median - list of dataframes dataframe containing the sums over ecoregions per each year considering only the median values (aggregated over the land uses), columns: Group, Forest_use, Management, Sum  
                             # results_CI - list of dataframes containing the sums over ecoregions per each year considering only the CI values (disaggregated per land use), columns in each df: Group, Forest_use, Management, all the land uses
                             # sums_CI - list of dataframes dataframe containing the sums over ecoregions per each year considering only the CI values (aggregated over the land uses), columns: Group, Forest_use, Management, Sum_upper, Sum_lower  
-        
+   
+               
+    year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
 
+source("./scripts/plotting/for_WBF/EU_barplots_WBF.R")
+source("./scripts/aggregation/aggregate_wood.R")
+          
+          EUFootprint.areas.barplot.EP.dis(aggr_plot_path_areas, label_timber, label, plots_path, year)
+          EUForest.areas.barplot.EP.dis(aggr_plot_path_areas, label_timber, label, plots_path, year)
+          aggregate.plot.vol(areas_base_path, csv_path, plots_path, label_timber, label, year)
+          EUfootprint.barplot.EP.dis(csv_path, file_label, plots_path, year)
+          EUinternal.barplot.EPnoex(csv_path, file_label, plots_path, year)
+          
+          
+          
+          

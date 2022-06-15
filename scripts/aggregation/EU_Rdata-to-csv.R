@@ -441,9 +441,7 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
           # this csv has the following columns: 
           # Group (climatic and forest use scenario), Scenario (forest management scenario), Category (land use category), PDFx100 (impact)
 
-  ######## SUMS OF GROUPED LAND USE CLASSES (IMPORTED FOREST MANAGEMENT DISAGGREGATED) ########
-
-        # group the land use classes in: EU28_Energy_crops, EU_Forest_net, Import_Energy_plantations, Import_Forest
+  ######## SUMS OF LAND USE CLASSES (IMPORTED FOREST MANAGEMENT DISAGGREGATED) ########
 
           results_temp_dis <- results_median[[year]] %>%
                             unite("Group", Group:Forest_use, remove = TRUE) %>%   # convert the columns containing the climatic scenarios and the forest use scenarios in a single column called "Group"
@@ -503,6 +501,11 @@ create.csv.EU.EPnoex <- function(file_rdata_path, csv_path, file_label, year) {
           # If columns lower95 and upper95 are all 0 it means that CI have not been calculated
                   
             rm(sums_oneyear, results_temp)
+            
+######## TOTAL SUMS DISAGGREGATED ########
+        
+            
+        
         
   ################## EU INTERNAL #######################
   
