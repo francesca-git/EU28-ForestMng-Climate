@@ -77,7 +77,7 @@ aggregate.plot.vol <- function(areas_base_path, csv_path, plots_path, label_timb
     figure <- plot.EU.barplot(data = data_oneyear, pal = pal, column = "Values", axis_name = "Mm3", file_label = file_label)
       figure
       
-    ggsave(paste0(plots_path, "EUForest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex.png"), width = 22, height = 15, units = "cm")
+    ggsave(paste0(plots_path, "EUForest_volume_Mm3_", year, "_", palette_name, "_", file_label, "_EPnoex.png"), width = 22, height = 15, units = "cm")
 
     rm(data_oneyear)
 
@@ -114,8 +114,62 @@ aggregate.plot.vol <- function(areas_base_path, csv_path, plots_path, label_timb
       figure <- plot.EU.barplot(data = data_oneyear, pal = pal, column = "Values", axis_name = "Mm3", file_label = file_label)
       figure
       
-    ggsave(paste0(plots_path, "EUFootprint_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex.png"), width = 27, height = 15, units = "cm")
+    ggsave(paste0(plots_path, "EUFootprint_volume_Mm3_", year, "_", palette_name, "_" , file_label, "_EPnoex.png"), width = 27, height = 15, units = "cm")
 
+    rm(data_oneyear)
+    
+    
+  ####### EU Footprint & EU Forest ########
+    
+  data_oneyear <- data %>% select(Group, Scenario, Category, all_of(year)) 
+     names(data_oneyear)[length(data_oneyear)] <- "Values"  
+        
+      # choose the palette
+      pal_FP = rev(viridis_pal()(5))
+      palette_name = "Viridis"
+      pal_EU = rev(viridis_pal(option = "magma")(7)[3:7])
+      palette_name = "Viridis-magma"
+      
+      Sel <- data_oneyear %>% filter(Category == "Clear_cut_EU" | Category == "Retention_EU" ) %>%
+                  mutate(Category = str_replace(Category,"Clear_cut_EU", "Selection_im"), Category = str_replace(Category, "Retention_EU", "Selective_im")) %>%
+                    mutate(Values = 0)
+
+        data_oneyear <- data_oneyear %>% full_join(Sel)
+
+      
+         data_oneyear <- data_oneyear %>% mutate(Category = str_replace(Category, "EP_EU", "EU28 Lignocel. energy crops"), 
+                                Category = str_replace(Category, "Clear_cut_EU", "EU28 Clear cut"),
+                                Category = str_replace(Category, "Retention_EU", "EU28 Retention"),
+                                Category = str_replace(Category, "Selection_EU", "EU28 Selection"),
+                                Category = str_replace(Category, "Timber_plant_EU", "EU28 Timber"),                                
+                                Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
+                                Category = str_replace(Category, "Pulp_Timber_Plantation_im", "Import - Timber and pulp plantations"),
+                                Category = str_replace(Category, "Clear_cut_im", "Import - Clear cut"),
+                                Category = str_replace(Category, "Selection_im", "Import - Selection"),
+                                Category = str_replace(Category, "Selective_im", "Import - Selective logging"))
+        
+        # set the order of the categories
+         
+        data_oneyear <- data_oneyear %>% filter(Category != "EU28 Timber")
+        data_oneyear$Category <- factor(data_oneyear$Category, levels = c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection", "Import - Selective logging",
+                                                        "EU28 Lignocel. energy crops", "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))
+        pal_EU = pal_EU[-1]
+        
+        pal = c(pal_FP, pal_EU) 
+
+                       
+       # if(grepl("mg", label, fixed = TRUE)) {
+       #    data <- data %>% filter(Category != "Import - Selection system" & Category != "Import - Selective logging")
+       #    #data <- droplevels(data$Category, "Import - Selection system", "Import - Selective logging")
+       #    }
+        
+        figure <- plot.EU.barplot(data = data_oneyear, pal = pal, column = "Values", axis_name = "Mm3", file_label = file_label)
+        figure
+        
+      ggsave(paste0(plots_path, "EUFootprint&Forest_volume_Mm3_", year, "_", palette_name, "_", file_label, "_EPnoex.png"), width = 27, height = 15, units = "cm")
+  
+      rm(data_oneyear)    
 
 
 

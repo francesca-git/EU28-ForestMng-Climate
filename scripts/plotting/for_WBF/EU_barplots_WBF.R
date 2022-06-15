@@ -78,10 +78,10 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
     # for EU footprint with fixed legend
     # ymin_value = 0
     # ymax_value = 0.5
-    
-    ymax_value = 0.35
+  
+    ymax_value = 0.45
     ymin_value = 0
-      
+    #   
     # for EU internal forest with fixed legend
     # ymin_value = -0.05
     # ymin_value = 0
@@ -140,7 +140,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       # facet_grid(. ~ Group) 
 
 
-  if(grepl("PDF", axis_name, fixed = TRUE)) {
+    if(grepl("bs", file_label, fixed = TRUE)) {
     figure +
       ylim(ymin_value, ymax_value) +
       geom_point(data = data_top, aes(x  = Scenario, y = !! sym(column)), color = "black", size = 1) +
@@ -254,12 +254,114 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
 
 #############################################################################################################################################################################
 
-                                                                  # 3) EU FOOTPRINT - BARPLOT - DISAGGREGATED #
+                                                                  # 3) EU FOOTPRINT and EU FOREST- BARPLOT #
 
 #############################################################################################################################################################################
 
 # General task: plot a figure with four barplots (one for each combination of climate mitigation scenario and forest use scenario) 
 # Date: May 2022
+# Author: Francesca Rosa
+
+  
+  EU.barplot.EP.dis <- function(csv_path, file_label, plots_path, year) {
+      # csv_path = path of the .csv files where the data to plot are stored (character vector)
+      # file_label = identification words which selects the file (character vector)
+      # plots_path = folder where the plots will be saved (character vector)
+      # year = year that will be plotted (number)
+    
+      # choose the palette
+      pal_FP = rev(viridis_pal()(5))
+      palette_name = "Viridis"
+      pal_EU = rev(viridis_pal(option = "magma")(7)[3:7])
+      palette_name = "Viridis-magma"
+      
+      data <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_EP_im-for-disaggr.csv"), header = TRUE) %>%
+            mutate(Category = str_replace(Category, "Import_Energy_plantations", "Energy_plantations_im"))
+      data_EU <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE) %>%
+                  filter(Category != "Other_management" & Category != "EP_EU")
+      data_EU <- data_EU %>% mutate(Category = str_replace(Category, "Clear_cut", "Clear_cut_EU"),
+                              Category = str_replace(Category, "Retention", "Retention_EU"),
+                              Category = str_replace(Category, "Selection", "Selection_EU"),
+                              Category = str_replace(Category, "Timber", "Timber_EU"))
+      
+      data_bu <- data
+
+      data <- data %>% filter(Category != "EU28_Forest_net") %>% full_join(data_EU) %>%
+        full_join(data_EU)
+                    
+      
+      data_top <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_top_EP.csv"), header = TRUE)
+      
+      data_other_manag <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE)
+      data_other_manag <- data_other_manag %>% filter(Category == "Other_management")
+      
+      data_other_manag <- data_other_manag %>% rename(Values = PDFx100)
+      data_top <- data_top %>% full_join(data_other_manag) %>% 
+        mutate(ratio = Values/PDFx100, 
+            PDFx100 = PDFx100 - Values)
+      data_top <- data_top %>% mutate(lower95 = lower95 - lower95*ratio, upper95 = upper95 - upper95*ratio) %>%
+        select(-ratio, -Values, -Category)
+
+      #data <- read.csv(paste0("./plotting/cutoff_timber/EUFootprint_", year, "_mg-det_cutoff_timber.csv"), header = TRUE)
+      
+      # RIL <- data_other_manag %>% mutate(PDFx100 = 0) %>% select(-Values) %>%
+      #         mutate(Category = str_replace(Category, "Other_management", "RIL_im"))
+      
+      # data <- data %>% full_join(RIL)
+
+      
+      rm(data_other_manag)
+      
+      # arrange the data ====
+      data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops"), 
+                              Category = str_replace(Category, "Clear_cut_EU", "EU28 Clear cut"),
+                              Category = str_replace(Category, "Retention_EU", "EU28 Retention"),
+                              Category = str_replace(Category, "Selection_EU", "EU28 Selection"),
+                              Category = str_replace(Category, "Timber_EU", "EU28 Timber"),
+                              Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
+                              Category = str_replace(Category, "Pulp_Timber_Plantation_im", "Import - Timber and pulp plantations"),
+                              Category = str_replace(Category, "Clear_cut_im", "Import - Clear cut"),
+                              Category = str_replace(Category, "Selection_im", "Import - Selection"),
+                              Category = str_replace(Category, "Selective_im", "Import - Selective logging"))
+      # set the order of the categories
+
+        if(grepl("timber", file_label, fixed = TRUE)) {
+        data$Category <- factor(data$Category, levels = c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection","Import - Selective logging", "EU28 Lignocel. energy crops", "EU28 Clear cut", "EU28 Retention", "EU28 Selection",
+                                                        "EU28 Timber"))
+        } else { 
+        data <- data %>% filter(Category != "EU28 Timber")
+        data$Category <- factor(data$Category, levels = c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection", "Import - Selective logging",
+                                                        "EU28 Lignocel. energy crops", "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))
+                pal_EU = pal_EU[-1]  
+        }
+      
+      pal = c(pal_FP, pal_EU) 
+        
+      figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
+      figure
+      # save as pdf
+      #ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_EP_or.pdf"), width = 30, height = 11, units = "cm")
+      ggsave(paste0(plots_path, "EUFootprint&Forest_", year, "_", palette_name, file_label, "_EP_im-for-disaggr_WBF.png"), width = 27, height = 15, units = "cm")
+
+  }
+  
+
+
+#############################################################################################################################################################################
+                                                                                # 4 #
+#############################################################################################################################################################################
+
+
+#############################################################################################################################################################################
+
+                                                                  # 4) EU FOOTPRINT - BARPLOT - DISAGGREGATED #
+
+#############################################################################################################################################################################
+
+# General task: plot a figure with four barplots (one for each combination of climate mitigation scenario and forest use scenario) 
+# Date: June 2022
 # Author: Francesca Rosa
 
   
@@ -326,14 +428,15 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
 
 
 
-#############################################################################################################################################################################
-                                                                                # 4 #
-#############################################################################################################################################################################
-
 
 #############################################################################################################################################################################
+                                                                                # 5 #
+#############################################################################################################################################################################
 
-                                                                  # 4) EU AREAS - BARPLOT #
+
+#############################################################################################################################################################################
+
+                                                                  # 5) EU AREAS - BARPLOT #
 
 #############################################################################################################################################################################
 
@@ -384,7 +487,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       # pal = viridis_pal(option = "magma")(7)
       # palette_name = "Viridis-magma"
       
-      figure <- plot.EU.barplot(data, data_top, pal, "Values", "Mha")
+      figure <- plot.EU.barplot(data = data, pal = pal, column = "Values", axis_name = "Mha", file_label = file_label)
       figure
       # save as pdf
       #ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_EP_or.pdf"), width = 30, height = 11, units = "cm")
@@ -429,7 +532,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
           }
       
     data <- data %>% filter(Category != "Other management")  
-    figure <- plot.EU.barplot(data, data_top, pal, "Values", "Mha", file_label = file_label)
+    figure <- plot.EU.barplot(data = data, pal = pal, column = "Values", axis_name = "Mha", file_label = file_label)
       figure
       
     ggsave(paste0(plots_path, "EUForest_areas_", year, "_", palette_name, file_label, "_EPnoex_WBF.png"), width = 22, height = 15, units = "cm")
@@ -438,5 +541,61 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
   
 
 
+EU.areas.barplot.EP.dis <- function(aggr_plot_path_areas, label_timber, file_label, plots_path, year) {
+      # aggr_plot_path_areas = path of the .csv files where the data to plot are stored (character vector)
+      # file_label = identification words which selects the file (character vector)
+      # plots_path = folder where the plots will be saved (character vector)
+      # year = year that will be plotted (number)
+
+      # choose the palette
+      pal_FP = rev(viridis_pal()(5))
+      palette_name = "Viridis"
+      pal_EU = rev(viridis_pal(option = "magma")(7)[3:7])
+      palette_name = "Viridis-magma"
+            
+      # load the data 
+      data <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year,"_", label_timber, "_disaggr.csv"), header = TRUE)
+      data_top <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year, "_", label_timber, "_top_EP.csv"), header = TRUE)
+      
+      data <- data %>% pivot_wider(names_from = Category, values_from = Values) %>%
+              mutate(EU28_Energy_crops = EP_EU + EP_conv_EU, Energy_plantations_im = EP_conv_im + For_PlantationFuel_im) %>% 
+                  select(-EP_conv_EU, -EP_conv_im, -EP_EU, -ForOther_Extensive_EU, -ForOther_Intensive_EU, -For_PlantationFuel_im) %>%
+                    pivot_longer(cols = (contains("For") | contains("_im") | contains("EU")), names_to = "Category", values_to = "Values") %>%
+                      data.frame()
+      
+      data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops"), 
+                              Category = str_replace(Category, "For_ClearCut_EU", "EU28 Clear cut"),
+                              Category = str_replace(Category, "For_Retention_EU", "EU28 Retention"),
+                              Category = str_replace(Category, "For_SelectionSystem_EU", "EU28 Selection"),
+                              Category = str_replace(Category, "For_TimberPlant_EU", "EU28 Timber"),
+                              Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
+                              Category = str_replace(Category, "For_TimberPlant_im", "Import - Timber and pulp plantations"),
+                              Category = str_replace(Category, "For_ClearCut_im", "Import - Clear cut"),
+                              Category = str_replace(Category, "For_SelectionSystem_im", "Import - Selection"),
+                              Category = str_replace(Category, "For_Selective_im", "Import - Selective logging"))
+     
+      # Delete the rows with timber if the timber feature is turned off
+      
+      if(grepl("timber", file_label, fixed = TRUE)) {
+        data$Category <- factor(data$Category, levels = c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection","Import - Selective logging", "EU28 Lignocel. energy crops", "EU28 Clear cut", "EU28 Retention", "EU28 Selection",
+                                                        "EU28 Timber"))
+        } else { 
+        data <- data %>% filter(Category != "EU28 Timber")
+        data$Category <- factor(data$Category, levels = c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection", "Import - Selective logging",
+                                                        "EU28 Lignocel. energy crops", "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))
+                pal_EU = pal_EU[-1]  
+        }
+      
+    pal = c(pal_FP, pal_EU) 
+
+    figure <- plot.EU.barplot(data = data, pal = pal, column = "Values", axis_name = "Mha", file_label = file_label)
+      figure
+      
+    ggsave(paste0(plots_path, "EUFootprint&Forest_areas_", year, "_", palette_name, file_label, "_EPnoex_WBF.png"), width = 22, height = 15, units = "cm")
+
+  }
+      
 
 
