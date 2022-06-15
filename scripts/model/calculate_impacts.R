@@ -72,7 +72,7 @@ select <- dplyr::select
       
       ratio_eco_static <- rr_ecoregion
 ########################################################################################################################################################################     
-     ratio_eco_static[,"SelectiveLogging",,] <- ratio_eco_static [,"ReducedImpactLogging",,]
+     #ratio_eco_static[,"SelectiveLogging",,] <- ratio_eco_static [,"ReducedImpactLogging",,]
 ########################################################################################################################################################################     
 
 
@@ -146,6 +146,7 @@ select <- dplyr::select
   # tstep_areas = c(4,5,7,8,9,10)
   
   tsteps = seq(from = 2000, to = 2100, by = 10)  # temporal steps
+ 
   ntsteps = length(tsteps)
   tstep_areas = seq(from = 1, to = 11, by = 1)
  
@@ -153,8 +154,7 @@ select <- dplyr::select
   
   ################### LOOPS OVER THE YEARS ################### 
 
-    for (tstep in 1:ntsteps) {
-
+    for (tstep in 1:ntsteps) { 
       ptm_year <- Sys.time()
       
       
