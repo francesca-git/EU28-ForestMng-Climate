@@ -91,9 +91,9 @@
                             
                             if (abs(test$EU_Energy_crops - (test_check$EP_EU + test_check$EP_conv_EU)) > 1e-16 |
                                 abs(test$EU_Forest_net - (test_check$For_ClearCut_EU + test_check$For_Retention_EU + test_check$For_TimberPlant_EU +
-                                                        test_check$For_SelectionSystem_EU + test_check$ForOther_Extensive_EU + test_check$ForOther_Intensive_EU)) > 1e-16  |
+                                                        test_check$For_SelectionSystem_EU + test_check$ForOther_Extensive_EU + test_check$ForOther_Intensive_EU)) > 1e-3  |
                                 abs(test$Import_Energy_plantations - test_check$EP_conv_im) > 1e-16  |
-                                abs(test$Import_Forest - (test_check$For_ClearCut_im + test_check$For_PlantationFuel_im +  test_check$For_TimberPlant_im + test_check$For_SelectionSystem_im)) > 1e-16 )
+                                abs(test$Import_Forest - (test_check$For_ClearCut_im + test_check$For_PlantationFuel_im +  test_check$For_TimberPlant_im + test_check$For_SelectionSystem_im + test_check$For_Selective_im)) > 1e-13 )
                               {stop("ERROR in the aggregation of land use for EU footprint")}
                               
                             # ====
@@ -175,12 +175,12 @@
                             test_check = results[[year]][nrow(results_temp),]
                             test_sum = results_sum[nrow(results_temp),]
                             
-                            if ( abs(test$Clear_cut - test_check$For_ClearCut_EU) > 1e-16 |
-                                abs(test$Retention - test_check$For_Retention_EU) > 1e-16 |
-                                abs(test$Selection - test_check$For_SelectionSystem_EU) > 1e-16 |
-                                abs(test$Timber - test_check$For_TimberPlant_EU) > 1e-16 |
-                                abs(test$Other_management - (test_check$ForOther_Extensive_EU + test_check$ForOther_Intensive_EU)) > 1e-16 |
-                                abs(test_sum$Sum - (test$Clear_cut + test$Retention + test$Selection + test$Other_management)) > 1e-16 )
+                            if ( abs(test$Clear_cut - test_check$For_ClearCut_EU) > 1e-13 |
+                                abs(test$Retention - test_check$For_Retention_EU) > 1e-13 |
+                                abs(test$Selection - test_check$For_SelectionSystem_EU) > 1e-13 |
+                                abs(test$Timber - test_check$For_TimberPlant_EU) > 1e-13 |
+                                abs(test$Other_management - (test_check$ForOther_Extensive_EU + test_check$ForOther_Intensive_EU)) > 1e-13 |
+                                abs(test_sum$Sum - (test$Clear_cut + test$Retention + test$Selection + test$Other_management)) > 1e-13 )
                               {stop("ERROR in the aggregation of land use for EU internal")}
                             
                             # ====
