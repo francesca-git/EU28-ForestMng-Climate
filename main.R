@@ -7,8 +7,8 @@
 ####################
 ############################ SET WORKING DIRECTORY ################################
 
-setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
-#setwd("/home/frrosa/R/forest-management/") 
+#setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
+setwd("/home/frrosa/R/forest-management/") 
 
 ############################ LOAD LIBRARIES ################################
 
@@ -44,7 +44,7 @@ select <- dplyr::select
     vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
     BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
                             # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-    lowintensity_imports = FALSE   
+    lowintensity_imports = TRUE   
 
     subcase = "" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)
 
