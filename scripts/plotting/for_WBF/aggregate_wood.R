@@ -64,8 +64,8 @@ EUForest.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path
   
   # Load the data
   if(grepl("mg", file_label, fixed = TRUE)) {
-    data <- read.csv(paste0(areas_base_path, "EUdemand_split_volumes_mg.csv"), header = TRUE)
-    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "EUdemand_split_volumes_av.csv"), header = TRUE)
+    data <- read.csv(paste0(areas_base_path, "Split_volumes_mg.csv"), header = TRUE)
+    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "Split_volumes_av.csv"), header = TRUE)
   }
   
   # Clean and prepare the data
@@ -76,10 +76,12 @@ EUForest.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path
   data_oneyear <- data %>% select(Group, Scenario, Category, all_of(year)) 
   names(data_oneyear)[length(data_oneyear)] <- "Values"  
    
-  # Filter the data for the year to be plotted
+  # Filter the data for the year to be plotted and subtract the imports from the internal production
    data_oneyear <- data_oneyear %>% pivot_wider(names_from = Category, values_from = Values) %>% data.frame %>%
-              select(Group, Scenario, contains("_EU")) %>%
-                pivot_longer(cols = contains("_EU"), names_to = "Category", values_to = "Values") %>% data.frame()
+                      mutate(Clear_cut_EU = Clear_cut_EU - Clear_cut_ex, Selection_EU = Selection_EU-Selection_ex) %>%
+                        mutate(Selection_EU = case_when(Selection_EU < 0 ~ 0, TRUE ~ as.numeric(Selection_EU))) %>%
+                        select(Group, Scenario, contains("_EU")) %>%
+                          pivot_longer(cols = contains("_EU"), names_to = "Category", values_to = "Values") %>% data.frame()
    
    data_oneyear <- data_oneyear %>% mutate(Category = str_replace(Category, "Clear_cut_EU", "Clear_cut"), Category = str_replace(Category, "Retention_EU", "Retention"), 
                           Category = str_replace(Category, "Timber_plant_EU", "Timber"), Category = str_replace(Category, "Selection_EU", "Selection")) 
@@ -102,7 +104,7 @@ EUForest.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path
       figure
       
     # Save png
-    ggsave(paste0(plots_path, "EUForest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex.png"), width = width_height[1], height = width_height[2], units = "cm")
+    ggsave(paste0(plots_path, "EUForest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex_25.png"), width = width_height[1], height = width_height[2], units = "cm")
 
 }
 
@@ -125,24 +127,25 @@ EUFootprint.volume.barplot.EP <- function(areas_base_path, csv_path, plots_path,
  
   # Load the data
   if(grepl("mg", file_label, fixed = TRUE)) {
-    data <- read.csv(paste0(areas_base_path, "EUdemand_split_volumes_mg.csv"), header = TRUE)
-    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "EUdemand_split_volumes_av.csv"), header = TRUE)
+    data <- read.csv(paste0(areas_base_path, "Split_volumes_mg.csv"), header = TRUE)
+    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "Split_volumes_av.csv"), header = TRUE)
   }
   
   # Clean and prepare the data
-  data <- data %>% unite("Group", Mitigation_scenario:Forest_use, sep = "_") %>%
-            rename(Scenario = Management_scenario)
+  data <- data %>% unite("Group", Mitigation_scenario:Forest_use, sep = "_") %>% dplyr::rename(Scenario = Management_scenario)
   
   names(data)[4:length(data)] <- as.character(seq(from = 2000, to = 2100, by = 10))
   data_oneyear <- data %>% select(Group, Scenario, Category, all_of(year)) 
   names(data_oneyear)[length(data_oneyear)] <- "Values"  
 
   data_oneyear <- data_oneyear %>% pivot_wider(names_from = Category, values_from = Values) %>% data.frame %>%
-              mutate(Group = Group, Scenario = Scenario, High_intensity_EU = EP_EU + Clear_cut_EU + Timber_plant_EU + Retention_EU, Low_intensity_EU = Selection_EU,
-                     High_intensity_im = Energy_plantations_im + Pulp_Timber_Plantation_im + Clear_cut_im,
-                     Low_intensity_im = 0) %>%
-                      select(-Clear_cut_EU, -Timber_plant_EU, -EP_EU, -Retention_EU, -Selection_EU, -Energy_plantations_im, -Pulp_Timber_Plantation_im, -Clear_cut_im)
-  
+                    mutate(Clear_cut_EU = Clear_cut_EU - Clear_cut_ex, Selection_EU = Selection_EU - Selection_ex) %>%
+                      mutate(Selection_EU = case_when(Selection_EU < 0 ~ 0, TRUE ~ as.numeric(Selection_EU))) %>%
+                        mutate(Group = Group, Scenario = Scenario, High_intensity_EU = EP_EU + Clear_cut_EU + Timber_plant_EU + Retention_EU, Low_intensity_EU = Selection_EU,
+                             High_intensity_im = Energy_plantations_im + Pulp_Timber_Plantation_im + Clear_cut_im,
+                             Low_intensity_im = 0) %>%
+                              select(-Clear_cut_EU, -Timber_plant_EU, -EP_EU, -Retention_EU, -Selection_EU, -Energy_plantations_im, -Pulp_Timber_Plantation_im, -Clear_cut_im, -Clear_cut_ex, -Selection_ex)
+          
    if(grepl("av", file_label, fixed = TRUE)) {
     data_oneyear <- data_oneyear %>% mutate(Low_intensity_im = Selection_im + Selective_im) %>%
       select(-Selection_im, -Selective_im)
@@ -172,6 +175,8 @@ EUFootprint.volume.barplot.EP <- function(areas_base_path, csv_path, plots_path,
     figure
       
     ggsave(paste0(plots_path, "EUFootprint_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex_25.png"), width = width_height[1], height = width_height[2], units = "cm")
+    
+    write.csv(data_oneyear, paste0(csv_path, "EUdemand_volumes_", year, file_label, ".csv"), row.names = FALSE) 
 
 }    
 
@@ -195,18 +200,25 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
  
   # Load the data
    if(grepl("mg", file_label, fixed = TRUE)) {
-    data <- read.csv(paste0(areas_base_path, "EUdemand_split_volumes_mg.csv"), header = TRUE)
-    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "EUdemand_split_volumes_av.csv"), header = TRUE)
+    data <- read.csv(paste0(areas_base_path, "Split_volumes_mg.csv"), header = TRUE)
+    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "Split_volumes_av.csv"), header = TRUE)
   }
   
   # Clean and prepare the data
   data <- data %>% unite("Group", Mitigation_scenario:Forest_use, sep = "_") %>%
-            rename(Scenario = Management_scenario)
+            rename(Scenario = Management_scenario)  
   
   names(data)[4:length(data)] <- as.character(seq(from = 2000, to = 2100, by = 10))
 
   data_oneyear <- data %>% select(Group, Scenario, Category, all_of(year)) 
      names(data_oneyear)[length(data_oneyear)] <- "Values"  
+     
+  data_oneyear <- data_oneyear %>%
+                pivot_wider(names_from = Category, values_from = Values) %>% data.frame %>%
+                    mutate(Clear_cut_EU = Clear_cut_EU - Clear_cut_ex, Selection_EU = Selection_EU - Selection_ex) %>%
+                      mutate(Selection_EU = case_when(Selection_EU < 0 ~ 0, TRUE ~ as.numeric(Selection_EU))) %>%
+                        select(-Clear_cut_ex, -Selection_ex) %>%
+                          pivot_longer(cols = contains("_EU") | contains("_im"), names_to = "Category", values_to = "Values")
 
     # Adding rows for the additional forest management practices needed to be included in the palette but not contributing to this production (so all values will be set to 0)
     if(grepl("mg", file_label, fixed = TRUE)) {
@@ -250,5 +262,8 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
     # Save as a png
     
     ggsave(paste0(plots_path, "EUFootprint&Forest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex_25.png"), width = width_height[1], height = width_height[2], units = "cm")
+    
+    write.csv(data_oneyear, paste0(csv_path, "EUdemand_volumes_", year, file_label, "_disaggr.csv"), row.names = FALSE) 
+
   
 }

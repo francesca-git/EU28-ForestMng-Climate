@@ -59,7 +59,7 @@
           # this csv has the following columns: 
           # Group (climatic and forest use scenario), Scenario (forest management scenario), Category (land use category), Values (areas)
             
-          
+          rm(results_temp)
       
         ################## EU FOOTPRINT #######################
           
@@ -221,7 +221,28 @@
           # If columns lower95 and upper95 are all 0 it means that CI have not been calculated
                   
             rm(sums_oneyear)
-                
+            
+      ################## EU INTERNAL INCLUDING IMPORTS #######################
+
+        results_temp <- results[[year]] %>%
+                              unite("Group", Group:Forest_use, remove = TRUE) %>%
+                                rename(Scenario = Management) %>% 
+                                  transmute(Group = Group, Scenario = Scenario, 
+                                            Clear_cut = For_ClearCut_EU + For_ClearCut_ex,
+                                            Retention = For_Retention_EU,
+                                            Selection = For_SelectionSystem_EU + For_SelectionSystem_ex,
+                                            Timber = For_TimberPlant_EU + For_TimberPlant_ex,
+                                            Other_management = rowSums(select(., contains("ForOther") & contains("EU"))))
+            
+            results_sum <- results_temp %>%
+                            transmute(Group = Group, Scenario = Scenario, Sum = rowSums(results_temp[,3:length(results_temp)]))
+              
+              results_oneyear <- results_temp %>% 
+              pivot_longer(cols = 3:(length(results_temp)), names_to = "Category", values_to = "Values")
+          
+       write.csv(results_oneyear, paste0(aggr_plot_path_areas, "areas_EUForest_int-export_", year,"_", label_timber, "_top_EP.csv"), row.names = FALSE) 
+   
+       rm(results_temp, results_oneyear)
             
         }
       
