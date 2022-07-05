@@ -117,7 +117,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                                GrsLnd_EU = GrsLnd_EU - EP_GrsLnd_EU, GrsLnd_RoW = GrsLnd_RoW - EP_GrsLnd_im,          # these subtractions produce negative values in some ecoregions
                                NatLnd_EU = NatLnd_EU - EP_NatLnd_EU, NatLnd_RoW = NatLnd_RoW - EP_NatLnd_im) %>%
                           # mutate(MngFor = MngFor - Clear_cut_im - Clear_cut_EU - Selection_EU - Retention_EU - Plantation_im) %>%
-                          mutate(MngFor = MngFor - Clear_cut_im - Plantation_im - Selection_im - Selective_im ) %>%
+                          mutate(MngFor = MngFor - Clear_cut_im - Plantation_im - Selection_im - Selective_im) %>% # - Clear_cut_EU - Selection_EU - Retention_EU) %>%
                             inner_join(urban) %>%
                               mutate(sum_EUfor = Clear_cut_EU + Selection_EU + Retention_EU) # also Timber_plant_EU contains EU forest areas, but it is already included in Clear_cut_EU
                                 areas_in$Ecoregion <- as.factor(areas_in$Ecoregion)
@@ -182,17 +182,19 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
             ################################################## 3) MAKE THE ALLOCATION ##################################################
   
       #3) Make all necessary allocations
-        
+            #Subset_allocation = function(Df, Df_in, Area_subset, Receiving_area, Area) {
+
           # Main allocation processes ====== 
-            areas_in = Subset_allocation(areas_in, areas.in[["2000"]], "MngFor", "sum_EUfor", "PriFor", c("NaN", "MFM", "noAF"))                   # allocation of difference between sum_EUfor in 2000 and sum_EUfor in the ith year to PriFor for the scenario set-aside regular subtraction of the sum of forest use from MngFor for the other scenarios                                                                                              
-              areas_neg_alloc = Neg_allocation(areas_in, Globiom_eco_org, "MngFor")                                                                      # allocation of the negative values in MngFor to the remaining positive MngFor within the same Globiom region
-                areas_for_alloc = For_allocation(areas_neg_alloc, Globiom_eco_org, "MngFor", data.list.steps[["Forest_intensity"]][[i]], Forests)           # allocation of the remaning MngFor area to two classes according to the share at Globiom leve: forest intensive and forest extensive
-                  areas_EP_alloc_RoW = EP_allocation(areas_for_alloc, Globiom_eco_org, EPtoconvert_RoW, EPconverted_RoW)                                    # allocation of negative values in CrpLnd, GrsLnd and NatLnd to the remaining positive ones within the same ecoregion or according to the share at Globiom level
-                    areas_EP_alloc_EU = EP_allocation(areas_EP_alloc_RoW, Globiom_eco_org, EPtoconvert_EU, EPconverted_EU)
-                      areas_EP_alloc_EU[is.na(areas_EP_alloc_EU)] <- 0                                                                                      # sets to 0 the NaN values that pop up in the intersections between rows outside EU and columns of EU values
-                        areas_post_alloc <- separate_region(areas_EP_alloc_EU, Globiom_eco_org, "Urban", "EU")                                              # separates Urban areas in EU and outside EU
-                          areas.fin[[toString(tstep[i])]] <- areas_post_alloc
-                          
+            areas_subset_alloc = Subset_allocation(areas_in, areas.in[["2000"]], "sum_EUfor", "PriFor", "MngFor")                  # allocation of difference between sum_EUfor in 2000 and sum_EUfor in the ith year to PriFor for the scenario set-aside regular subtraction of the sum of forest use from MngFor for the other scenarios                                                                                              
+              areas_subset_alloc <- areas_subset_alloc %>% mutate(MngFor = MngFor - Clear_cut_EU - Selection_EU - Retention_EU)
+                areas_neg_alloc = Neg_allocation(areas_subset_alloc, Globiom_eco_org, "MngFor")                                                               # allocation of the negative values in MngFor to the remaining positive MngFor within the same Globiom region
+                  areas_for_alloc = For_allocation(areas_neg_alloc, Globiom_eco_org, "MngFor", data.list.steps[["Forest_intensity"]][[i]], Forests)           # allocation of the remaining MngFor area to two classes according to the share at Globiom level: forest intensive and forest extensive
+                    areas_EP_alloc_RoW = EP_allocation(areas_for_alloc, Globiom_eco_org, EPtoconvert_RoW, EPconverted_RoW)                                    # allocation of negative values in CrpLnd, GrsLnd and NatLnd to the remaining positive ones within the same ecoregion or according to the share at Globiom level
+                      areas_EP_alloc_EU = EP_allocation(areas_EP_alloc_RoW, Globiom_eco_org, EPtoconvert_EU, EPconverted_EU)
+                        areas_EP_alloc_EU[is.na(areas_EP_alloc_EU)] <- 0                                                                                      # sets to 0 the NaN values that pop up in the intersections between rows outside EU and columns of EU values
+                          areas_post_alloc <- separate_region(areas_EP_alloc_EU, Globiom_eco_org, "Urban", "EU")                                              # separates Urban areas in EU and outside EU
+                            areas.fin[[toString(tstep[i])]] <- areas_post_alloc
+                            
             areas.fin[[toString(tstep[i])]] <- areas.fin[[toString(tstep[i])]] %>%
                                                     arrange(Scenario, Ecoregion)
             
@@ -200,15 +202,15 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
               mutate(Clear_cut_EU = Clear_cut_EU - Timber_plant_EU - Clear_cut_EU_ex, Selection_EU = Selection_EU - Selection_EU_ex, Timber_plant_EU = Timber_plant_EU - Timber_plant_EU_ex)       # Timber_plant_EU contains both areas used for domestic consumption in the EU and for export
             
             # test ====
-              test1 = colSums(areas_in[3:length(areas_in)])
+              test1 = colSums(areas_in[3:(length(areas_in)-1)])
               test1a = sum(test1)
-              
+             
               # Check allocation of negative MngFor ====
               test2 = colSums(areas_neg_alloc[3:length(areas_neg_alloc)])
               test2a = sum(test2)
-                if(round(test1a-test2a, 3) != 0) {stop("ERROR - allocation of negative values of MngFor")}
-                if(all.equal(test1, test2) != TRUE) {stop("ERROR - allocation of negative values of MngFor")}
-                
+              test2b <- sum(test1["Clear_cut_EU"][[1]], test1["Selection_EU"][[1]], test1["Retention_EU"][[1]])
+                if(round(test1a-test2a-test2b, 3) != 0) {stop("ERROR - allocation of negative values of MngFor")}
+
               # Check allocation of exceeding MngFor ====
               if(not_rel_wet == FALSE) {
                 test3 = colSums(areas_for_alloc[3:length(areas_for_alloc)])

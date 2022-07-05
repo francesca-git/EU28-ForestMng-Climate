@@ -26,10 +26,10 @@ library(compare)
     #Df = dataframe - its first two columns are Scenario and Ecoregion, the others contain the area per land use type
     #Regions = dataframe of two columns
     
-    # Outputs:
-    # 1) Df with the areas allocated at both ecoregion and Globiom level according to the share that each ecoregion has in each Globiom region. Five columns, content: scenarios, ecoregions, Globiom regions, areas, share at Globiom region of each ecoregion 
-    # 2a) If Columns has length > 1 - Df that contains: Scenario, Regions, Columns grouped at Globiom Regions level, share that each column of Columns has in each ecoregion
-    # 2b) If Columns has length == 1, Df that contains: Scenario, Regions, Columns grouped at Globiom Regions level, rowwise sum of Columns 
+    # Outputs: a list with two elements
+    # 1) "Shares": Df with the areas allocated at both ecoregion and Globiom level according to the share that each ecoregion has in each Globiom region. Five columns, content: scenarios, ecoregions, Globiom regions, areas, share at Globiom region of each ecoregion 
+    # 2a) "Land_use_classes_Glreg" : If Columns has length > 1 - Df that contains: Scenario, Regions, Columns grouped at Globiom Regions level, share that each column of Columns has in each ecoregion
+    # 2b) "Land_use_classes_Glreg" : If Columns has length == 1, Df that contains: Scenario, Regions, Columns grouped at Globiom Regions level, rowwise sum of Columns 
     
     Glreg_in = Df %>%
       inner_join(Regions)                               # adds two columns: one with the Glreg and the other with the relative share 
@@ -165,7 +165,7 @@ library(compare)
         pos <- Df %>%                                                 # rows with positive values, needed to quantify the allocation factors
             filter_at(vars(matches(For)), all_vars(. > 0))            # selects positive values
         
-      # If there are no negative value, the final df is equal to the initial one
+      # If there are no negative values, the final df is equal to the initial one
         
         if(nrow(pos) == nrow(Df)) {                                   # if the number of rows of positive values is equal to the total number of rows, 
           fin <- pos                                                  # it means that there are no negative value and no modifications are needed. 
@@ -213,7 +213,7 @@ library(compare)
   
           neg_Glreg_sums <- data.frame(neg_Glreg_sums)
           
-          # checks that there is enought positive area to allocate the negative values
+          # checks that there is enough positive area to allocate the negative values
           test_Glreg <- neg_Glreg_sums %>% 
                           full_join(pos_Glreg_sums) %>%
                             mutate(Neg_areas = replace_na(Neg_areas, 0)) %>%
@@ -259,8 +259,13 @@ library(compare)
     # ALLOCATION OF MANAGED FOREST TO FOREST MANAGEMENT INTENSITIES (extensive, intensive, regrowth)
     
      # Df1 = Neg_allocation(Df_in, Regions, For)
-     # Df = Df1
-    # 
+     # Df = areas_neg_alloc
+     # Regions = Globiom_eco_org
+     # For = "MngFor"
+     # Forest_intensity = data.list.steps[["Forest_intensity"]][[i]]
+     # Forests = Forests
+     # 
+     #      # 
     For_allocation = function(Df, Regions, For, Forest_intensity, Forests) {#Df = dataframe with all land use areas, ecoregions and scenarios, 
       #Regions = Globiom regions, For = Column with potential negative values, Forest_intensity = Df with the forest intensity areas per Globiom region
       #Forests = Columns of Forest_intensity to which For has to be allocated
@@ -295,6 +300,41 @@ library(compare)
       
       Df_Globiom$Ecoregion <- as.factor(Df_Globiom$Ecoregion) 
       
+      # Now we need to allocate the remaining MngFor in the EU globiom region to the other globiom regions in the same ecoregions
+      # create a character vector with the list of Ecoregion belonging (entirely or partially) to the EU globiom region
+      Regions_EU <- Regions %>% filter(Globiom_Reg == "EU") %>% select(Ecoregion) %>% pull()
+      # select the column with the sum at ecoregion level of the MngFor and rename it to distinguish it form the MngFor in Df_Globiom 
+      Df_eco <- Df %>% rename(MngFor_eco = MngFor)
+      # join the two df
+      Df_EU_reg <- Df_Globiom %>% full_join(Df_eco)
+      # filter only the ecoregions in Regions_EU
+      Df_EU_reg <- Df_EU_reg %>% filter(Ecoregion %in% Regions_EU)
+      # create a df with the MngFor only for EU
+      MngFor_EU <- Df_EU_reg %>% filter(Globiom_Reg == "EU") %>% mutate(MngFor_EU = MngFor) %>% select(Scenario, Ecoregion, MngFor_EU)
+      # calculate the new share of the globiom regions which share an ecoregion with EU removing the share of EU
+      Df_EU_reg <- Df_EU_reg %>% filter(Share != 1) %>% full_join(MngFor_EU, by = c("Ecoregion", "Scenario")) %>% 
+          mutate(new_Share = MngFor/(MngFor_eco - MngFor_EU)) %>%
+        # calculate the new MngFor
+            mutate(MngFor = MngFor + MngFor_EU*new_Share) %>% 
+              filter(Globiom_Reg != "EU" | Share == 1) %>%
+                select(Scenario, Ecoregion, MngFor, Globiom_Reg, new_Share) %>% rename(Share = new_Share)
+                  Df_EU_reg[is.na(Df_EU_reg)] <- 0
+
+        #### test ####
+          test <- Df_EU_reg %>% filter(Share != 0) %>% group_by(Scenario, Ecoregion) %>% summarise_if(is.numeric, sum, na.rm =TRUE) %>% data.frame()
+          if(round(sum(test$Share)) != nrow(test)) {stop("Error in the calculation of the new shares")}
+        #####
+      
+      Eco_scen_part_EU <- unique(Df_EU_reg %>% select(Scenario, Ecoregion) %>% unite("Ecoscen", Scenario:Ecoregion, remove = TRUE, sep = "/") %>% pull())
+      Df_Globiom <- Df_Globiom %>% unite("Ecoscen", Scenario:Ecoregion, remove = TRUE, sep = "/")
+      Eco_scen <- unique(Df_Globiom %>% select(Ecoscen) %>% pull())
+      Eco_scen_no_part_EU <- dplyr::setdiff(Eco_scen, Eco_scen_part_EU)
+
+      Df_Globiom <- Df_Globiom %>% filter(Ecoscen %in% Eco_scen_no_part_EU)
+      Df_Globiom <- Df_Globiom %>% separate(Ecoscen, c("Scenario", "Ecoregion"), "/")
+      
+      Df_Globiom <- Df_Globiom %>% bind_rows(Df_EU_reg)
+          
       Df_Globiom <- Df_Globiom %>%
                       separate(Scenario, c("Climate", "Forest_use", "Management"), "_")                             # forest intensities are classified only by climate scenario, so the column scenario must be splitted
       
@@ -316,8 +356,7 @@ library(compare)
       # This block splits the columns of For_Extensive, For_Intensive and For_Regrowth in areas belonging to EU and areas outside EU
         names_EU = paste(names_for, "EU", sep = "_")
           Df_fin[,names_EU] = Df_fin[,names_for]
-            Df_fin[Df_fin$Globiom_Reg != "EU", names_EU] <- 0             # areas outside EU are set to 0
-              Df_fin[Df_fin$Globiom_Reg == "EU", names_for] <- 0          # areas inside EU are set to 0
+            Df_fin[, names_EU] <- 0                                       # areas outside EU are set to 0
                 Df_fin <- sum_over_ecoregions(Df_fin)                     # no Globiom level anymore
 
       Df_fin <- Df_fin %>%
@@ -568,63 +607,42 @@ library(compare)
       
     }
     
-    
-    # Df = areas.av.in[[toString(tstep[i])]]
-    # Df_in = areas.av.in[["2000"]]
+    # 
+    # Df = areas.in[[toString(tstep[i])]]
+    # Df_in = areas.in[["2000"]]
     # Area = "MngFor"
     # Area_subset = "sum_EUfor"
     # Receiving_area = "PriFor"
     # scenario_exclusion = c("NaN", "MFM", "noAF")
-    
-    Subset_allocation = function(Df, Df_in, Area, Area_subset, Receiving_area, scenario_exclusion) {
-      # This function considers the following elements: a column (Area) in the input dataframe (Df), a subset of that column (Area_subset), a refence dataframe (Df_in -> referring to a previous year),
-      # another column in Df (Receiving_area) to which part of Area should be allocated, the indication about which scenarios are not concerned (scenario_exclusion).
+
+    # areas_subset_alloc = Subset_allocation(areas_in, areas.in[["2000"]], "MngFor", "sum_EUfor", "PriFor", c("NaN", "MFM", "noAF"))                  # allocation of difference between sum_EUfor in 2000 and sum_EUfor in the ith year to PriFor for the scenario set-aside regular subtraction of the sum of forest use from MngFor for the other scenarios                                                                                              
+
+    Subset_allocation = function(Df, Df_in, Area_subset, Receiving_area, Area) {
+      # This function considers the following elements: a subset of areas (Area_subset), a reference dataframe (Df_in -> referring to a previous year),
+      # another column in Df (Receiving_area) to which Area_subset will be added, a column (Area) from which Area_subset will be subtracted.
       # The aim is to subtract from Area the corresponding subset area in the reference Df_if, and allocate the difference between the two subset areas 
       # (the one in Df and the one in Df_in) to Receiving_area
-      # ! scenario_exclusion is a string vector with three elements, one for each aspect of the scenario (climate, forest use and management). If no restriction is needed for either of them,
-      # write "NaN" as elements of the vector.
+
+      Df[, "Area_in"] = Df_in[, Area_subset]                                                        # creates a column with the reference Area (Area_in)
+      Df[, "Area_new"] = Df[, "Area_in"] - Df[, Area_subset]                                     # calculates the new Area as difference between Area and the reference Area
       
-      do_test = TRUE                                         
-      Df[,"Area_in_subset"] = Df_in[,Area_subset]                                                        # creates a column with the reference Area (Area_in_subset)
-      Df[,"Area_new"] = Df[,Area]-Df[,"Area_in_subset"]                                                  # calculates the new Area as difference between Area and the reference Area
-      areas_excluded <- Df %>% filter( (str_detect(Scenario, toString(scenario_exclusion[1]))) 
-                                      | (str_detect(Scenario, toString(scenario_exclusion[2]))) 
-                                      | (str_detect(Scenario, toString(scenario_exclusion[3]))))  # filters the rows which are not concerned according to given exclusion
+      # Some values in Area_new might be negative, so we should allocate them to the other EU forest categories, accordign to their share in sum_EUfor
       
-      areas_excluded <- areas_excluded %>%
-                          full_join(Df[Df[,Area_subset] == 0,])                                   # filters the rows which are 0 in the involved column
-    
-      areas_included <- dplyr::setdiff(Df, areas_excluded)                                        # filters the rows needed for the allocation
+      Df_fin <- Df %>% mutate(ratio_Clear_cut_EU = Clear_cut_EU/sum_EUfor, ratio_Selection_EU = Selection_EU/sum_EUfor, ratio_Retention_EU = Retention_EU/sum_EUfor) %>%
+              mutate(Area_new_neg = Area_new) %>% mutate(Area_new_neg = case_when(Area_new_neg >= 0 ~ 0, TRUE ~ as.numeric(Area_new_neg))) %>%
+                mutate(ratio_Clear_cut_EU = ratio_Clear_cut_EU*Area_new_neg, ratio_Selection_EU = ratio_Selection_EU*Area_new_neg, ratio_Retention_EU = ratio_Retention_EU*Area_new_neg) %>%
+                  mutate(Clear_cut_EU = Clear_cut_EU - ratio_Clear_cut_EU, Selection_EU = Selection_EU - ratio_Selection_EU, Retention_EU = Retention_EU - ratio_Retention_EU) %>%
+                    mutate(Area_new = case_when(Area_new < 0 ~ 0, TRUE ~ as.numeric(Area_new))) %>% select(-contains("ratio"), -Area_new_neg)
+
+      Df_fin[is.na(Df_fin)] <- 0
+                      
+      # Assign the difference to the Receiving_area
+      Df_fin[, Receiving_area] <- Df_fin[, Receiving_area] + Df_fin[, "Area_new"]
+      # Subtract the difference form Area
+      Df_fin[, Area] <- Df_fin[, Area] - Df_fin[, "Area_new"]
       
-      areas_excluded[,Area] <- areas_excluded[,Area] - areas_excluded[,Area_subset]               # calculates the new areas as difference between the original Area and the subset
-        if (do_test == TRUE) { # test 
-          scenario_test = "RCP_SFM_noAF"
-          ecoregion_test = "PA0608"
-          test1 <- areas_excluded %>% filter(Scenario == scenario_test, Ecoregion == ecoregion_test) 
-          test2 <-Df %>% filter(Scenario == scenario_test, Ecoregion == ecoregion_test)
-          test3 <- test2[,Area] - test2[,Area_subset]
-          if (test3 != test1[,Area]) {print("error in the calculation for the areas not involved in the allocation")}
-        # end of the test
-      }
-      
-      areas_included[,Area] = areas_included[,"Area_new"]                                         # sets Area equal to the one calculated for the allocation process
-      areas_included[,Receiving_area] = areas_included[,Receiving_area] +                         # allocates the difference between the reference Area and the subset Area to the receiving Area
-                                        (areas_included[,"Area_in_subset"] - areas_included[,Area_subset])   
-        if (do_test == TRUE) {
-        # test 
-          scenario_test = "RCP_SFM_AF0"
-          ecoregion_test = "PA0404"
-          test1 <- areas_included %>% filter(Scenario == scenario_test, Ecoregion == ecoregion_test) 
-          test2 <-Df %>% filter(Scenario == scenario_test, Ecoregion == ecoregion_test) 
-          test3 <- test1[,Area] + test1[,Receiving_area] + test1[,Area_subset] + test2[,"Area_in_subset"]
-          test4 <- test2[,Area] + test2[,Receiving_area] + test2[,"Area_in_subset"]
-          if (test3 != test4) {print("error in the allocation for the involved areas")}
-      }
-      
-      Df_fin <- areas_excluded %>% full_join(areas_included) %>%                                  # joins the areas which have undergone the allocation and those which have not
-                  arrange(Scenario, Ecoregion)
-      
-      Df_fin <- Df_fin %>% select(-Area_in_subset, -Area_new, -all_of(Area_subset)) 
+      Df_fin <- Df_fin %>% select(-Area_new, -Area_in, -all_of(Area_subset))
+                      
       return(Df_fin)
       
     }
