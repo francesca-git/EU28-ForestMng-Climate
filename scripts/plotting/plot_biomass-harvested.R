@@ -42,7 +42,7 @@ library(tidyr)                            # dataframe management
 library(abind)                            # dataframe management
 library(tidyverse)                        # dataframe management
 library(stringr)                          # string management
-source("./scripts/plotting/for_WBF/EU_barplots_WBF.R")
+#source("./scripts/plotting/for_WBF/EU_barplots_WBF.R")
 
 #############################################################################################################################################################################
                                                                                 # 1 #
@@ -261,7 +261,7 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
     
     # Save as a png
     
-    ggsave(paste0(plots_path, "EUFootprint&Forest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex_25.png"), width = width_height[1], height = width_height[2], units = "cm")
+    ggsave(paste0(plots_path, "EUFootprint&Forest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex.pdf"), width = width_height[1], height = width_height[2], units = "cm")
     
     write.csv(data_oneyear, paste0(csv_path, "EUdemand_volumes_", year, file_label, "_disaggr.csv"), row.names = FALSE) 
 

@@ -44,7 +44,7 @@ select <- dplyr::select
 #     column: name of the column with the values to be plotted (character vector)
 #     axis_name: label for the y axis (character vector)
 
-plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label, width_height) {
+plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) {
   
     if(missing(data_top)){}
   
@@ -102,10 +102,24 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label, 
     }
     
         # Set the y limits
-
+    
     if(grepl("PDF", axis_name, fixed = TRUE)) {
   
-      ymax_value = 0.4
+      ymax_value = 0.3
+      ymin_value = 0
+      
+    }
+
+    if(grepl("Mha", axis_name, fixed = TRUE)) {
+  
+      ymax_value = 350
+      ymin_value = 0
+      
+    }
+    
+    if(grepl("Mm3", axis_name, fixed = TRUE)) {
+  
+      ymax_value = 1700
       ymin_value = 0
       
     }
@@ -128,7 +142,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label, 
       guides(fill = guide_legend(title = "Category", title.position = "top")) +
       scale_x_discrete(labels = label_scenario) + # assign the names to the labels
       xlab("Scenarios") + ylab(axis_name) +
-      #ylim(ymin_value, ymax_value) + 
+      ylim(ymin_value, ymax_value) + 
       scale_fill_manual(values = pal)
 
   #   if(length(data) > 3) {

@@ -41,13 +41,15 @@ select <- dplyr::select
 # the arguments are 
 #     data: dataframe with the values for each category 
 #     data_top: total value per bar
-#     palette_name: name of the palette according to the Brewer color scale
+#     pal: name of the palette according to the Brewer color scale
+#     column: name of the column with the values to be plotted (character vector)
+#     axis_name: label for the y axis (character vector)
 
-plot.EU.barplot <- function(data, data_top, pal) {
+plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) {
   
-    
+    if(missing(data_top)){}
+
     data <- data %>% filter(Scenario != "AFMfree")
-    data_top <- data_top %>% filter(Scenario != "AFMfree")
 
     # rename the scenarios
     #label_scenario <- c("no AFM (baseline)", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
@@ -55,81 +57,80 @@ plot.EU.barplot <- function(data, data_top, pal) {
 
     data_bu <- data
     data <- data_bu
-    # rename the groups
-    # data <- data %>% unite("Management", Group:Scenario, sep = "!", remove = TRUE)
-    # data <- data %>% mutate(Management = str_replace(Management, "RCP2.6_MFM!noAFM", "RCP2.6 - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "RCP2.6_SFM!noAFM", "RCP2.6 - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "REF_MFM!noAFM", "RCP6.5 (REF) - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "REF_SFM!noAFM", "RCP6.5 (REF) - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "RCP2.6_MFM!AFMfree", "RCP2.6 - Free model!AFMfree"),
-    #                         Management = str_replace(Management, "RCP2.6_SFM!AFMfree", "RCP2.6 - Free model!AFMfree"),
-    #                         Management = str_replace(Management, "REF_MFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree"),
-    #                         Management = str_replace(Management, "REF_SFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree")) %>%
-    #                     separate(Management, c("Group", "Scenario"), sep = "!")
-    # 
+    
     data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 - Set-aside"),
                             Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside")) 
 
-    # data_top <- data_top %>% unite("Management", Group:Scenario, sep = "!", remove = TRUE)
-    # data_top <- data_top %>% mutate(Management = str_replace(Management, "RCP2.6_MFM!noAFM", "RCP2.6 - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "RCP2.6_SFM!noAFM", "RCP2.6 - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "REF_MFM!noAFM", "RCP6.5 (REF) - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "REF_SFM!noAFM", "RCP6.5 (REF) - Baseline!noAFM"),
-    #                         Management = str_replace(Management, "RCP2.6_MFM!AFMfree", "RCP2.6 - Free model!AFMfree"),
-    #                         Management = str_replace(Management, "RCP2.6_SFM!AFMfree", "RCP2.6 - Free model!AFMfree"),
-    #                         Management = str_replace(Management, "REF_MFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree"),
-    #                         Management = str_replace(Management, "REF_SFM!AFMfree", "RCP6.5 (REF) - Free model!AFMfree")) %>%
-    #                     separate(Management, c("Group", "Scenario"), sep = "!")
-    data_top <- data_top %>% mutate(Group = str_replace(Group,  "REF_MFM", "RCP6.5 - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 - Set-aside"),
-                             Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
     
     data <- data %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
                             Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50")) 
-    data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
-                            Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50"))
     
     #to keep the same order between the scenarios
     data$Scenario <- factor(data$Scenario, levels=unique(data$Scenario))
-    data_top$Scenario <- factor(data_top$Scenario, levels=unique(data_top$Scenario))
+    
     
     # set the order of the groups
     data$Group <- factor(data$Group, levels = c("RCP6.5 - Close-to-nature", "RCP6.5 - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
-    data_top$Group <- factor(data_top$Group, levels = c("RCP6.5 - Close-to-nature", "RCP6.5 - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
 
-    # set the maximum value of the y axis according to the max value of the PDF 
+    # set the maximum value of the y axis 
 
-      #max_data_top <- max(max(data_top$PDFx100), max(data_top$upper95))
-      max_per_scenario <- data %>% filter(PDFx100 >= 0) %>% group_by(Group, Scenario) %>% summarise(max = sum(PDFx100))
-      max_per_scenario <- max(max_per_scenario$max, max(data_top$upper95))
+      if(grepl("PDF", axis_name, fixed = TRUE)) {
+    
+        ymax_value = 0.4
+        ymin_value = 0
+        
+      }
+  
+      if(grepl("Mha", axis_name, fixed = TRUE)) {
+    
+        ymax_value = 350
+        ymin_value = 0
+        
+      }
       
-      if((round(max_per_scenario, digits = 3) - max_per_scenario) < 0.005)
-        { ymax_value <- (round(max_per_scenario, digits = 2) + 0.01)
-            } else { ymax_value <- round(max_per_scenario, digits = 2) }
-
-      min_per_scenario <- data %>% filter(PDFx100 < 0) %>% group_by(Group, Scenario) %>% summarise(min = sum(PDFx100))
-      min_per_scenario <- min(min_per_scenario$min, min(data_top$lower95))
+      if(grepl("Mm3", axis_name, fixed = TRUE)) {
+    
+        ymax_value = 1700
+        ymin_value = 0
+        
+      }
+    
+  # Add the points and the CI if the data loaded are labeled accordingly
+    if(grepl("bs", file_label, fixed = TRUE)) { # bs means bootstrapping
       
-      if (min_per_scenario >= 0) {ymin_value = 0} else {
-        ymin_value <- min_per_scenario }
+      data_top <- data_top %>% filter(Scenario != "AFMfree")
+    
+      data_top <- data_top %>% mutate(Group = str_replace(Group,  "REF_MFM", "RCP6.5 - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 - Set-aside"),
+                                 Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
+    
+      data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
+                                Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50"))
+        
+      data_top$Scenario <- factor(data_top$Scenario, levels=unique(data_top$Scenario))
+        
+      data_top$Group <- factor(data_top$Group, levels = c("RCP6.5 - Close-to-nature", "RCP6.5 - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
 
-    #ymax_value = 0.3
-    # for EU footprint with fixed legend  
-    # ymin_value = -0.02
-    # ymax_value = 0.3
-    # for EU footprint with fixed legend
-    # ymin_value = 0
-    # ymax_value = 0.5
-      
-    # for EU internal forest with fixed legend
-    ymin_value = -0.05
-    ymin_value = 0
-    ymax_value = 0.1
+      # Define the y limits 
+        max_per_scenario <- data %>% filter(!! sym(column) >= 0) %>% group_by(Scenario) %>% summarise(max = sum(!! sym(column)))
+        max_per_scenario <- max(max_per_scenario$max, max(data_top$upper95))
+
+        if((round(max_per_scenario, digits = 3) - max_per_scenario) < 0.005)
+          { ymax_value <- (round(max_per_scenario, digits = 2) + 0.01)
+              } else { ymax_value <- round(max_per_scenario, digits = 2) }
+
+        min_per_scenario <- data %>% filter(!! sym(column) < 0) %>% group_by(Scenario) %>% summarise(min = sum(!! sym(column)))
+          min_per_scenario <- min(min_per_scenario$min, min(data_top$lower95))
+
+        if (min_per_scenario >= 0) {ymin_value = 0} else {
+          ymin_value <- min_per_scenario }
+
+      }
 
     # plot
     
     figure <-
       ggplot(data)+
-      geom_bar(aes(x = Scenario, y = PDFx100, fill = Category), size = 0.2, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
+      geom_bar(aes(x = Scenario, y = !! sym(column), fill = Category), size = 0.2, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
       theme_classic() + # select the theme of the plot
       #theme_minimal(base_size = 15) + # select the theme of the plot
       theme(legend.position = "right", 
@@ -141,17 +142,21 @@ plot.EU.barplot <- function(data, data_top, pal) {
            legend.key.size = unit(0.6, "cm")) +
       guides(fill = guide_legend(title = "Land use category", title.position = "top")) +
       scale_x_discrete(labels = label_scenario) + # assign the names to the labels
-      xlab("Scenarios") + ylab("global PDF (%)") +
+      xlab("Scenarios") + ylab(axis_name) +
       #scale_fill_brewer(palette = palette_name, direction = -1) +
       scale_fill_manual(values = pal) +
       ylim(ymin_value, ymax_value) + 
-      geom_point(data = data_top, aes(x  = Scenario, y = PDFx100), color = "black", size = 1) +
       #theme(panel.border = element_rect(color = "black", fill = NA)) +
-      geom_errorbar(data = data_top, aes(x = Scenario, y = PDFx100, ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05) +
       # guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
       facet_wrap(~ Group, ncol = 2) 
       # facet_grid(. ~ Group) 
 
+     # Include the CI if needed
+    if(grepl("bs", file_label, fixed = TRUE)) {
+    figure +
+      geom_point(data = data_top, aes(x  = Scenario, y = !! sym(column)), color = "black", size = 1) +
+      geom_errorbar(data = data_top, aes(x = Scenario, y = !! sym(column), ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05)
+    }
     
     return(figure)
     
@@ -174,7 +179,6 @@ plot.EU.barplot <- function(data, data_top, pal) {
 # Date: September 2020
 # Author: Francesca Rosa
 
-  
   EUfootprint.barplot.EP <- function(csv_path, file_label, plots_path, year) {
       # csv_path = path of the .csv files where the data to plot are stored (character vector)
       # file_label = identification words which selects the file (character vector)
@@ -197,8 +201,8 @@ plot.EU.barplot <- function(data, data_top, pal) {
                               Category = str_replace(Category, "Import_Forest", "Import - Managed forests"))
       # set the order of the categories
       data$Category <- factor(data$Category, levels = c("Import - Energy plantations", "Import - Managed forests", "EU28 Managed forests (domestic use)", "EU28 Lignocel. energy crops (domestic use)"))
-      
-      figure <- plot.EU.barplot(data, data_top, pal)
+
+      figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
       figure
       # save as pdf
       #ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_EP_or.pdf"), width = 30, height = 11, units = "cm")
@@ -237,7 +241,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
     
     labs = c("Clear cut", "Retention", "Selection", "Other management")
 
-    figure <- plot.EU.barplot(data, data_top, pal)
+    figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
     figure
     
     ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_noEPex.pdf"), width = 23, height = 10, units = "cm")
@@ -279,7 +283,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
     
     labs = c("Clear cut", "Retention", "Selection", "Other management", "Energy crops")
 
-    figure <- plot.EU.barplot(data, data_top, pal)
+    figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
     figure
     
     ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex.pdf"), width = 22, height = 15, units = "cm")
@@ -322,7 +326,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
       # set the order of the categories
       data$Category <- factor(data$Category, levels = c("EU28 Forests (for domestic use)", "Import Forests"))
       
-      figure <- plot.EU.barplot(data, data_top, pal)
+      figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
       figure
       # save as pdf
       ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_noEP.pdf"), width = 20, height = 16, units = "cm")
@@ -359,7 +363,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
     
     labs = c("Clear cut", "Retention", "Selection", "Other management")
 
-    figure <- plot.EU.barplot(data, data_top, pal)
+    figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
     figure
     
     ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_noEPnoex.pdf"), width = 20, height = 16, units = "cm")
@@ -411,7 +415,7 @@ plot.EU.barplot <- function(data, data_top, pal) {
       data$Category <- factor(data$Category, levels = c("EU28 Lignocel. energy crops (domestic use)", "EU28 Managed forests (domestic use)", "Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
                                                         "Import - Selection system", "Import - Selective logging"))
       
-      figure <- plot.EU.barplot(data, data_top, pal)
+      figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
       figure
       # save as pdf
       #ggsave(paste0(plots_path, "EUFootprint_", year, "_", palette_name, file_label, "_EP_or.pdf"), width = 30, height = 11, units = "cm")
@@ -420,4 +424,215 @@ plot.EU.barplot <- function(data, data_top, pal) {
   }
   
 
+#############################################################################################################################################################################
+                                                                                # 3 #
+#############################################################################################################################################################################
 
+
+#############################################################################################################################################################################
+
+                                                                  # 5) EU FOOTPRINT and EU FOREST - BARPLOT all disaggregated #
+
+#############################################################################################################################################################################
+
+# General task: create a barplot of footprints of the various climate mitigation scenarios and forest use scenarios with the disaggregation also at EU level
+# Date: June 2022
+# Author: Francesca Rosa
+
+  
+  EU.barplot.EP.all.dis <- function(csv_path, file_label, plots_path, year, width_height) {
+      # csv_path = path of the .csv files where the data to plot are stored (character vector)
+      # file_label = identification words which selects the file (character vector)
+      # plots_path = folder where the plots will be saved (character vector)
+      # year = year that will be plotted (number)
+    
+      # Choose the palette
+      
+      palette_name = "Brewer_VG"
+      pal_EU = c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8")
+      pal_im = rev(c("#D9F0D3", "#A6DBA0", "#5AAE61", "#1B7837", "#00441B"))
+            
+      
+      # Load the data
+        # Load the disaggregated data
+        data <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_EP_im-for-disaggr.csv"), header = TRUE) %>%
+              mutate(Category = str_replace(Category, "Import_Energy_plantations", "Energy_plantations_im"))  # Rename one of the category to contain "_im"
+        data_EU <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE) %>%
+                    filter(Category != "Other_management" & Category != "EP_EU")
+        # Rename the categories to make them handier
+        data_EU <- data_EU %>% mutate(Category = str_replace(Category, "Clear_cut", "Clear_cut_EU"),
+                                Category = str_replace(Category, "Retention", "Retention_EU"),
+                                Category = str_replace(Category, "Selection", "Selection_EU"),
+                                Category = str_replace(Category, "Timber", "Timber_EU"))
+        
+        # Remove the grouped Category for EU internal impacts
+        data <- data %>% filter(Category != "EU28_Forest_net") %>% full_join(data_EU) %>%
+          full_join(data_EU)
+                      
+        # Load the cumulative data and subtract the share of "Other_management" (see previous function)
+          data_top <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_top_EP.csv"), header = TRUE)
+          data_other_manag <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE)
+          data_other_manag <- data_other_manag %>% filter(Category == "Other_management")
+          data_other_manag <- data_other_manag %>% rename(Values = PDFx100)
+          data_top <- data_top %>% full_join(data_other_manag) %>% 
+            mutate(ratio = Values/PDFx100, 
+                PDFx100 = PDFx100 - Values)
+          data_top <- data_top %>% mutate(lower95 = lower95 - lower95*ratio, upper95 = upper95 - upper95*ratio) %>%
+            select(-ratio, -Values, -Category)
+
+      rm(data_other_manag)
+      
+      # Clean and arrange the data 
+        data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops"), 
+                                Category = str_replace(Category, "Clear_cut_EU", "EU28 Clear cut"),
+                                Category = str_replace(Category, "Retention_EU", "EU28 Retention"),
+                                Category = str_replace(Category, "Selection_EU", "EU28 Selection"),
+                                Category = str_replace(Category, "Timber_EU", "EU28 Timber"),
+                                Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
+                                Category = str_replace(Category, "Pulp_Timber_Plantation_im", "Import - Timber and pulp plantations"),
+                                Category = str_replace(Category, "Clear_cut_im", "Import - Clear cut"),
+                                Category = str_replace(Category, "Selection_im", "Import - Selection"),
+                                Category = str_replace(Category, "Selective_im", "Import - Selective logging"))
+        
+        data <- data %>% filter(Category != "EU28 Timber")
+      
+        data$Category <- factor(data$Category, levels = c(rev(c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection", "Import - Selective logging")), rev(c("EU28 Lignocel. energy crops", 
+                                                        "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))))
+      
+      pal = c(rev(pal_im), rev(pal_EU)) 
+        
+      # Plot
+      figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
+      figure
+      
+      # Save as png
+      ggsave(paste0(plots_path, "EUFootprint&Forest_", year, "_", palette_name, file_label, "_EP_im-for-all-disaggr.pdf"), width = width_height[1], height = width_height[2], units = "cm")
+
+  }
+  
+
+
+
+#############################################################################################################################################################################
+                                                                                # 6 #
+#############################################################################################################################################################################
+
+
+#############################################################################################################################################################################
+
+                                                                  # 6) EU DEMAND AREAS - BARPLOT #
+
+#############################################################################################################################################################################
+
+# General task: create a barplot of areas to meet EU demand in the various climate mitigation scenarios and forest use scenarios with the disaggregation also at EU level
+# Date: June 2022
+# Author: Francesca Rosa
+  
+  EUFootprint.areas.barplot.EP <- function(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height) {
+      # aggr_plot_path_areas = path of the .csv files where the data to plot are stored (character vector)
+      # file_label = identification words which selects the file (character vector)
+      # plots_path = folder where the plots will be saved (character vector)
+      # year = year that will be plotted (number)
+
+        pal_im = c("#A6DBA0", "#008837")
+        pal_EU = c("#C2A5CF", "#7B3294")
+        palette_name = "Brewer_VG"
+        pal = c(pal_im, pal_EU) 
+
+      # Load the data
+      data <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year,"_", label_timber, "_disaggr.csv"), header = TRUE)
+      
+      # Clean and arrange the data
+      
+      data <- data %>% pivot_wider(names_from = Category, values_from = Values) %>% data.frame() %>%
+        # Group the data to be grouped
+        transmute(Group = Group, Scenario = Scenario, High_intensity_EU = EP_EU + EP_conv_EU + For_ClearCut_EU + For_TimberPlant_EU + For_Retention_EU, 
+                  Low_intensity_EU = For_SelectionSystem_EU, # + ForOther_Extensive_EU + ForOther_Intensive_EU,
+               High_intensity_im = EP_conv_im + For_PlantationFuel_im + For_ClearCut_im, Low_intensity_im = For_SelectionSystem_im + For_Selective_im) %>%
+                pivot_longer(cols = contains("_EU") | contains("_im"), names_to = "Category", values_to = "Values") %>% data.frame()
+      
+      # Clean and arrange the data 
+      data <- data %>% mutate(Category = str_replace(Category, "High_intensity_EU", "EU28 - High-intensity management"), 
+                              Category = str_replace(Category, "Low_intensity_EU", "EU28 - Low-intensity management"),
+                              Category = str_replace(Category, "High_intensity_im", "Import - High-intensity management"), 
+                              Category = str_replace(Category, "Low_intensity_im", "Import - Low-intensity management"))
+      
+     # Set the order of the categories
+      data$Category <- factor(data$Category, levels =c("Import - Low-intensity management",  "Import - High-intensity management", 
+                                                                       "EU28 - Low-intensity management", "EU28 - High-intensity management"))
+    
+      # Plot
+      figure <- plot.EU.barplot(data = data, pal = pal, column = "Values", axis_name = "Mha", file_label = file_label)
+      figure
+      
+      # Save as png
+      ggsave(paste0(plots_path, "EUFootprint_areas_", year, "_", palette_name, "_", label_timber, file_label, "_EP_im_int-ext.pdf"), width = width_height[1], height = width_height[2], units = "cm")
+
+  }
+  
+
+#############################################################################################################################################################################
+                                                                                # 7 #
+#############################################################################################################################################################################
+
+
+#############################################################################################################################################################################
+
+                                                                  # 7) EU FOREST AND DEMAND AREAS - BARPLOT #
+
+#############################################################################################################################################################################
+
+# General task: create a barplot of areas to meet EU demand in the various climate mitigation scenarios and forest use scenarios with the disaggregation also at EU level
+# Date: June 2022
+# Author: Francesca Rosa
+
+EU.areas.barplot.EP.dis <- function(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height) {
+      # aggr_plot_path_areas = path of the .csv files where the data to plot are stored (character vector)
+      # file_label = identification words which selects the file (character vector)
+      # plots_path = folder where the plots will be saved (character vector)
+      # year = year that will be plotted (number)
+
+      # Choose the palette
+
+      palette_name = "Brewer_VG"
+      pal_EU = c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8")
+      pal_im = rev(c("#D9F0D3", "#A6DBA0", "#5AAE61", "#1B7837", "#00441B"))
+            
+      # Load and prepare the data 
+      data <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year,"_", label_timber, "_disaggr.csv"), header = TRUE)
+      data_top <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year, "_", label_timber, "_top_EP.csv"), header = TRUE)
+      
+      data <- data %>% pivot_wider(names_from = Category, values_from = Values) %>%
+              mutate(EU28_Energy_crops = EP_EU + EP_conv_EU, Energy_plantations_im = EP_conv_im + For_PlantationFuel_im) %>% 
+                  select(-EP_conv_EU, -EP_conv_im, -EP_EU, -ForOther_Extensive_EU, -ForOther_Intensive_EU, -For_PlantationFuel_im) %>%
+                    pivot_longer(cols = (contains("For") | contains("_im") | contains("EU")), names_to = "Category", values_to = "Values") %>%
+                      data.frame()
+      
+      data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops"), 
+                              Category = str_replace(Category, "For_ClearCut_EU", "EU28 Clear cut"),
+                              Category = str_replace(Category, "For_Retention_EU", "EU28 Retention"),
+                              Category = str_replace(Category, "For_SelectionSystem_EU", "EU28 Selection"),
+                              Category = str_replace(Category, "For_TimberPlant_EU", "EU28 Timber"),
+                              Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
+                              Category = str_replace(Category, "For_TimberPlant_im", "Import - Timber and pulp plantations"),
+                              Category = str_replace(Category, "For_ClearCut_im", "Import - Clear cut"),
+                              Category = str_replace(Category, "For_SelectionSystem_im", "Import - Selection"),
+                              Category = str_replace(Category, "For_Selective_im", "Import - Selective logging"))
+
+        data <- data %>% filter(Category != "EU28 Timber")
+
+        data$Category <- factor(data$Category, levels = c(rev(c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
+                                                        "Import - Selection", "Import - Selective logging")), rev(c("EU28 Lignocel. energy crops", 
+                                                        "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))))
+
+      pal = c(rev(pal_im), rev(pal_EU)) 
+  
+      # Plot
+      figure <- plot.EU.barplot(data = data, pal = pal, column = "Values", axis_name = "Mha", file_label = file_label)
+        figure
+        
+      ggsave(paste0(plots_path, "EUFootprint&Forest_areas_", year, "_", palette_name, file_label, "_EPnoex_all-dis.pdf"), width = width_height[1], height = width_height[2], units = "cm")
+
+  }
+      
