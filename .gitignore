@@ -2,6 +2,5 @@ temporary_old/*
 RR_distributions/*
 R-files/*
 scripts/plotting/maps_shapefiles/WWF_Ecoregions/*
-scripts/plotting/for_SETAC/*
 data/model_parameters/ecoregions_data/rr_z*
 .Rhistory
