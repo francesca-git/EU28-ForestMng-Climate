@@ -7,8 +7,8 @@
 ####################
 ############################ SET WORKING DIRECTORY ################################
 
-#setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
-setwd("/home/frrosa/R/forest-management/") 
+setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
+#setwd("/home/frrosa/R/forest-management/") 
 
 ############################ LOAD LIBRARIES ################################
 
@@ -127,7 +127,7 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
       dir.create(plots_path) # create the director
       dir.create(csv_path)
       
-  ################# AGGREGATE DATA OVER THE ECOREGIONSAND/OR LAND USES #######################
+  ################# AGGREGATE DATA OVER THE ECOREGIONS AND/OR LAND USES #######################
       
     # General task: convert .csv model results to an aggregated .Rdata file
     
