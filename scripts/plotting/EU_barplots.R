@@ -49,38 +49,83 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
   
     if(missing(data_top)){}
 
-    data <- data %>% filter(Scenario != "AFMfree")
-
     # rename the scenarios
-    #label_scenario <- c("no AFM (baseline)", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
-    label_scenario <- c("Baseline (noAFM)", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
 
     data_bu <- data
     data <- data_bu
     
-    data <- data %>% mutate(Group = str_replace(Group, "REF_MFM", "RCP6.5 - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 - Set-aside"),
-                            Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside")) 
+    data <- data %>% mutate(Pathway = str_replace(Pathway, "REF", "RCP6.5"), Group = str_replace(Group, "SFM", "Set-aside"),
+                            Group = str_replace(Group, "MFM", "Close-to-nature")) 
 
     
     data <- data %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
                             Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50")) 
     
+        data <- data %>% filter(Scenario != "AFMfree") # & Scenario != "AFM12.5" & Scenario != "AFM37.5")
+         #label_scenario <- c("no AFM (baseline)", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+          label_scenario <- c("Baseline (noAFM)", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+
     #to keep the same order between the scenarios
-    data$Scenario <- factor(data$Scenario, levels=unique(data$Scenario))
+    data$Scenario <- factor(data$Scenario, levels = unique(data$Scenario))
     
+    # set the order of the pathways and the groups
+    data$Group <- factor(data$Group, levels = c("Close-to-nature", "Set-aside"))
+    data$Pathway <- factor(data$Pathway, levels = c("RCP6.5", "RCP2.6"))
     
-    # set the order of the groups
-    data$Group <- factor(data$Group, levels = c("RCP6.5 - Close-to-nature", "RCP6.5 - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
+  # Add the points and the CI if the data loaded are labeled accordingly
+    if(grepl("PDF", axis_name, fixed = TRUE)) { # bs means bootstrapping
+      
+      data_top_bu <- data_top
+      data_top <- data_top_bu
+      
+      data_top <- data_top %>% mutate(Pathway = str_replace(Pathway, "REF", "RCP6.5"), Group = str_replace(Group, "SFM", "Set-aside"),
+                                      Group = str_replace(Group, "MFM", "Close-to-nature")) 
+    
+      data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
+                                Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50"))
+      
+              data_top <- data_top %>% filter(Scenario != "AFMfree") # & Scenario != "AFM12.5" & Scenario != "AFM37.5")
+
+      data_top$Scenario <- factor(data_top$Scenario, levels=unique(data_top$Scenario))
+        
+      data_top$Group <- factor(data_top$Group, levels = unique(data$Group))
+      data_top$Pathway <- factor(data_top$Pathway, levels = unique(data$Pathway))
+
+      # Define the y limits 
+      
+      
+        # max_per_scenario <- data %>% filter(!! sym(column) >= 0) %>% group_by(Scenario, Group) %>% summarise(max = sum(!! sym(column)))
+        # max_per_scenario <- max(max_per_scenario$max, max(data_top$upper95))
+        # 
+        # if((round(max_per_scenario, digits = 3) - max_per_scenario) < 0.005)
+        #   { ymax_value <- (round(max_per_scenario, digits = 2) + 0.01)
+        #       } else { ymax_value <- round(max_per_scenario, digits = 2) }
+        # 
+        # min_per_scenario <- data %>% filter(!! sym(column) < 0) %>% group_by(Scenario) %>% summarise(min = sum(!! sym(column)))
+        #   min_per_scenario <- min(min_per_scenario$min, min(data_top$lower95))
+        # 
+        # if (min_per_scenario >= 0) {ymin_value = 0} else {
+        #   ymin_value <- min_per_scenario }
+
+      }
 
     # set the maximum value of the y axis 
-
-      if(grepl("PDF", axis_name, fixed = TRUE)) {
-    
-        ymax_value = 0.4
-        ymin_value = 0
         
-      }
+      if(grepl("PDF", axis_name, fixed = TRUE) && grepl("bs", file_label, fixed = TRUE)) {
+      
+          ymax_value = 0.47
+          ymin_value = 0
+          
+        }
   
+      
+      if(grepl("PDF", axis_name, fixed = TRUE) && length(pal) < 9) {
+      
+          ymax_value = 0.1125
+          ymin_value = 0
+          
+      }
+    
       if(grepl("Mha", axis_name, fixed = TRUE)) {
     
         ymax_value = 350
@@ -95,51 +140,23 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
         
       }
     
-  # Add the points and the CI if the data loaded are labeled accordingly
-    if(grepl("bs", file_label, fixed = TRUE)) { # bs means bootstrapping
-      
-      data_top <- data_top %>% filter(Scenario != "AFMfree")
-    
-      data_top <- data_top %>% mutate(Group = str_replace(Group,  "REF_MFM", "RCP6.5 - Close-to-nature"), Group = str_replace(Group, "REF_SFM", "RCP6.5 - Set-aside"),
-                                 Group = str_replace(Group, "RCP2.6_MFM", "RCP2.6 - Close-to-nature"), Group = str_replace(Group, "RCP2.6_SFM", "RCP2.6 - Set-aside"))
-    
-      data_top <- data_top %>% mutate(Scenario = str_replace(Scenario, "AFM25", "AFM12.5"), Scenario = str_replace(Scenario, "AFM50", "AFM25"),
-                                Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50"))
-        
-      data_top$Scenario <- factor(data_top$Scenario, levels=unique(data_top$Scenario))
-        
-      data_top$Group <- factor(data_top$Group, levels = c("RCP6.5 - Close-to-nature", "RCP6.5 - Set-aside", "RCP2.6 - Close-to-nature", "RCP2.6 - Set-aside"))
-
-      # Define the y limits 
-        max_per_scenario <- data %>% filter(!! sym(column) >= 0) %>% group_by(Scenario) %>% summarise(max = sum(!! sym(column)))
-        max_per_scenario <- max(max_per_scenario$max, max(data_top$upper95))
-
-        if((round(max_per_scenario, digits = 3) - max_per_scenario) < 0.005)
-          { ymax_value <- (round(max_per_scenario, digits = 2) + 0.01)
-              } else { ymax_value <- round(max_per_scenario, digits = 2) }
-
-        min_per_scenario <- data %>% filter(!! sym(column) < 0) %>% group_by(Scenario) %>% summarise(min = sum(!! sym(column)))
-          min_per_scenario <- min(min_per_scenario$min, min(data_top$lower95))
-
-        if (min_per_scenario >= 0) {ymin_value = 0} else {
-          ymin_value <- min_per_scenario }
-
-      }
-
     # plot
     
     figure <-
       ggplot(data)+
-      geom_bar(aes(x = Scenario, y = !! sym(column), fill = Category), size = 0.2, width = 0.5, stat = "identity", position = position_stack(reverse = FALSE)) +
-      theme_classic() + # select the theme of the plot
+      geom_bar(aes(x = Scenario, y = !! sym(column), fill = Category), size = 0.2, width = 0.45, stat = "identity", position = position_stack(reverse = FALSE)) +
+      #theme_classic() + # select the theme of the plot
       #theme_minimal(base_size = 15) + # select the theme of the plot
-      theme(legend.position = "right", 
-           legend.text = element_text(size = 12),
-           axis.text = element_text(size = 12),
+      theme_minimal_hgrid() +
+      theme(legend.position = "none", 
+           legend.text = element_text(size = 15),
+           axis.text = element_text(size = 15),
            axis.text.x = element_text(angle = 90),
-           axis.title = element_text(size = 12),
-           legend.title = element_text(size = 13),
-           legend.key.size = unit(0.6, "cm")) +
+           axis.title = element_text(size = 15),
+           legend.title = element_text(size = 15),
+           legend.key.size = unit(0.6, "cm"),
+           strip.background = element_rect(fill = "gray"),
+           panel.background = element_rect(fill = "white")) +
       guides(fill = guide_legend(title = "Land use category", title.position = "top")) +
       scale_x_discrete(labels = label_scenario) + # assign the names to the labels
       xlab("Scenarios") + ylab(axis_name) +
@@ -148,15 +165,16 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       ylim(ymin_value, ymax_value) + 
       #theme(panel.border = element_rect(color = "black", fill = NA)) +
       # guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
-      facet_wrap(~ Group, ncol = 2) 
-      # facet_grid(. ~ Group) 
+      #facet_wrap(Pathway ~ Group, nrow = 1) #horizontal
+      facet_wrap(Pathway ~ Group, ncol = 1) #vertical
+      #facet_grid(Pathway ~ Group) 
 
      # Include the CI if needed
     if(grepl("bs", file_label, fixed = TRUE)) {
     figure +
-      geom_point(data = data_top, aes(x  = Scenario, y = !! sym(column)), color = "black", size = 1) +
-      geom_errorbar(data = data_top, aes(x = Scenario, y = !! sym(column), ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05)
-    }
+        geom_errorbar(data = data_top, aes(x = Scenario, y = !! sym(column), ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05) +
+        geom_point(data = data_top, aes(x  = Scenario, y = !! sym(column)), color = "black", size = 1)
+      }
     
     return(figure)
     
@@ -267,26 +285,38 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
     data <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE)
     data_top <- read.csv(paste0(csv_path, "EUForest_", year, file_label,"_top_EPnoex.csv"), header = TRUE)
 
-    pal = rev(c("#EDF8E9", "#BAE4B3", "#74C476", "#31A354", "#006D2C")) # Greens palette of Brewer palette
+    #pal = rev(c("#EDF8E9", "#BAE4B3", "#74C476", "#31A354", "#006D2C")) # Greens palette of Brewer palette
     # pal = c( "#440154FF", "#414487FF", "#2A788EFF", "#22A884FF", "#7AD151FF")
     #pal = c("#FDE725FF", "#94D840FF", "#3CBC75FF", "#1F968BFF", "2D718EFF", "#404788FF")
-    #pal = c("#C2DF23FF", "#51C56AFF", "#1E9B8AFF", "#2D708EFF", "#433E85FF") 
-    palette_name = "Greens"
+    #pal = c("#C2DF23FF", "#51C56AFF", "#1E9B8AFF", "#2D708EFF", "#433E85FF")
+    pal = rev(c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8"))
+    palette_name = "Purples"
+    #pal = rev(c("#762A83", "#9970AB", "#C2A5CF", "#E7D4E8"))
+    # pal = rev(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"))
+    # palette_name = "Set1"
+
+    # palette_name = "BrBG"
+    # pal = (c("#8C510A", "#BF812D", "#DFC27D", "#F6E8C3"))
+    # palette_name = "BrBG_rev"
+    # pal = (c("#C7EAE5", "#80CDC1", "#35978F", "#01665E"))
     
      if(grepl("timber", file_label, fixed = TRUE)) {
-        data$Category <- factor(data$Category, levels = c("Timber", "Clear_cut", "Retention", "Selection", "Other_management", "EP_EU"), labels = c("Timber", "Clear cut", "Retention", "Selection", "Other management", "Lignocellulosic energy crops"))
-                pal = rev(c("#EDF8E9", "#BAE4B3", "#74C476", "#31A354", "#006D2C", "#003b18"))
+        data$Category <- factor(data$Category, levels = c("Timber", "Selection", "Retention", "Clear_cut", "EP_EU"), labels = c("Timber", "Selection", "Retention", "Clear cut", "Lignocellulosic energy crops"))
+                pal = (c("#762A83", "#9970AB", "#C2A5CF", "#E7D4E8", "#40004B"))
         } else { 
-        data <- data %>% filter(Category != "Timber")
-        data$Category <- factor(data$Category, levels = c("Clear_cut", "Retention", "Selection", "Other_management", "EP_EU"), labels = c("Clear cut", "Retention", "Selection", "Other management", "Lignocel. energy crops"))
+        data <- data %>% filter(Category != "Timber" & Category != "Other_management")
+        data$Category <- factor(data$Category, levels = c("Selection", "Retention", "Clear_cut",  "EP_EU"), labels = c("Selection", "Retention", "Clear cut","Lignocel. energy crops"))
       }
     
-    labs = c("Clear cut", "Retention", "Selection", "Other management", "Energy crops")
+    labs = c("Selection","Retention",  "Clear cut", "Lignocel. energy crops")
 
-    figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
+    data <- data %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
+    data_top <- data_top %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
+      
+    figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name = "global PDF (%)", file_label = file_label)
     figure
     
-    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex.pdf"), width = 22, height = 15, units = "cm")
+    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex_white_test.png"), width = width_height[1], height = width_height[2], units = "cm")
     #ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex_or.pdf"), width = 30, height = 11, units = "cm")
 
   }
@@ -449,10 +479,16 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       # Choose the palette
       
       palette_name = "Brewer_VG"
-      pal_EU = c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8")
+      #palette_name = "BrBG_rev"
+      pal_EU = (c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8"))
+      #pal_EU = (c("#8C510A", "#BF812D", "#DFC27D", "#F6E8C3"))
       pal_im = rev(c("#D9F0D3", "#A6DBA0", "#5AAE61", "#1B7837", "#00441B"))
-            
+      #pal_im = rev(c("#C7EAE5", "#80CDC1", "#35978F", "#01665E", "#003C30"))
       
+      # palette_name = "Set1"
+      # pal_EU = (c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"))
+      # pal_im = (c("#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"))
+
       # Load the data
         # Load the disaggregated data
         data <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_EP_im-for-disaggr.csv"), header = TRUE) %>%
@@ -501,13 +537,16 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
                                                         "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))))
       
       pal = c(rev(pal_im), rev(pal_EU)) 
-        
+      
+      data <- data %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
+      data_top <- data_top %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
+      
       # Plot
       figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDFx100", axis_name ="global PDF (%)", file_label = file_label)
       figure
       
       # Save as png
-      ggsave(paste0(plots_path, "EUFootprint&Forest_", year, "_", palette_name, file_label, "_EP_im-for-all-disaggr.pdf"), width = width_height[1], height = width_height[2], units = "cm")
+      ggsave(paste0(plots_path, "EUFootprint&Forest_", year, "_", palette_name, file_label, "_EP_im-for-all-disaggr_ver_white_test.png"), width = width_height[1], height = width_height[2], units = "cm")
 
   }
   
