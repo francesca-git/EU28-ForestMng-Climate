@@ -7,8 +7,8 @@
 ####################
 ############################ SET WORKING DIRECTORY ################################
 
-#setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
-setwd("/home/frrosa/R/forest-management/") 
+setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
+#setwd("/home/frrosa/R/forest-management/") 
 
 ############################ LOAD LIBRARIES ################################
 
@@ -187,7 +187,6 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
     # Select the year to be plotted and if the exports are included or not 
           
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
-    energy_exports = "EPnoex-all-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
 
       ################# GLOBAL TIME SERIES AND AREAS (DISAGGREGATED) #######################
           
@@ -197,17 +196,25 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
       ################# BARPLOT OF EU FOOTPRINT  #######################
           
           source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
+          library(cowplot)
+          energy_exports = "EPnoex-all-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
           if (energy_exports == "ex") { EUfootprint.barplot.EP(csv_path, file_label, plots_path, year) # EU_barplots.R
             }else if(energy_exports == "EPnoex") { EUfootprint.barplot.EP(csv_path, file_label, plots_path, year)
               }else if(energy_exports == "noEPnoex") { EUfootprint.barplot.noEP(csv_path, file_label, plots_path, year)
                 }else if(energy_exports == "EPnoex-dis") { EUfootprint.barplot.EP.dis(csv_path, file_label, plots_path, year)
                   }else if(energy_exports == "EPnoex-all-dis") {
-                    width_height = c(27, 15)
+                    width_height = c(16, 30)
+                    #width_height = c(30, 11)
+                    width_height = c(9, 27)
+                    width_height = c(27, 9)
                     EU.barplot.EP.all.dis(csv_path, file_label, plots_path, year, width_height)
                   }
   
       ################# BARPLOT OF EU INTERNAL FOREST IMPACTS #######################
-          
+          source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
+          width_height = c(14, 25)
+          #width_height = c(27, 9)
+          energy_exports = "EPnoex"
           if (energy_exports == "ex") { EUinternal.barplot.noEPex(csv_path, file_label, plots_path, year) # EU_barplots.R
             }else if(energy_exports == "EPnoex") { EUinternal.barplot.EPnoex(csv_path, file_label, plots_path, year)
             }else if(energy_exports == "noEPnoex") { EUinternal.barplot.noEPnoex(csv_path, file_label, plots_path, year)}
@@ -254,8 +261,11 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
           
           source("./scripts/plotting/map_PDF.R")                        
           # Plots produced with this function: Global - 2020 vs 2100 RCP2.6 vs 2100 REF, EUFootprint - 2100 + RCP2.6 for MFM and SFM100; EUForest - 2100 + RCP2.6 vs REF for Baseline, MFM25%, MFM100%, SFM25%, SFM100% 
-
           source("./scripts/plotting/map_PDF_multi.R")                   
+          ratio = FALSE
+          difference = FALSE
+          plot.map(results_path, result_files, file_label, plots_path, id, map, graph, ratio, difference)
+
           # This other function is meant to be tailored according to what it is needed to be plotted.
           
       ################# MAP OF GLOBAL IMPACTS PER UNIT OF VOLUME #######################
@@ -298,7 +308,9 @@ year = "2100" # select the year. WARNING: use a character string containing the 
 
 source("./scripts/plotting/for_WBF/EU_barplots_WBF.R")
 source("./scripts/plotting/plot_biomass-harvested.R")
-          width_height = c(21, 16)
+source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
+
+          width_height = c(9, 27)
           EUFootprint.areas.barplot.EP(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height)
           EUFootprint.volume.barplot.EP(areas_base_path, csv_path, plots_path, label_timber, file_label, year, width_height)  
 
