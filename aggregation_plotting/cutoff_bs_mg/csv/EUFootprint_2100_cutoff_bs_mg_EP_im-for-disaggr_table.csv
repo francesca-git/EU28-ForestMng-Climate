@@ -1,0 +1,217 @@
+Climate scenario,Forest use scenario,Management scenario,Domestic or imported,Category,Extinction risk [PDF]
+RCP2.6,CFM,Baseline (noAFM),Import,Clear-cut,0.000212393
+RCP2.6,CFM,Baseline (noAFM),Import,Energy plantations,0.000454251
+RCP2.6,CFM,Baseline (noAFM),Import,Selection,0
+RCP2.6,CFM,Baseline (noAFM),Import,Selective,0
+RCP2.6,CFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000833605
+RCP2.6,CFM,Baseline (noAFM),EU28,Clear-cut,0.000291602
+RCP2.6,CFM,Baseline (noAFM),EU28,Lignocell. energy crops,0.000351744
+RCP2.6,CFM,Baseline (noAFM),EU28,Retention,0
+RCP2.6,CFM,Baseline (noAFM),EU28,Selection,1.67E-06
+RCP6.5,CFM,Baseline (noAFM),Import,Clear-cut,0.000202715
+RCP6.5,CFM,Baseline (noAFM),Import,Energy plantations,4.88E-05
+RCP6.5,CFM,Baseline (noAFM),Import,Selection,0
+RCP6.5,CFM,Baseline (noAFM),Import,Selective,0
+RCP6.5,CFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000571486
+RCP6.5,CFM,Baseline (noAFM),EU28,Clear-cut,0.000187759
+RCP6.5,CFM,Baseline (noAFM),EU28,Lignocell. energy crops,8.27E-05
+RCP6.5,CFM,Baseline (noAFM),EU28,Retention,0
+RCP6.5,CFM,Baseline (noAFM),EU28,Selection,9.15E-06
+RCP2.6,SFM,Baseline (noAFM),Import,Clear-cut,0.000212676
+RCP2.6,SFM,Baseline (noAFM),Import,Energy plantations,0.000451812
+RCP2.6,SFM,Baseline (noAFM),Import,Selection,0
+RCP2.6,SFM,Baseline (noAFM),Import,Selective,0
+RCP2.6,SFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000842445
+RCP2.6,SFM,Baseline (noAFM),EU28,Clear-cut,0.000291634
+RCP2.6,SFM,Baseline (noAFM),EU28,Lignocell. energy crops,0.000351733
+RCP2.6,SFM,Baseline (noAFM),EU28,Retention,0
+RCP2.6,SFM,Baseline (noAFM),EU28,Selection,1.67E-06
+RCP6.5,SFM,Baseline (noAFM),Import,Clear-cut,0.00020166
+RCP6.5,SFM,Baseline (noAFM),Import,Energy plantations,5.16E-05
+RCP6.5,SFM,Baseline (noAFM),Import,Selection,0
+RCP6.5,SFM,Baseline (noAFM),Import,Selective,0
+RCP6.5,SFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000583195
+RCP6.5,SFM,Baseline (noAFM),EU28,Clear-cut,0.00018784
+RCP6.5,SFM,Baseline (noAFM),EU28,Lignocell. energy crops,8.29E-05
+RCP6.5,SFM,Baseline (noAFM),EU28,Retention,0
+RCP6.5,SFM,Baseline (noAFM),EU28,Selection,9.14E-06
+RCP2.6,CFM,AFM 12.5%,Import,Clear-cut,0.000166112
+RCP2.6,CFM,AFM 12.5%,Import,Energy plantations,0.000461513
+RCP2.6,CFM,AFM 12.5%,Import,Selection,0
+RCP2.6,CFM,AFM 12.5%,Import,Selective,0
+RCP2.6,CFM,AFM 12.5%,Import,Timber and pulp plantatios,0.000608586
+RCP2.6,CFM,AFM 12.5%,EU28,Clear-cut,0.000206323
+RCP2.6,CFM,AFM 12.5%,EU28,Lignocell. energy crops,0.000347463
+RCP2.6,CFM,AFM 12.5%,EU28,Retention,6.38E-06
+RCP2.6,CFM,AFM 12.5%,EU28,Selection,5.39E-06
+RCP6.5,CFM,AFM 12.5%,Import,Clear-cut,0.000139086
+RCP6.5,CFM,AFM 12.5%,Import,Energy plantations,4.86E-05
+RCP6.5,CFM,AFM 12.5%,Import,Selection,0
+RCP6.5,CFM,AFM 12.5%,Import,Selective,0
+RCP6.5,CFM,AFM 12.5%,Import,Timber and pulp plantatios,0.000371765
+RCP6.5,CFM,AFM 12.5%,EU28,Clear-cut,0.000152121
+RCP6.5,CFM,AFM 12.5%,EU28,Lignocell. energy crops,7.98E-05
+RCP6.5,CFM,AFM 12.5%,EU28,Retention,4.27E-06
+RCP6.5,CFM,AFM 12.5%,EU28,Selection,1.00E-05
+RCP2.6,SFM,AFM 12.5%,Import,Clear-cut,0.000195975
+RCP2.6,SFM,AFM 12.5%,Import,Energy plantations,0.000522986
+RCP2.6,SFM,AFM 12.5%,Import,Selection,0
+RCP2.6,SFM,AFM 12.5%,Import,Selective,0
+RCP2.6,SFM,AFM 12.5%,Import,Timber and pulp plantatios,0.000747828
+RCP2.6,SFM,AFM 12.5%,EU28,Clear-cut,0.000206425
+RCP2.6,SFM,AFM 12.5%,EU28,Lignocell. energy crops,0.000353313
+RCP2.6,SFM,AFM 12.5%,EU28,Retention,6.61E-06
+RCP2.6,SFM,AFM 12.5%,EU28,Selection,1.43E-06
+RCP6.5,SFM,AFM 12.5%,Import,Clear-cut,0.000182268
+RCP6.5,SFM,AFM 12.5%,Import,Energy plantations,5.51E-05
+RCP6.5,SFM,AFM 12.5%,Import,Selection,0
+RCP6.5,SFM,AFM 12.5%,Import,Selective,0
+RCP6.5,SFM,AFM 12.5%,Import,Timber and pulp plantatios,0.000432515
+RCP6.5,SFM,AFM 12.5%,EU28,Clear-cut,0.000165672
+RCP6.5,SFM,AFM 12.5%,EU28,Lignocell. energy crops,8.12E-05
+RCP6.5,SFM,AFM 12.5%,EU28,Retention,5.04E-06
+RCP6.5,SFM,AFM 12.5%,EU28,Selection,4.62E-06
+RCP2.6,CFM,AFM 25%,Import,Clear-cut,0.000186364
+RCP2.6,CFM,AFM 25%,Import,Energy plantations,0.000517509
+RCP2.6,CFM,AFM 25%,Import,Selection,0
+RCP2.6,CFM,AFM 25%,Import,Selective,0
+RCP2.6,CFM,AFM 25%,Import,Timber and pulp plantatios,0.000652869
+RCP2.6,CFM,AFM 25%,EU28,Clear-cut,0.000186669
+RCP2.6,CFM,AFM 25%,EU28,Lignocell. energy crops,0.000351541
+RCP2.6,CFM,AFM 25%,EU28,Retention,4.58E-06
+RCP2.6,CFM,AFM 25%,EU28,Selection,8.77E-06
+RCP6.5,CFM,AFM 25%,Import,Clear-cut,0.000160167
+RCP6.5,CFM,AFM 25%,Import,Energy plantations,5.42E-05
+RCP6.5,CFM,AFM 25%,Import,Selection,0
+RCP6.5,CFM,AFM 25%,Import,Selective,0
+RCP6.5,CFM,AFM 25%,Import,Timber and pulp plantatios,0.000388598
+RCP6.5,CFM,AFM 25%,EU28,Clear-cut,0.000145635
+RCP6.5,CFM,AFM 25%,EU28,Lignocell. energy crops,8.09E-05
+RCP6.5,CFM,AFM 25%,EU28,Retention,3.43E-06
+RCP6.5,CFM,AFM 25%,EU28,Selection,1.23E-05
+RCP2.6,SFM,AFM 25%,Import,Clear-cut,0.00024943
+RCP2.6,SFM,AFM 25%,Import,Energy plantations,0.000639992
+RCP2.6,SFM,AFM 25%,Import,Selection,0
+RCP2.6,SFM,AFM 25%,Import,Selective,0
+RCP2.6,SFM,AFM 25%,Import,Timber and pulp plantatios,0.001111248
+RCP2.6,SFM,AFM 25%,EU28,Clear-cut,0.000184874
+RCP2.6,SFM,AFM 25%,EU28,Lignocell. energy crops,0.000363241
+RCP2.6,SFM,AFM 25%,EU28,Retention,4.65E-06
+RCP2.6,SFM,AFM 25%,EU28,Selection,1.35E-06
+RCP6.5,SFM,AFM 25%,Import,Clear-cut,0.000238811
+RCP6.5,SFM,AFM 25%,Import,Energy plantations,6.18E-05
+RCP6.5,SFM,AFM 25%,Import,Selection,0
+RCP6.5,SFM,AFM 25%,Import,Selective,0
+RCP6.5,SFM,AFM 25%,Import,Timber and pulp plantatios,0.000772211
+RCP6.5,SFM,AFM 25%,EU28,Clear-cut,0.000145842
+RCP6.5,SFM,AFM 25%,EU28,Lignocell. energy crops,8.67E-05
+RCP6.5,SFM,AFM 25%,EU28,Retention,3.80E-06
+RCP6.5,SFM,AFM 25%,EU28,Selection,4.12E-06
+RCP2.6,CFM,AFM 37.5%,Import,Clear-cut,0.00020073
+RCP2.6,CFM,AFM 37.5%,Import,Energy plantations,0.000558253
+RCP2.6,CFM,AFM 37.5%,Import,Selection,0
+RCP2.6,CFM,AFM 37.5%,Import,Selective,0
+RCP2.6,CFM,AFM 37.5%,Import,Timber and pulp plantatios,0.000808678
+RCP2.6,CFM,AFM 37.5%,EU28,Clear-cut,0.00016798
+RCP2.6,CFM,AFM 37.5%,EU28,Lignocell. energy crops,0.000358776
+RCP2.6,CFM,AFM 37.5%,EU28,Retention,2.42E-06
+RCP2.6,CFM,AFM 37.5%,EU28,Selection,1.21E-05
+RCP6.5,CFM,AFM 37.5%,Import,Clear-cut,0.000174535
+RCP6.5,CFM,AFM 37.5%,Import,Energy plantations,5.24E-05
+RCP6.5,CFM,AFM 37.5%,Import,Selection,0
+RCP6.5,CFM,AFM 37.5%,Import,Selective,0
+RCP6.5,CFM,AFM 37.5%,Import,Timber and pulp plantatios,0.000496468
+RCP6.5,CFM,AFM 37.5%,EU28,Clear-cut,0.000129532
+RCP6.5,CFM,AFM 37.5%,EU28,Lignocell. energy crops,8.30E-05
+RCP6.5,CFM,AFM 37.5%,EU28,Retention,1.89E-06
+RCP6.5,CFM,AFM 37.5%,EU28,Selection,1.53E-05
+RCP2.6,SFM,AFM 37.5%,Import,Clear-cut,0.000311838
+RCP2.6,SFM,AFM 37.5%,Import,Energy plantations,0.000764967
+RCP2.6,SFM,AFM 37.5%,Import,Selection,0
+RCP2.6,SFM,AFM 37.5%,Import,Selective,0
+RCP2.6,SFM,AFM 37.5%,Import,Timber and pulp plantatios,0.001293607
+RCP2.6,SFM,AFM 37.5%,EU28,Clear-cut,0.000162976
+RCP2.6,SFM,AFM 37.5%,EU28,Lignocell. energy crops,0.000369978
+RCP2.6,SFM,AFM 37.5%,EU28,Retention,2.44E-06
+RCP2.6,SFM,AFM 37.5%,EU28,Selection,1.11E-06
+RCP6.5,SFM,AFM 37.5%,Import,Clear-cut,0.000335495
+RCP6.5,SFM,AFM 37.5%,Import,Energy plantations,9.42E-05
+RCP6.5,SFM,AFM 37.5%,Import,Selection,0
+RCP6.5,SFM,AFM 37.5%,Import,Selective,0
+RCP6.5,SFM,AFM 37.5%,Import,Timber and pulp plantatios,0.001043992
+RCP6.5,SFM,AFM 37.5%,EU28,Clear-cut,0.000115488
+RCP6.5,SFM,AFM 37.5%,EU28,Lignocell. energy crops,9.35E-05
+RCP6.5,SFM,AFM 37.5%,EU28,Retention,2.48E-06
+RCP6.5,SFM,AFM 37.5%,EU28,Selection,4.05E-06
+RCP2.6,CFM,AFM 50%,Import,Clear-cut,0.000232987
+RCP2.6,CFM,AFM 50%,Import,Energy plantations,0.000633441
+RCP2.6,CFM,AFM 50%,Import,Selection,0
+RCP2.6,CFM,AFM 50%,Import,Selective,0
+RCP2.6,CFM,AFM 50%,Import,Timber and pulp plantatios,0.000852271
+RCP2.6,CFM,AFM 50%,EU28,Clear-cut,0.00014821
+RCP2.6,CFM,AFM 50%,EU28,Lignocell. energy crops,0.000362999
+RCP2.6,CFM,AFM 50%,EU28,Retention,0
+RCP2.6,CFM,AFM 50%,EU28,Selection,1.55E-05
+RCP6.5,CFM,AFM 50%,Import,Clear-cut,0.000209689
+RCP6.5,CFM,AFM 50%,Import,Energy plantations,6.32E-05
+RCP6.5,CFM,AFM 50%,Import,Selection,0
+RCP6.5,CFM,AFM 50%,Import,Selective,0
+RCP6.5,CFM,AFM 50%,Import,Timber and pulp plantatios,0.000599786
+RCP6.5,CFM,AFM 50%,EU28,Clear-cut,0.00011301
+RCP6.5,CFM,AFM 50%,EU28,Lignocell. energy crops,8.58E-05
+RCP6.5,CFM,AFM 50%,EU28,Retention,0
+RCP6.5,CFM,AFM 50%,EU28,Selection,1.83E-05
+RCP2.6,SFM,AFM 50%,Import,Clear-cut,0.000365427
+RCP2.6,SFM,AFM 50%,Import,Energy plantations,0.000840598
+RCP2.6,SFM,AFM 50%,Import,Selection,0
+RCP2.6,SFM,AFM 50%,Import,Selective,0
+RCP2.6,SFM,AFM 50%,Import,Timber and pulp plantatios,0.001599056
+RCP2.6,SFM,AFM 50%,EU28,Clear-cut,0.000142192
+RCP2.6,SFM,AFM 50%,EU28,Lignocell. energy crops,0.000379143
+RCP2.6,SFM,AFM 50%,EU28,Retention,0
+RCP2.6,SFM,AFM 50%,EU28,Selection,1.47E-07
+RCP6.5,SFM,AFM 50%,Import,Clear-cut,0.000417384
+RCP6.5,SFM,AFM 50%,Import,Energy plantations,0.000141298
+RCP6.5,SFM,AFM 50%,Import,Selection,0
+RCP6.5,SFM,AFM 50%,Import,Selective,0
+RCP6.5,SFM,AFM 50%,Import,Timber and pulp plantatios,0.001446609
+RCP6.5,SFM,AFM 50%,EU28,Clear-cut,9.22E-05
+RCP6.5,SFM,AFM 50%,EU28,Lignocell. energy crops,9.91E-05
+RCP6.5,SFM,AFM 50%,EU28,Retention,0
+RCP6.5,SFM,AFM 50%,EU28,Selection,3.62E-06
+RCP2.6,CFM,Baseline (noAFM),Import,Clear-cut,0.000212393
+RCP2.6,CFM,Baseline (noAFM),Import,Energy plantations,0.000454251
+RCP2.6,CFM,Baseline (noAFM),Import,Selection,0
+RCP2.6,CFM,Baseline (noAFM),Import,Selective,0
+RCP2.6,CFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000833605
+RCP2.6,CFM,Baseline (noAFM),EU28,Clear-cut,0.000291602
+RCP2.6,CFM,Baseline (noAFM),EU28,Lignocell. energy crops,0.000351744
+RCP2.6,CFM,Baseline (noAFM),EU28,Retention,0
+RCP2.6,CFM,Baseline (noAFM),EU28,Selection,1.67E-06
+RCP6.5,CFM,Baseline (noAFM),Import,Clear-cut,0.000202715
+RCP6.5,CFM,Baseline (noAFM),Import,Energy plantations,4.88E-05
+RCP6.5,CFM,Baseline (noAFM),Import,Selection,0
+RCP6.5,CFM,Baseline (noAFM),Import,Selective,0
+RCP6.5,CFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000571486
+RCP6.5,CFM,Baseline (noAFM),EU28,Clear-cut,0.000187759
+RCP6.5,CFM,Baseline (noAFM),EU28,Lignocell. energy crops,8.27E-05
+RCP6.5,CFM,Baseline (noAFM),EU28,Retention,0
+RCP6.5,CFM,Baseline (noAFM),EU28,Selection,9.15E-06
+RCP2.6,SFM,Baseline (noAFM),Import,Clear-cut,0.000212676
+RCP2.6,SFM,Baseline (noAFM),Import,Energy plantations,0.000451812
+RCP2.6,SFM,Baseline (noAFM),Import,Selection,0
+RCP2.6,SFM,Baseline (noAFM),Import,Selective,0
+RCP2.6,SFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000842445
+RCP2.6,SFM,Baseline (noAFM),EU28,Clear-cut,0.000291634
+RCP2.6,SFM,Baseline (noAFM),EU28,Lignocell. energy crops,0.000351733
+RCP2.6,SFM,Baseline (noAFM),EU28,Retention,0
+RCP2.6,SFM,Baseline (noAFM),EU28,Selection,1.67E-06
+RCP6.5,SFM,Baseline (noAFM),Import,Clear-cut,0.00020166
+RCP6.5,SFM,Baseline (noAFM),Import,Energy plantations,5.16E-05
+RCP6.5,SFM,Baseline (noAFM),Import,Selection,0
+RCP6.5,SFM,Baseline (noAFM),Import,Selective,0
+RCP6.5,SFM,Baseline (noAFM),Import,Timber and pulp plantatios,0.000583195
+RCP6.5,SFM,Baseline (noAFM),EU28,Clear-cut,0.00018784
+RCP6.5,SFM,Baseline (noAFM),EU28,Lignocell. energy crops,8.29E-05
+RCP6.5,SFM,Baseline (noAFM),EU28,Retention,0
+RCP6.5,SFM,Baseline (noAFM),EU28,Selection,9.14E-06
