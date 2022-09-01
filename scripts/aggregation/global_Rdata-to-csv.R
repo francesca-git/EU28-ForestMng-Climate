@@ -44,12 +44,12 @@
         
         sums_oneyear = sums[[year]] %>% 
           unite("Group", Group:Forest_use, remove = TRUE) %>%
-            rename(Scenario = Management, PDFx100 = Sum_median, lower95 = Sum_lower95, upper95 = Sum_upper95) 
+            rename(Scenario = Management, PDF = Sum_median, lower95 = Sum_lower95, upper95 = Sum_upper95) 
             
           if (CI == TRUE) { write.csv(sums_oneyear, paste0(csv_path, "global_", year, file_label, "_top_CI.csv"), row.names = FALSE) 
             } else if (CI == FALSE) { write.csv(sums_oneyear, paste0(csv_path, "global_", year, file_label, "_top.csv"), row.names = FALSE) }
             # this csv has the following columns: 
-            # Group (climatic and forest use scenario), Scenario (forest management scenario), PDFx100 (impact), lower95 (lower CI interval), upper95 (upper CI interval)
+            # Group (climatic and forest use scenario), Scenario (forest management scenario), PDF (impact), lower95 (lower CI interval), upper95 (upper CI interval)
             # If CI == FALSE, the columns lower95 and upper95 are all 0
         
   
@@ -70,7 +70,7 @@
                                Urban = rowSums(select(., contains("Urban"))))
       # change the format (before: one column per each land use class; after the change: one single column with al the values and one with the corresponding Category)
           results_oneyear <- results_temp %>% 
-                            pivot_longer(cols = 3:(length(results_temp)), names_to = "Category", values_to = "PDFx100")
+                            pivot_longer(cols = 3:(length(results_temp)), names_to = "Category", values_to = "PDF")
         
                 # test ====
           
@@ -97,7 +97,7 @@
         
         write.csv(results_oneyear, paste0(csv_path, "global_", year, file_label, ".csv"), row.names = FALSE)
         # this csv has the following columns: 
-        # Group (climatic and forest use scenario), Scenario (forest management scenario), Category (land use category), PDFx100 (impact)
+        # Group (climatic and forest use scenario), Scenario (forest management scenario), Category (land use category), PDF (impact)
     
         rm(results_temp, results_oneyear)
     
@@ -167,7 +167,7 @@
       
       # change the format (before: one column per each land use class; after the change: one single column with al the values and one with the corresponding Category)
       df <- df %>% 
-          pivot_longer(cols = 4:(length(df)), names_to = "Category", values_to = "PDFx100")
+          pivot_longer(cols = 4:(length(df)), names_to = "Category", values_to = "PDF")
           #pivot_longer(cols = 4:(length(df)), names_to = "Category", values_to = "Area")
       
       write.csv(df, paste0(csv_path, "global_time-series", file_label, ".csv"), row.names = FALSE)
@@ -203,7 +203,7 @@
   
   df <- df[2:nrow(df),]
   df <- df %>% 
-          rename(PDFx100 = Sum_median, upper95 = Sum_upper95, lower95 = Sum_lower95) %>%
+          rename(PDF = Sum_median, upper95 = Sum_upper95, lower95 = Sum_lower95) %>%
             dplyr::filter(Year != "2000" & Year != "2010") %>%
               filter((Group == "REF" | Group == "RCP2.6") & (Forest_use == "MFM") & (Management == "noAFM")) %>% 
                 dplyr::select(-Forest_use, -Management) %>%

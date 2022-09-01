@@ -55,13 +55,13 @@ plot.EU.timeseries <- function(csv_path, file_label, plots_path, id, energy_expo
   
   #jpg(file = "./plotting/noAF_CI.jpg", width = 900, height = 700)
   figure <-
-  ggplot(data, aes(x = Year, y = PDFx100, group = Scenario, col = Scenario, linetype = Scenario)) +
+  ggplot(data, aes(x = Year, y = PDF, group = Scenario, col = Scenario, linetype = Scenario)) +
     geom_line(size = 0.8) +
     scale_colour_viridis(discrete = TRUE)+
     theme_minimal() +
-    ylim(0, max(data$PDFx100)) +
+    ylim(0, max(data$PDF)) +
     xlim(2020, 2100)+
-    xlab("Years") + ylab("PDF%") +
+    xlab("Years") + ylab("Extinction risk [PDF]") +
     theme(plot.title = element_text(size = 1, face = "bold.italic")) +
     theme(panel.border = element_rect(color="grey", fill=NA)) +
     facet_wrap(~ Group) +

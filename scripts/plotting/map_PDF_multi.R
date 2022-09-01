@@ -93,7 +93,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   # Load the data ====
   
   if(map == "PDF") {
-      legend = "global PDF (%)"
+      legend = "Extinction risk [PDF]"
       data <- read.csv(paste0(results_path, "/", result_files, year[1], file_label, ".csv"))
     
       if (length(year) > 1) {
@@ -103,7 +103,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   }
   
   if(map == "PDFha") {
-      legend = "global PDF(%)/ha (logarithmic scale)"
+      legend = "Extinction risk per hectare [PDF/ha] (logarithmic scale)"
       data <- read.csv(paste0(csv_path, "PDF-ha.csv"), header = TRUE)
       
         if(id == "Global") {data <- data %>% filter(Year == "2100" | Year == "2020")
@@ -131,7 +131,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   
   # Sum the rows which should be aggregated ====
       data <- data %>%  
-        mutate_if(is.numeric, ~.*100) %>%
+        #mutate_if(is.numeric, ~.*100) %>%
           mutate(Global = rowSums(select(., contains("median"))),
                   EUFootprint = case_when((energy_exports == "ex" | energy_exports == "EPnoex") 
                                           ~ rowSums(select(., contains("median") & ((contains("EP") & contains("EU"))|(starts_with("For") & contains("EU"))|(contains("EP") & contains("im"))|(starts_with("For_") & contains("im")))), na.rm = TRUE),
@@ -271,6 +271,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
     
     if(ratio == TRUE) {
     data_long[data_long$eco_code == "PA1212", "Values"] = NaN
+    legend = "log-scale"
     }
 
     data <- data_long
@@ -358,46 +359,48 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
     # }
     # 
   
-    if(id == "EUForest" & subcase == "" & ratio == FALSE & difference == FALSE) {
-      li <- c(0, 0.01)
-      br <- c(0, 0.002, 0.004, 0.006, 0.008, 0.010)
-    }
-    
-    if(id == "EUFootprint" & subcase == "" & ratio == FALSE & difference == FALSE) {
-      li <- c(0, 0.022)
-      br <- c(0, 0.004, 0.008, 0.012, 0.016, 0.020)
-    } 
-
-    if(id == "EUForest" & subcase != "" & ratio == FALSE & difference == FALSE) {
-      li <- c(0, 0.01)
-      br <- c(0, 0.002, 0.004, 0.006, 0.008, 0.010)
-    }
-    
-    if(id == "EUFootprint" & subcase != "" & ratio == FALSE & difference == FALSE) {
-      li <- c(0, 0.012)
-      br <- c(0, 0.003, 0.006, 0.009, 0.012)
-    } 
+    # if(id == "EUForest" & ratio == FALSE & difference == FALSE) {
+    #   li <- c(0, 0.01)
+    #   br <- c(0, 0.002, 0.004, 0.006, 0.008, 0.010)
+    # }
+    # 
+    # if(id == "EUFootprint" & ratio == FALSE & difference == FALSE) {
+    #   li <- c(0, 0.022)
+    #   br <- c(0, 0.004, 0.008, 0.012, 0.016, 0.020)
+    # } 
   
-  
-    if(id == "EUForest" & subcase == "" & difference == TRUE) {
-      li <- c(-0.002, 0.01)
-      br <- c(-0.002, 0, 0.002, 0.004, 0.006, 0.008, 0.010)
+    if(id == "EUForest" && (grepl("mammals", file_label, fixed = TRUE)||grepl("birds", file_label, fixed = TRUE)||grepl("plants", file_label, fixed = TRUE)) && ratio == FALSE & difference == FALSE) {
+      li <- c(0, 1.1e-04)
+      br <- c(0, 2e-05, 4e-05, 6e-05, 8e-05, 1e-04)
     }
     
-    if(id == "EUFootprint" & subcase == "" & difference == TRUE) {
-      li <- c(-0.0025, 0.0175)
-      br <- c(0, 0.005, 0.010, 0.015)
-    } 
+    if(id == "EUFootprint" && (grepl("mammals", file_label, fixed = TRUE)||grepl("birds", file_label, fixed = TRUE)||grepl("plants", file_label, fixed = TRUE)) && ratio == FALSE & difference == FALSE) {
+      li <- c(0, 1.3e-04)
+      br <- c(0, 3e-05, 6e-05, 9e-05, 1.2e-04)
+      show(li)
+      show(br)
+    }
+    # 
+    # 
+    # if(id == "EUForest" & subcase == "" & difference == TRUE) {
+    #   li <- c(-0.002, 0.01)
+    #   br <- c(-0.002, 0, 0.002, 0.004, 0.006, 0.008, 0.010)
+    # }
+    
+    # if(id == "EUFootprint" & subcase == "" & difference == TRUE) {
+    #   li <- c(-0.0025, 0.0175)
+    #   br <- c(0, 0.005, 0.010, 0.015)
+    # } 
 
-    if(id == "EUForest" & subcase == "" & ratio == TRUE) {
-      li <- c(-1, 1.5)
-      br <- c(-1, -0.5, 0, 0.5, 1)
-    }
+    # if(id == "EUForest" & subcase == "" & ratio == TRUE) {
+    #   li <- c(-1, 1.5)
+    #   br <- c(-1, -0.5, 0, 0.5, 1)
+    # }
     
-    if(id == "EUFootprint" & subcase == "" & ratio == TRUE) {
-      li <- c(-0.5, 7)
-      br <- c(0, 2, 4, 6)
-    } 
+    # if(id == "EUFootprint" & subcase == "" & ratio == TRUE) {
+    #   li <- c(-0.5, 7)
+    #   br <- c(0, 2, 4, 6)
+    # } 
 
   
   figure <- ggplot() +
@@ -425,12 +428,18 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
                         panel.border = element_rect(colour = "grey", fill = "transparent", size = 0.5),
                         plot.title = element_text(hjust = 0.5))
   
-  if (ratio == FALSE & difference == FALSE) {
+  if ((!grepl("mammals", file_label, fixed = TRUE) && !grepl("birds", file_label, fixed = TRUE) && !grepl("plants", file_label, fixed = TRUE)) && ratio == FALSE && difference == FALSE) {
     figure <- figure +
-    scale_fill_gradientn(colors = pal, na.value = "white", limits = li, breaks = br) ################################ this is the line to keep
-  } else if(ratio == TRUE | difference == TRUE) {
+    scale_fill_gradientn(colors = pal, na.value = "white", labels = function(x) format(x, scientific = TRUE)) #, limits = li, breaks = br) ################################ this is the line to keep
+    show(pal)
+  } else if(ratio == TRUE || difference == TRUE) {
     figure <- figure +                   
-    scale_fill_gradient2(low = "darkgreen", mid = "white", high = "red", midpoint = 0, na.value = "grey98", limits = li, breaks = br)
+    scale_fill_gradient2(low = "darkgreen", mid = "white", high = "red", midpoint = 0, na.value = "grey98", labels = function(x) format(x, scientific = TRUE)) #, limits = li, breaks = br)
+  } else if((grepl("mammals", file_label, fixed = TRUE)||grepl("birds", file_label, fixed = TRUE)||grepl("plants", file_label, fixed = TRUE)) && ratio == FALSE && difference == FALSE) {
+    figure <- figure + 
+          scale_fill_gradientn(colors = pal, na.value = "white", limits = li, breaks = br, labels = function(x) format(x, scientific = TRUE)) ################################ this is the line to keep
+          show(li)
+          show(br)
   }
   
   # if( region == "global") {figure <- figure + facet_wrap(~ Group + Scenario, nrow = 4) + coord_sf(ylim=c(-60, 90)) } 

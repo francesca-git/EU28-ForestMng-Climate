@@ -42,8 +42,9 @@ rename <- dplyr::rename
           source("./scripts/set_directories.R")
         plot.map(results_path, result_files, file_label, plots_path, id, map, graph, ratio, difference)
         # This other function is meant to be tailored according to what it is needed to be plotted.
-        
+
         subcase = "mammals" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)
+          source("./scripts/set_directories.R")
         plot.map(results_path, result_files, file_label, plots_path, id, map, graph, ratio, difference)
     
         subcase = "birds" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)

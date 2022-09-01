@@ -169,6 +169,7 @@ EUFootprint.volume.barplot.EP <- function(areas_base_path, csv_path, plots_path,
         palette_name = "Brewer_VG"
         pal = c(pal_im, pal_EU) 
 
+        data <- data %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
     
   # Plot
     figure <- plot.EU.barplot(data = data_oneyear, pal = pal, column = "Values", axis_name = "Mm3", file_label = file_label)
@@ -251,9 +252,13 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
       palette_name = "Brewer_VG"
       pal_EU = c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8")
       pal_im = rev(c("#D9F0D3", "#A6DBA0", "#5AAE61", "#1B7837", "#00441B"))
-          
+      palette_name = "BuPu"
+      pal_EU = c("#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
+      pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")   
             
-      pal = c(rev(pal_im), rev(pal_EU)) 
+      pal = c(pal_im, pal_EU) 
+      
+      data_oneyear <- data_oneyear %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
 
     # Plot
         figure <- plot.EU.barplot(data = data_oneyear, pal = pal, column = "Values", axis_name = "Mm3", file_label = file_label)

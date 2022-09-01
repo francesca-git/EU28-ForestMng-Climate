@@ -61,7 +61,7 @@ plot.global.time.series <- function(csv_path, file_label, plots_path, label_timb
   # plot the impacts
   
     figure1 <-
-    ggplot(data, aes(x=Year, y=PDFx100, fill = Category)) +
+    ggplot(data, aes(x=Year, y=PDF, fill = Category)) +
       geom_area(alpha = 0.85, size = 0.2, color = "gray85") +
       #scale_fill_brewer(palette = palette_name, direction = dir, labels =  c("Afforestation", "Regrowth", "Forest", "Energy crops and plantations", "Annual crops", "Pastures", "Permanent crops", "Urban"))+
       #scale_fill_nord(palette = palette_name, reverse = TRUE, labels =  c("Afforestation", "Regrowth", "Forest", "Energy crops and plantations", "Annual crops", "Pastures", "Permanent crops", "Urban"))+
@@ -161,7 +161,7 @@ plot.global.time.series.CI <- function(csv_path, file_label, plots_path) {
     
     #jpg(file = "./plotting/noAF_CI.jpg", width = 900, height = 700)
     figure <-
-    ggplot(data, aes(x = Year, y = PDFx100, linetype = Scenario, fill = Scenario)) +
+    ggplot(data, aes(x = Year, y = PDF, linetype = Scenario, fill = Scenario)) +
       geom_line(size = 1.3, aes(color = Scenario)) +
       geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha = 0.1)+
       theme_minimal(base_size = 17) +

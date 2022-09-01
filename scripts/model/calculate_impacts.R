@@ -72,7 +72,7 @@ select <- dplyr::select
       
       ratio_eco_static <- rr_ecoregion
 ########################################################################################################################################################################     
-    ratio_eco_static[,"SelectiveLogging",,] <- ratio_eco_static [,"ReducedImpactLogging",,]
+    #ratio_eco_static[,"SelectiveLogging",,] <- ratio_eco_static [,"ReducedImpactLogging",,]
 ########################################################################################################################################################################     
 
 
@@ -154,8 +154,8 @@ select <- dplyr::select
   
   ################### LOOPS OVER THE YEARS ################### 
 
-    #for (tstep in 1:ntsteps) { 
-  tstep = 11
+    for (tstep in 1:ntsteps) { 
+
       ptm_year <- Sys.time()
       
       
@@ -376,7 +376,7 @@ select <- dplyr::select
       print(paste0("Time (one year): ", round(ptm_endyear, 3), units(ptm_endyear)))
       
       
-    #}
+    }
   
   run_time = Sys.time() - initial.time
   print(paste('Total time:', round(run_time, 3), units(run_time)))

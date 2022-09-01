@@ -52,7 +52,7 @@
         results = lapply(results_in, function(x)  select(x, -Ecoregion, -Year) %>%                               
                                                   group_by(Scenario) %>%                                      
                                                     summarise_if(is.numeric, sum, na.rm = TRUE) %>%                                                          # sum
-                                                      mutate_if(is.numeric, ~(.*100)) %>%                                                                    # convert to percentage
+                                                      #mutate_if(is.numeric, ~(.*100)) %>%                                                                    # convert to percentage
                                                         separate(Scenario, into = c("Group", "Forest_use", "Management"), sep = "_") %>%                     # separate the column Scenario
                                                           mutate(Group = factor(Group), Forest_use = factor(Forest_use), Management = factor(Management)) %>% # keep the factor feature
                                                             arrange(match(Management, for_management), Group, Forest_use)  )                                 # arrange the data according column Management, as displaied in for_management  
