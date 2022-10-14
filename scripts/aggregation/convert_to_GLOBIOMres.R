@@ -38,8 +38,7 @@ convert.to.GLOBIOMres <- function(results_path, csv_path, areas_base_path, file_
   
   # convert the list into a single dataframe
   df <- reduce(results_in, full_join) %>%
-          mutate(Year = as.character(Year)) %>%
-            mutate_if(is.numeric, ~.*100)
+          mutate(Year = as.character(Year)) 
   
   # classify according to GLIOBIOM region
   Globiom_eco_org <- read.csv(paste0(areas_base_path, "GLOBIOM_Ecoregion.csv"), header = TRUE)
@@ -70,7 +69,7 @@ convert.to.GLOBIOMres <- function(results_path, csv_path, areas_base_path, file_
     test_scenario = sample(unique(df$Scenario), 1)
     print(paste0("Test on year ", test_year, " and on scenario ", test_scenario))
     test1 = df_regions %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Globiom_Reg, -Year)
-    test2 = results_in[[11]] %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Ecoregion, -Year) %>% mutate_if(is.numeric, ~.*100)
+    test2 = results_in[[11]] %>% filter(Year == "2100" & Scenario == test_scenario) %>% select(-Scenario, -Ecoregion, -Year) 
     if (abs(sum(test1, na.rm = TRUE) - sum(test2, na.rm = TRUE)) > 1e-8) {stop("Error in the aggregation of impacts at Globiom level")}
 
   rm(test_df, test_df_regions, test_year, test_scenario, test1, test2)  

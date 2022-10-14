@@ -231,22 +231,22 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
     }
      
     # Rename the categories
-         data_oneyear <- data_oneyear %>% mutate(Category = str_replace(Category, "EP_EU", "EU28 Lignocel. energy crops"), 
-                                Category = str_replace(Category, "Clear_cut_EU", "EU28 Clear cut"),
-                                Category = str_replace(Category, "Retention_EU", "EU28 Retention"),
-                                Category = str_replace(Category, "Selection_EU", "EU28 Selection"),
-                                Category = str_replace(Category, "Timber_plant_EU", "EU28 Timber"),                                
+         data_oneyear <- data_oneyear %>% mutate(Category = str_replace(Category, "EP_EU", "EU28 - Lignocel. energy crops"), 
+                                Category = str_replace(Category, "Clear_cut_EU", "EU28 - Clear cut"),
+                                Category = str_replace(Category, "Retention_EU", "EU28 - Retention"),
+                                Category = str_replace(Category, "Selection_EU", "EU28 - Selection"),
+                                Category = str_replace(Category, "Timber_plant_EU", "EU28 - Timber"),                                
                                 Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
                                 Category = str_replace(Category, "Pulp_Timber_Plantation_im", "Import - Timber and pulp plantations"),
                                 Category = str_replace(Category, "Clear_cut_im", "Import - Clear cut"),
                                 Category = str_replace(Category, "Selection_im", "Import - Selection"),
                                 Category = str_replace(Category, "Selective_im", "Import - Selective logging"))
         
-        data_oneyear <- data_oneyear %>% filter(Category != "EU28 Timber")
+        data_oneyear <- data_oneyear %>% filter(Category != "EU28 - Timber")
 
         data_oneyear$Category <- factor(data_oneyear$Category, levels = c(rev(c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
-                                                        "Import - Selection", "Import - Selective logging")), rev(c("EU28 Lignocel. energy crops", 
-                                                        "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))))
+                                                        "Import - Selection", "Import - Selective logging")), rev(c("EU28 - Lignocel. energy crops", 
+                                                        "EU28 - Clear cut", "EU28 - Retention", "EU28 - Selection"))))
 
       
       palette_name = "Brewer_VG"
@@ -254,7 +254,10 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
       pal_im = rev(c("#D9F0D3", "#A6DBA0", "#5AAE61", "#1B7837", "#00441B"))
       palette_name = "BuPu"
       pal_EU = c("#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
-      pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")   
+      pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")
+      
+      pal_EU = c("#C3D6E8", "#8C96C6", "#8C6BB1", "#530A50")
+      pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")
             
       pal = c(pal_im, pal_EU) 
       
@@ -266,7 +269,7 @@ EU.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, labe
     
     # Save as a png
     
-    ggsave(paste0(plots_path, "EUFootprint&Forest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex.pdf"), width = width_height[1], height = width_height[2], units = "cm")
+    ggsave(paste0(plots_path, "EUFootprint&Forest_volume_Mm3_", year, "_", palette_name, file_label, "_EPnoex_new-pal.png"), width = width_height[1], height = width_height[2], units = "cm")
     
     write.csv(data_oneyear, paste0(csv_path, "EUdemand_volumes_", year, file_label, "_disaggr.csv"), row.names = FALSE) 
 

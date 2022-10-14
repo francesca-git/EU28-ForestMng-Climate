@@ -1,169 +1,169 @@
 "Pathway","Group","Scenario","Category","Values"
-"RCP2.6","MFM","noAFM","EU28 Clear cut",730.294771
-"RCP2.6","MFM","noAFM","EU28 Lignocel. energy crops",298
-"RCP2.6","MFM","noAFM","EU28 Retention",0
-"RCP2.6","MFM","noAFM","EU28 Selection",15.58528103
+"RCP2.6","MFM","noAFM","EU28 - Clear cut",730.294771
+"RCP2.6","MFM","noAFM","EU28 - Lignocel. energy crops",298
+"RCP2.6","MFM","noAFM","EU28 - Retention",0
+"RCP2.6","MFM","noAFM","EU28 - Selection",15.58528103
 "RCP2.6","MFM","noAFM","Import - Clear cut",202.3027459
 "RCP2.6","MFM","noAFM","Import - Energy plantations",227.747803
 "RCP2.6","MFM","noAFM","Import - Timber and pulp plantations",97.39732856
-"RCP2.6","MFM","AFMfree","EU28 Clear cut",592.1185505
-"RCP2.6","MFM","AFMfree","EU28 Lignocel. energy crops",279
-"RCP2.6","MFM","AFMfree","EU28 Retention",213.4837323
-"RCP2.6","MFM","AFMfree","EU28 Selection",32.54532837
+"RCP2.6","MFM","AFMfree","EU28 - Clear cut",592.1185505
+"RCP2.6","MFM","AFMfree","EU28 - Lignocel. energy crops",279
+"RCP2.6","MFM","AFMfree","EU28 - Retention",213.4837323
+"RCP2.6","MFM","AFMfree","EU28 - Selection",32.54532837
 "RCP2.6","MFM","AFMfree","Import - Clear cut",145.4297856
 "RCP2.6","MFM","AFMfree","Import - Energy plantations",201.3088609
 "RCP2.6","MFM","AFMfree","Import - Timber and pulp plantations",78.04704012
-"RCP2.6","MFM","AFM25","EU28 Clear cut",500.1183361
-"RCP2.6","MFM","AFM25","EU28 Lignocel. energy crops",295
-"RCP2.6","MFM","AFM25","EU28 Retention",164.881824
-"RCP2.6","MFM","AFM25","EU28 Selection",118.0936991
+"RCP2.6","MFM","AFM25","EU28 - Clear cut",500.1183361
+"RCP2.6","MFM","AFM25","EU28 - Lignocel. energy crops",295
+"RCP2.6","MFM","AFM25","EU28 - Retention",164.881824
+"RCP2.6","MFM","AFM25","EU28 - Selection",118.0936991
 "RCP2.6","MFM","AFM25","Import - Clear cut",155.5830617
 "RCP2.6","MFM","AFM25","Import - Energy plantations",229.6621644
 "RCP2.6","MFM","AFM25","Import - Timber and pulp plantations",81.75204493
-"RCP2.6","MFM","AFM50","EU28 Clear cut",403.6750559
-"RCP2.6","MFM","AFM50","EU28 Lignocel. energy crops",303
-"RCP2.6","MFM","AFM50","EU28 Retention",113.8236035
-"RCP2.6","MFM","AFM50","EU28 Selection",202.4386042
+"RCP2.6","MFM","AFM50","EU28 - Clear cut",403.6750559
+"RCP2.6","MFM","AFM50","EU28 - Lignocel. energy crops",303
+"RCP2.6","MFM","AFM50","EU28 - Retention",113.8236035
+"RCP2.6","MFM","AFM50","EU28 - Selection",202.4386042
 "RCP2.6","MFM","AFM50","Import - Clear cut",180.2852325
 "RCP2.6","MFM","AFM50","Import - Energy plantations",262.380482
 "RCP2.6","MFM","AFM50","Import - Timber and pulp plantations",87.17409133
-"RCP2.6","MFM","AFM75","EU28 Clear cut",318.9548712
-"RCP2.6","MFM","AFM75","EU28 Lignocel. energy crops",318
-"RCP2.6","MFM","AFM75","EU28 Retention",61.77197102
-"RCP2.6","MFM","AFM75","EU28 Selection",275.3132168
+"RCP2.6","MFM","AFM75","EU28 - Clear cut",318.9548712
+"RCP2.6","MFM","AFM75","EU28 - Lignocel. energy crops",318
+"RCP2.6","MFM","AFM75","EU28 - Retention",61.77197102
+"RCP2.6","MFM","AFM75","EU28 - Selection",275.3132168
 "RCP2.6","MFM","AFM75","Import - Clear cut",199.2676947
 "RCP2.6","MFM","AFM75","Import - Energy plantations",284.2539344
 "RCP2.6","MFM","AFM75","Import - Timber and pulp plantations",100.2409328
-"RCP2.6","MFM","AFM100","EU28 Clear cut",249.1337514
-"RCP2.6","MFM","AFM100","EU28 Lignocel. energy crops",318
-"RCP2.6","MFM","AFM100","EU28 Retention",0
-"RCP2.6","MFM","AFM100","EU28 Selection",339.3853191
+"RCP2.6","MFM","AFM100","EU28 - Clear cut",249.1337514
+"RCP2.6","MFM","AFM100","EU28 - Lignocel. energy crops",318
+"RCP2.6","MFM","AFM100","EU28 - Retention",0
+"RCP2.6","MFM","AFM100","EU28 - Selection",339.3853191
 "RCP2.6","MFM","AFM100","Import - Clear cut",223.7391883
 "RCP2.6","MFM","AFM100","Import - Energy plantations",328.6352518
 "RCP2.6","MFM","AFM100","Import - Timber and pulp plantations",106.0104079
-"RCP2.6","SFM","noAFM","EU28 Clear cut",730.3831977
-"RCP2.6","SFM","noAFM","EU28 Lignocel. energy crops",298
-"RCP2.6","SFM","noAFM","EU28 Retention",0
-"RCP2.6","SFM","noAFM","EU28 Selection",15.53557646
+"RCP2.6","SFM","noAFM","EU28 - Clear cut",730.3831977
+"RCP2.6","SFM","noAFM","EU28 - Lignocel. energy crops",298
+"RCP2.6","SFM","noAFM","EU28 - Retention",0
+"RCP2.6","SFM","noAFM","EU28 - Selection",15.53557646
 "RCP2.6","SFM","noAFM","Import - Clear cut",202.3649686
 "RCP2.6","SFM","noAFM","Import - Energy plantations",226.2939351
 "RCP2.6","SFM","noAFM","Import - Timber and pulp plantations",98.75911471
-"RCP2.6","SFM","AFMfree","EU28 Clear cut",596.199978
-"RCP2.6","SFM","AFMfree","EU28 Lignocel. energy crops",283
-"RCP2.6","SFM","AFMfree","EU28 Retention",214.6946278
-"RCP2.6","SFM","AFMfree","EU28 Selection",25.82113538
+"RCP2.6","SFM","AFMfree","EU28 - Clear cut",596.199978
+"RCP2.6","SFM","AFMfree","EU28 - Lignocel. energy crops",283
+"RCP2.6","SFM","AFMfree","EU28 - Retention",214.6946278
+"RCP2.6","SFM","AFMfree","EU28 - Selection",25.82113538
 "RCP2.6","SFM","AFMfree","Import - Clear cut",149.6415162
 "RCP2.6","SFM","AFMfree","Import - Energy plantations",196.1838914
 "RCP2.6","SFM","AFMfree","Import - Timber and pulp plantations",76.6499993
-"RCP2.6","SFM","AFM25","EU28 Clear cut",531.0971512
-"RCP2.6","SFM","AFM25","EU28 Lignocel. energy crops",308
-"RCP2.6","SFM","AFM25","EU28 Retention",163.7874284
-"RCP2.6","SFM","AFM25","EU28 Selection",10.73940361
+"RCP2.6","SFM","AFM25","EU28 - Clear cut",531.0971512
+"RCP2.6","SFM","AFM25","EU28 - Lignocel. energy crops",308
+"RCP2.6","SFM","AFM25","EU28 - Retention",163.7874284
+"RCP2.6","SFM","AFM25","EU28 - Selection",10.73940361
 "RCP2.6","SFM","AFM25","Import - Clear cut",189.0118686
 "RCP2.6","SFM","AFM25","Import - Energy plantations",263.6811361
 "RCP2.6","SFM","AFM25","Import - Timber and pulp plantations",95.57603212
-"RCP2.6","SFM","AFM50","EU28 Clear cut",441.8693967
-"RCP2.6","SFM","AFM50","EU28 Lignocel. energy crops",325
-"RCP2.6","SFM","AFM50","EU28 Retention",110.0684731
-"RCP2.6","SFM","AFM50","EU28 Selection",7.864798713
+"RCP2.6","SFM","AFM50","EU28 - Clear cut",441.8693967
+"RCP2.6","SFM","AFM50","EU28 - Lignocel. energy crops",325
+"RCP2.6","SFM","AFM50","EU28 - Retention",110.0684731
+"RCP2.6","SFM","AFM50","EU28 - Selection",7.864798713
 "RCP2.6","SFM","AFM50","Import - Clear cut",232.1261411
 "RCP2.6","SFM","AFM50","Import - Energy plantations",330.5488539
 "RCP2.6","SFM","AFM50","Import - Timber and pulp plantations",134.2651634
-"RCP2.6","SFM","AFM75","EU28 Clear cut",350.4280526
-"RCP2.6","SFM","AFM75","EU28 Lignocel. energy crops",343
-"RCP2.6","SFM","AFM75","EU28 Retention",51.92023276
-"RCP2.6","SFM","AFM75","EU28 Selection",5.330352376
+"RCP2.6","SFM","AFM75","EU28 - Clear cut",350.4280526
+"RCP2.6","SFM","AFM75","EU28 - Lignocel. energy crops",343
+"RCP2.6","SFM","AFM75","EU28 - Retention",51.92023276
+"RCP2.6","SFM","AFM75","EU28 - Selection",5.330352376
 "RCP2.6","SFM","AFM75","Import - Clear cut",302.3762572
 "RCP2.6","SFM","AFM75","Import - Energy plantations",399.1736977
 "RCP2.6","SFM","AFM75","Import - Timber and pulp plantations",150.7324489
-"RCP2.6","SFM","AFM100","EU28 Clear cut",248.6881048
-"RCP2.6","SFM","AFM100","EU28 Lignocel. energy crops",361
-"RCP2.6","SFM","AFM100","EU28 Retention",0
-"RCP2.6","SFM","AFM100","EU28 Selection",3.274594037
+"RCP2.6","SFM","AFM100","EU28 - Clear cut",248.6881048
+"RCP2.6","SFM","AFM100","EU28 - Lignocel. energy crops",361
+"RCP2.6","SFM","AFM100","EU28 - Retention",0
+"RCP2.6","SFM","AFM100","EU28 - Selection",3.274594037
 "RCP2.6","SFM","AFM100","Import - Clear cut",371.6220547
 "RCP2.6","SFM","AFM100","Import - Energy plantations",443.7166333
 "RCP2.6","SFM","AFM100","Import - Timber and pulp plantations",186.5528416
-"REF","MFM","noAFM","EU28 Clear cut",371.4379924
-"REF","MFM","noAFM","EU28 Lignocel. energy crops",97
-"REF","MFM","noAFM","EU28 Retention",0
-"REF","MFM","noAFM","EU28 Selection",119.9580538
+"REF","MFM","noAFM","EU28 - Clear cut",371.4379924
+"REF","MFM","noAFM","EU28 - Lignocel. energy crops",97
+"REF","MFM","noAFM","EU28 - Retention",0
+"REF","MFM","noAFM","EU28 - Selection",119.9580538
 "REF","MFM","noAFM","Import - Clear cut",211.559598
 "REF","MFM","noAFM","Import - Energy plantations",27.64007452
 "REF","MFM","noAFM","Import - Timber and pulp plantations",65.34047365
-"REF","MFM","AFMfree","EU28 Clear cut",325.0204301
-"REF","MFM","AFMfree","EU28 Lignocel. energy crops",89
-"REF","MFM","AFMfree","EU28 Retention",117.9413651
-"REF","MFM","AFMfree","EU28 Selection",107.6642032
+"REF","MFM","AFMfree","EU28 - Clear cut",325.0204301
+"REF","MFM","AFMfree","EU28 - Lignocel. energy crops",89
+"REF","MFM","AFMfree","EU28 - Retention",117.9413651
+"REF","MFM","AFMfree","EU28 - Selection",107.6642032
 "REF","MFM","AFMfree","Import - Clear cut",148.4697201
 "REF","MFM","AFMfree","Import - Energy plantations",31.38239828
 "REF","MFM","AFMfree","Import - Timber and pulp plantations",46.88986989
-"REF","MFM","AFM25","EU28 Clear cut",283.6814531
-"REF","MFM","AFM25","EU28 Lignocel. energy crops",91
-"REF","MFM","AFM25","EU28 Retention",102.7627546
-"REF","MFM","AFM25","EU28 Selection",152.5904718
+"REF","MFM","AFM25","EU28 - Clear cut",283.6814531
+"REF","MFM","AFM25","EU28 - Lignocel. energy crops",91
+"REF","MFM","AFM25","EU28 - Retention",102.7627546
+"REF","MFM","AFM25","EU28 - Selection",152.5904718
 "REF","MFM","AFM25","Import - Clear cut",157.6444907
 "REF","MFM","AFM25","Import - Energy plantations",29.13332355
 "REF","MFM","AFM25","Import - Timber and pulp plantations",48.60655752
-"REF","MFM","AFM50","EU28 Clear cut",232.7648612
-"REF","MFM","AFM50","EU28 Lignocel. energy crops",94
-"REF","MFM","AFM50","EU28 Retention",81.7727926
-"REF","MFM","AFM50","EU28 Selection",203.2617841
+"REF","MFM","AFM50","EU28 - Clear cut",232.7648612
+"REF","MFM","AFM50","EU28 - Lignocel. energy crops",94
+"REF","MFM","AFM50","EU28 - Retention",81.7727926
+"REF","MFM","AFM50","EU28 - Selection",203.2617841
 "REF","MFM","AFM50","Import - Clear cut",174.4570987
 "REF","MFM","AFM50","Import - Energy plantations",33.84437951
 "REF","MFM","AFM50","Import - Timber and pulp plantations",51.5772791
-"REF","MFM","AFM75","EU28 Clear cut",183.0263108
-"REF","MFM","AFM75","EU28 Lignocel. energy crops",99
-"REF","MFM","AFM75","EU28 Retention",46.77439045
-"REF","MFM","AFM75","EU28 Selection",255.3069707
+"REF","MFM","AFM75","EU28 - Clear cut",183.0263108
+"REF","MFM","AFM75","EU28 - Lignocel. energy crops",99
+"REF","MFM","AFM75","EU28 - Retention",46.77439045
+"REF","MFM","AFM75","EU28 - Selection",255.3069707
 "REF","MFM","AFM75","Import - Clear cut",199.9843832
 "REF","MFM","AFM75","Import - Energy plantations",30.12553936
 "REF","MFM","AFM75","Import - Timber and pulp plantations",61.52599952
-"REF","MFM","AFM100","EU28 Clear cut",141.259427
-"REF","MFM","AFM100","EU28 Lignocel. energy crops",106
-"REF","MFM","AFM100","EU28 Retention",0
-"REF","MFM","AFM100","EU28 Selection",304.5481036
+"REF","MFM","AFM100","EU28 - Clear cut",141.259427
+"REF","MFM","AFM100","EU28 - Lignocel. energy crops",106
+"REF","MFM","AFM100","EU28 - Retention",0
+"REF","MFM","AFM100","EU28 - Selection",304.5481036
 "REF","MFM","AFM100","Import - Clear cut",221.966919
 "REF","MFM","AFM100","Import - Energy plantations",37.19179314
 "REF","MFM","AFM100","Import - Timber and pulp plantations",71.97235317
-"REF","SFM","noAFM","EU28 Clear cut",371.2729085
-"REF","SFM","noAFM","EU28 Lignocel. energy crops",97
-"REF","SFM","noAFM","EU28 Retention",0
-"REF","SFM","noAFM","EU28 Selection",119.6645554
+"REF","SFM","noAFM","EU28 - Clear cut",371.2729085
+"REF","SFM","noAFM","EU28 - Lignocel. energy crops",97
+"REF","SFM","noAFM","EU28 - Retention",0
+"REF","SFM","noAFM","EU28 - Selection",119.6645554
 "REF","SFM","noAFM","Import - Clear cut",206.4689563
 "REF","SFM","noAFM","Import - Energy plantations",33.55590965
 "REF","SFM","noAFM","Import - Timber and pulp plantations",65.54228437
-"REF","SFM","AFMfree","EU28 Clear cut",342.6295138
-"REF","SFM","AFMfree","EU28 Lignocel. energy crops",89
-"REF","SFM","AFMfree","EU28 Retention",125.15797
-"REF","SFM","AFMfree","EU28 Selection",81.08449867
+"REF","SFM","AFMfree","EU28 - Clear cut",342.6295138
+"REF","SFM","AFMfree","EU28 - Lignocel. energy crops",89
+"REF","SFM","AFMfree","EU28 - Retention",125.15797
+"REF","SFM","AFMfree","EU28 - Selection",81.08449867
 "REF","SFM","AFMfree","Import - Clear cut",152.5986887
 "REF","SFM","AFMfree","Import - Energy plantations",28.35415602
 "REF","SFM","AFMfree","Import - Timber and pulp plantations",48.01697903
-"REF","SFM","AFM25","EU28 Clear cut",334.0204682
-"REF","SFM","AFM25","EU28 Lignocel. energy crops",95
-"REF","SFM","AFM25","EU28 Retention",112.6694801
-"REF","SFM","AFM25","EU28 Selection",58.74719467
+"REF","SFM","AFM25","EU28 - Clear cut",334.0204682
+"REF","SFM","AFM25","EU28 - Lignocel. energy crops",95
+"REF","SFM","AFM25","EU28 - Retention",112.6694801
+"REF","SFM","AFM25","EU28 - Selection",58.74719467
 "REF","SFM","AFM25","Import - Clear cut",189.5092664
 "REF","SFM","AFM25","Import - Energy plantations",33.53187185
 "REF","SFM","AFM25","Import - Timber and pulp plantations",56.70383447
-"REF","SFM","AFM50","EU28 Clear cut",293.9870855
-"REF","SFM","AFM50","EU28 Lignocel. energy crops",113
-"REF","SFM","AFM50","EU28 Retention",82.14244835
-"REF","SFM","AFM50","EU28 Selection",48.92820404
+"REF","SFM","AFM50","EU28 - Clear cut",293.9870855
+"REF","SFM","AFM50","EU28 - Lignocel. energy crops",113
+"REF","SFM","AFM50","EU28 - Retention",82.14244835
+"REF","SFM","AFM50","EU28 - Selection",48.92820404
 "REF","SFM","AFM50","Import - Clear cut",233.0522596
 "REF","SFM","AFM50","Import - Energy plantations",37.21723311
 "REF","SFM","AFM50","Import - Timber and pulp plantations",89.16331798
-"REF","SFM","AFM75","EU28 Clear cut",226.9318003
-"REF","SFM","AFM75","EU28 Lignocel. energy crops",126
-"REF","SFM","AFM75","EU28 Retention",42.25929125
-"REF","SFM","AFM75","EU28 Selection",42.64352801
+"REF","SFM","AFM75","EU28 - Clear cut",226.9318003
+"REF","SFM","AFM75","EU28 - Lignocel. energy crops",126
+"REF","SFM","AFM75","EU28 - Retention",42.25929125
+"REF","SFM","AFM75","EU28 - Selection",42.64352801
 "REF","SFM","AFM75","Import - Clear cut",300.8341148
 "REF","SFM","AFM75","Import - Energy plantations",57.15770443
 "REF","SFM","AFM75","Import - Timber and pulp plantations",120.5780079
-"REF","SFM","AFM100","EU28 Clear cut",148.2151846
-"REF","SFM","AFM100","EU28 Lignocel. energy crops",143
-"REF","SFM","AFM100","EU28 Retention",0
-"REF","SFM","AFM100","EU28 Selection",29.60443522
+"REF","SFM","AFM100","EU28 - Clear cut",148.2151846
+"REF","SFM","AFM100","EU28 - Lignocel. energy crops",143
+"REF","SFM","AFM100","EU28 - Retention",0
+"REF","SFM","AFM100","EU28 - Selection",29.60443522
 "REF","SFM","AFM100","Import - Clear cut",361.5643791
 "REF","SFM","AFM100","Import - Energy plantations",87.11827876
 "REF","SFM","AFM100","Import - Timber and pulp plantations",159.2375852

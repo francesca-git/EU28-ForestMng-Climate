@@ -60,8 +60,8 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
       climate = "RCP6.5-RCP2.6"
       Zoom = F
       group = c("RCP6.5", "RCP2.6")
-      scenario = c("Close-to-nature")
-      level = "Baseline"
+      scenario = c("CFM")
+      level = "noAFM"
       title = "Global loss of species - Impacts of global land use in 2020 and 2100"
   
   } else if (id == "EUFootprint") {
@@ -72,8 +72,8 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
       climate = "RCP6.5-RCP2.6"
       Zoom = F
       group = c("RCP6.5", "RCP2.6")
-      scenario = c("Close-to-nature", "Set-aside")
-      level = c("Baseline", "25%", "50%")
+      scenario = c("CFM", "SFM")
+      level = c("noAFM", "25%", "50%")
       title = "Global loss of species - Impacts of EU forest biomass demand in 2100 (RCP2.6)"
   
   } else if (id == "EUForest"){
@@ -83,9 +83,9 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
       climate = "RCP6.5-RCP2.6"
       Zoom = TRUE
       group = c("RCP6.5","RCP2.6")
-      scenario = c("Close-to-nature", "Set-aside")
-      # level = c("Baseline", "25%", "50%")
-      level = c("Baseline", "25%", "50%")
+      scenario = c("CFM", "SFM")
+      # level = c("noAFM", "25%", "50%")
+      level = c("noAFM", "25%", "50%")
       title = "Global loss of species - Impacts of EU internal forest management in 2100"
   
   } else {stop("Define id")}
@@ -114,10 +114,10 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
       
   # Rename elements ====
     data <- data %>% separate(Scenario, into = c("Group", "Scenario", "Level"), sep = "_") %>%                                       # separate the column Scenario into three columns 
-                mutate(Level = str_replace(Level,"noAF", "Baseline"), Level = str_replace(Level,"AF0", "Free"),  # rename the factors in the column with Level information
+                mutate(Level = str_replace(Level,"noAF", "noAFM"), Level = str_replace(Level,"AF0", "Free"),  # rename the factors in the column with Level information
                   Level = str_replace(Level,"AF25", "12.5%"), Level = str_replace(Level,"AF50", "25%"),     
                   Level = str_replace(Level,"AF75", "37.5%"), Level = str_replace(Level,"AF100", "50%"),
-                  Group = str_replace(Group, "RCP", "RCP2.6"),  Group = str_replace(Group, "REF", "RCP6.5"), Scenario = str_replace(Scenario,"MFM","Close-to-nature"), Scenario = str_replace(Scenario, "SFM", "Set-aside")) #%>%                                                              # rename the rcp scenario 
+                  Group = str_replace(Group, "RCP", "RCP2.6"),  Group = str_replace(Group, "REF", "RCP6.5"), Scenario = str_replace(Scenario,"MFM","CFM"), Scenario = str_replace(Scenario, "SFM", "SFM")) #%>%                                                              # rename the rcp scenario 
                     #unite("Scenario", Group:Level, sep = "_")                                                                   # re-merge the columns describing the scenario to keep it as it was initially
   #====
       
@@ -164,79 +164,79 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
             print("EUFootprint")
               if(graph == "B-25-50") {
                 print("B-25-50")
-                data <- data %>% filter(Level == "25%" | Level == "50%" | Level == "Baseline" & Scenario == "Close-to-nature") %>%
+                data <- data %>% filter(Level == "25%" | Level == "50%" | Level == "noAFM" & Scenario == "CFM") %>%
                                     unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-                                      mutate(Scenario = str_replace(Scenario, "Close-to-nature-Baseline", "Baseline"))
+                                      mutate(Scenario = str_replace(Scenario, "CFM-noAFM", "noAFM"))
                 data$Group = factor(data$Group, levels = c("RCP6.5", "RCP2.6"), labels = c("RCP6.5", "RCP2.6"))
-                data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Close-to-nature-50%", "Set-aside-25%", "Set-aside-50%"), labels = c("Baseline", "Close-to-nature 25%", "Close-to-nature 50%", "Set-aside 25%" , "Set-aside 50%"))
+                data$Scenario = factor(data$Scenario, levels = c("noAFM", "CFM-25%", "CFM-50%", "SFM-25%", "SFM-50%"), labels = c("noAFM", "CFM 25%", "CFM 50%", "SFM 25%" , "SFM 50%"))
 
               } else if(graph == "B-50") {
                 print("B-50")
-                data <- data %>% filter(Level == "50%" | Level == "Baseline" & Scenario == "Close-to-nature") %>%
+                data <- data %>% filter(Level == "50%" | Level == "noAFM" & Scenario == "CFM") %>%
                                     unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-                                      mutate(Scenario = str_replace(Scenario, "Close-to-nature-Baseline", "Baseline"))
+                                      mutate(Scenario = str_replace(Scenario, "CFM-noAFM", "noAFM"))
                 data$Group = factor(data$Group, levels = c("RCP6.5", "RCP2.6"), labels = c("RCP6.5", "RCP2.6"))
-                data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline", "Close-to-nature 50%", "Set-aside 50%"))
+                data$Scenario = factor(data$Scenario, levels = c("noAFM", "CFM-50%", "SFM-50%"), labels = c("noAFM", "CFM 50%", "SFM 50%"))
                 
           
       }} else if(id == "EUForest") {
           print("EUForest")
-          data <- data %>% filter(Level == "25%" | Level == "50%" | (Level == "Baseline" & Scenario == "Close-to-nature") | (Level == "Free" & Scenario == "Close-to-nature")) %>%
+          data <- data %>% filter(Level == "25%" | Level == "50%" | (Level == "noAFM" & Scenario == "CFM") | (Level == "Free" & Scenario == "CFM")) %>%
                               unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-                                mutate(Scenario = str_replace(Scenario, "Close-to-nature-Baseline", "Baseline"))
+                                mutate(Scenario = str_replace(Scenario, "CFM-noAFM", "noAFM"))
            data$Group = factor(data$Group, levels = c("RCP6.5", "RCP2.6"), labels = c("RCP6.5", "RCP2.6"))
-          data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Set-aside-25%", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline", "Close-to-nature 25%", "Close-to-nature 50%", "Set-aside 25%" , "Set-aside 50%"))
+          data$Scenario = factor(data$Scenario, levels = c("noAFM", "CFM-25%", "SFM-25%", "CFM-50%", "SFM-50%"), labels = c("noAFM", "CFM 25%", "CFM 50%", "SFM 25%" , "SFM 50%"))
 
-          # data <- data %>% filter(Level == "50%" | (Level == "Baseline" & Scenario == "Close-to-nature") | (Level == "Free" & Scenario == "Close-to-nature")) %>%
+          # data <- data %>% filter(Level == "50%" | (Level == "noAFM" & Scenario == "CFM") | (Level == "Free" & Scenario == "CFM")) %>%
           #                     unite("Scenario", c(Scenario, Level), sep = "-", remove = TRUE) %>%
-          #                       mutate(Scenario = str_replace(Scenario, "Close-to-nature-Baseline", "Baseline"))
+          #                       mutate(Scenario = str_replace(Scenario, "CFM-noAFM", "noAFM"))
           #  data$Group = factor(data$Group, levels = c("RCP6.5", "RCP2.6"), labels = c("RCP6.5", "RCP2.6"))
-          # data$Scenario = factor(data$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"), labels = c("Baseline (noAFM)", "Close-to-nature 50%", "Set-aside 50%"))
+          # data$Scenario = factor(data$Scenario, levels = c("noAFM", "CFM-50%", "SFM-50%"), labels = c("noAFM (noAFM)", "CFM 50%", "SFM 50%"))
           # 
           }
 
   
   if (ratio == TRUE) {
-    data_wide <- data.frame(data %>% mutate(Scenario = str_replace(Scenario, "Close-to-nature 50%", "CFM50"),
-                                            Scenario = str_replace(Scenario, "Close-to-nature 25%", "CFM25"),
-                                            Scenario = str_replace(Scenario, "Set-aside 25%", "SFM25"),
-                                            Scenario = str_replace(Scenario, "Set-aside 50%", "SFM50")) %>%
+    data_wide <- data.frame(data %>% mutate(Scenario = str_replace(Scenario, "CFM 50%", "CFM50"),
+                                            Scenario = str_replace(Scenario, "CFM 25%", "CFM25"),
+                                            Scenario = str_replace(Scenario, "SFM 25%", "SFM25"),
+                                            Scenario = str_replace(Scenario, "SFM 50%", "SFM50")) %>%
                     unite("Scenario", c(Group, Scenario), sep = "_") %>%
                       arrange(Scenario, Year, eco_code) %>%
                         pivot_wider(names_from = Scenario, values_from = Values))
     
-    data_wide <- data_wide %>% mutate(reference = RCP6.5_Baseline) %>% mutate_if(is.numeric, ~./reference)
+    data_wide <- data_wide %>% mutate(reference = RCP6.5_noAFM) %>% mutate_if(is.numeric, ~./reference)
     
   } else if (difference == TRUE) {
   
-     data_wide <- data.frame(data %>% mutate(Scenario = str_replace(Scenario, "Close-to-nature 50%", "CFM50"),
-                                            Scenario = str_replace(Scenario, "Close-to-nature 25%", "CFM25"),
-                                            Scenario = str_replace(Scenario, "Set-aside 25%", "SFM25"),
-                                            Scenario = str_replace(Scenario, "Set-aside 50%", "SFM50")) %>%
+     data_wide <- data.frame(data %>% mutate(Scenario = str_replace(Scenario, "CFM 50%", "CFM50"),
+                                            Scenario = str_replace(Scenario, "CFM 25%", "CFM25"),
+                                            Scenario = str_replace(Scenario, "SFM 25%", "SFM25"),
+                                            Scenario = str_replace(Scenario, "SFM 50%", "SFM50")) %>%
                     unite("Scenario", c(Group, Scenario), sep = "_") %>%
                       arrange(Scenario, Year, eco_code) %>%
                         pivot_wider(names_from = Scenario, values_from = Values))
     
-    data_wide <- data_wide %>% mutate(reference = RCP6.5_Baseline) %>% mutate_if(is.numeric, ~.-reference)
+    data_wide <- data_wide %>% mutate(reference = RCP6.5_noAFM) %>% mutate_if(is.numeric, ~.-reference)
   }
   
   if(ratio == TRUE | difference == TRUE) {
       if(graph == "B-25-50") {
-          data_wide <- data_wide %>% transmute(eco_code = eco_code, Year = Year, RCP6.5_Baseline = RCP6.5_Baseline, 
+          data_wide <- data_wide %>% transmute(eco_code = eco_code, Year = Year, RCP6.5_noAFM = RCP6.5_noAFM, 
                                                RCP6.5_CFM25 = RCP6.5_CFM25, 
                                                RCP6.5_CFM50 = RCP6.5_CFM50, 
                                                RCP6.5_SFM25 = RCP6.5_SFM25, 
                                                RCP6.5_SFM50 = RCP6.5_SFM50, 
-                                               RCP2.6_Baseline = RCP2.6_Baseline, 
+                                               RCP2.6_noAFM = RCP2.6_noAFM, 
                                                RCP2.6_CFM25 = RCP2.6_CFM25,
                                                RCP2.6_CFM50 = RCP2.6_CFM50, 
                                                RCP2.6_SFM25 = RCP2.6_SFM25, 
                                                RCP2.6_SFM50 = RCP2.6_SFM50) 
       }else if(graph == "B-50") {
-          data_wide <- data_wide %>% transmute(eco_code = eco_code, Year = Year, RCP6.5_Baseline = RCP6.5_Baseline, 
+          data_wide <- data_wide %>% transmute(eco_code = eco_code, Year = Year, RCP6.5_noAFM = RCP6.5_noAFM, 
                                                RCP6.5_CFM50 = RCP6.5_CFM50, 
                                                RCP6.5_SFM50 = RCP6.5_SFM50, 
-                                               RCP2.6_Baseline = RCP2.6_Baseline, 
+                                               RCP2.6_noAFM = RCP2.6_noAFM, 
                                                RCP2.6_CFM50 = RCP2.6_CFM50, 
                                                RCP2.6_SFM50 = RCP2.6_SFM50) 
       }
@@ -245,28 +245,28 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
     data_wide[is.na(data_wide)] <- 0
     
     
-    data_long <- data.frame(data_wide %>% pivot_longer(cols = RCP6.5_Baseline:RCP2.6_SFM50, names_to = "Scenario", values_to = "Values") %>%
+    data_long <- data.frame(data_wide %>% pivot_longer(cols = RCP6.5_noAFM:RCP2.6_SFM50, names_to = "Scenario", values_to = "Values") %>%
                     separate(Scenario, into = c("Group", "Scenario"), sep = "_")  %>%
                         arrange(Group, Year, Scenario, eco_code))
 
     if(graph == "B-25-50") {
     data_long <- data_long %>%  
-                 mutate(Scenario = str_replace(Scenario, "CFM25", "Close-to-nature-25%")) %>%
-                    mutate(Scenario = str_replace(Scenario, "CFM50", "Close-to-nature-50%")) %>%
-                        mutate(Scenario = str_replace(Scenario, "SFM25", "Set-aside-25%")) %>%
-                          mutate(Scenario = str_replace(Scenario, "SFM50", "Set-aside-50%")) 
+                 mutate(Scenario = str_replace(Scenario, "CFM25", "CFM-25%")) %>%
+                    mutate(Scenario = str_replace(Scenario, "CFM50", "CFM-50%")) %>%
+                        mutate(Scenario = str_replace(Scenario, "SFM25", "SFM-25%")) %>%
+                          mutate(Scenario = str_replace(Scenario, "SFM50", "SFM-50%")) 
           data_long$Group = factor(data_long$Group, levels = c("RCP6.5", "RCP2.6"))
-          #data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
-          data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-25%", "Close-to-nature-50%", "Set-aside-25%", "Set-aside-50%"))
+          #data_long$Scenario = factor(data_long$Scenario, levels = c("noAFM", "CFM-50%", "SFM-50%"))
+          data_long$Scenario = factor(data_long$Scenario, levels = c("noAFM", "CFM-25%", "CFM-50%", "SFM-25%", "SFM-50%"))
     }
     
     if(graph == "B-50") {
     data_long <- data_long %>%  
-                 mutate(Scenario = str_replace(Scenario, "CFM50", "Close-to-nature-50%")) %>%
-                        mutate(Scenario = str_replace(Scenario, "SFM50", "Set-aside-50%")) 
+                 mutate(Scenario = str_replace(Scenario, "CFM50", "CFM-50%")) %>%
+                        mutate(Scenario = str_replace(Scenario, "SFM50", "SFM-50%")) 
           data_long$Group = factor(data_long$Group, levels = c("RCP6.5", "RCP2.6"))
-          #data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
-          data_long$Scenario = factor(data_long$Scenario, levels = c("Baseline", "Close-to-nature-50%", "Set-aside-50%"))
+          #data_long$Scenario = factor(data_long$Scenario, levels = c("noAFM", "CFM-50%", "SFM-50%"))
+          data_long$Scenario = factor(data_long$Scenario, levels = c("noAFM", "CFM-50%", "SFM-50%"))
     }
     
     if(ratio == TRUE) {
@@ -279,7 +279,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   }
   
    
-  #data <- data %>% filter(Scenario == "Baseline" | Scenario == "Set-aside-50%")
+  #data <- data %>% filter(Scenario == "noAFM" | Scenario == "SFM-50%")
   
   data_backup <- data
   #==== 
@@ -320,21 +320,23 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   #pal <- c("#F1F1F1", "#E1EDC9", "#C0E7BB", "#98DEB6", "#6BD1B9", "#3CC2BE", "#1CAEC3", "#3797C3", "#5B7BBD", "#775BAF", "#833993", "#80146E")
   # this is the palette to use:    
   pal <- c("#fafafa", "#f0f9e8", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#1E4069", "#011959")
-      # #f3f7f0
+  pal <- c("#fafafa", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#1E4069", "#011959")
+
+        # #f3f7f0
   ptm <- proc.time()
   
   if (length(year) > 1) {
     
-    png(file = paste0(plots_path, map, "_", climate, "_", region, file_label, "_", energy_exports , ".png"), width = 7, height = 12, res = 600, units = "in") # 7, 12
+    png(file = paste0(plots_path, map, "_", climate, "_", region, file_label, "_", energy_exports , "_new.png"), width = 7, height = 12, res = 600, units = "in") # 7, 12
     } else{
       
     if(ratio == TRUE & difference == FALSE) {
     #png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff.png"),  width = 5, height = 9, res = 600, units = "in") # 10, 18
-      png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_ratio.png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
+      png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_ratio_new.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
         }else if(difference == TRUE & ratio == FALSE) {
-          png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff.png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
+          png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff_new.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
           }else if(ratio == FALSE & difference == FALSE){
-            png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, ".png"),  width = 10, height = 5, res = 600, units = "in") # 20, 10
+            png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_new_pal.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
               }
     }
   
@@ -430,8 +432,8 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   
   if ((!grepl("mammals", file_label, fixed = TRUE) && !grepl("birds", file_label, fixed = TRUE) && !grepl("plants", file_label, fixed = TRUE)) && ratio == FALSE && difference == FALSE) {
     figure <- figure +
-    scale_fill_gradientn(colors = pal, na.value = "white", labels = function(x) format(x, scientific = TRUE)) #, limits = li, breaks = br) ################################ this is the line to keep
-    show(pal)
+      scale_fill_gradientn(colors = pal, na.value = "white", labels = function(x) format(x, scientific = TRUE)) #, limits = li, breaks = br) ################################ this is the line to keep
+      show(pal)
   } else if(ratio == TRUE || difference == TRUE) {
     figure <- figure +                   
     scale_fill_gradient2(low = "darkgreen", mid = "white", high = "red", midpoint = 0, na.value = "grey98", labels = function(x) format(x, scientific = TRUE)) #, limits = li, breaks = br)

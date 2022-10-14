@@ -76,8 +76,8 @@ calculate.impacts.pervolume <- function(csv_path, file_label, areas_base_path) {
     # focus on EU
     
     df_fin <- df2 %>% full_join(df1) %>%
-                        select(Scenario, Region, Year, contains("Wood"), contains("median") & ((starts_with("For_")&(contains("EU")|contains("ex")|contains("im")))|  # selects the columns containing the production of Wood and energy crops/plantations and the columns containing EU internal/imported/exported forest use or energy crops/plantations
-                                                                                              (starts_with("EP")&((contains("EU")&contains("conv"))|contains("im"))))) %>% 
+                        select(Scenario, Region, Year, contains("Wood"), contains("median") & ((starts_with("For_")&(contains("EU")|contains("ex_")|contains("im_")))|  # selects the columns containing the production of Wood and energy crops/plantations and the columns containing EU internal/imported/exported forest use or energy crops/plantations
+                                                                                              (starts_with("EP")&((contains("EU")&contains("conv"))|contains("im_"))))) %>% 
                           mutate(PDF_forest_EU = rowSums(select(., (starts_with("For_") & contains("EU")))), 
                                  PDF_forest_im = rowSums(select(., (starts_with("For_") & contains("im")))),  
                                  PDF_forest_ex = rowSums(select(., (starts_with("For_") & contains("ex")))),

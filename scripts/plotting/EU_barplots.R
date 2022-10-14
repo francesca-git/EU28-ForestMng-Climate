@@ -63,8 +63,8 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
                             Scenario = str_replace(Scenario, "AFM75", "AFM37.5"), Scenario = str_replace(Scenario, "AFM100", "AFM50")) 
     
     data <- data %>% filter(Scenario != "AFMfree") # & Scenario != "AFM12.5" & Scenario != "AFM37.5")
-    label_scenario <- c("Baseline (noAFM)", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
-    #label_scenario <- c("no AFM (baseline)", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+    label_scenario <- c("noAFM", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
+    #label_scenario <- c("no AFM", "Laissez-faire", "AFM 12.5%", "AFM 25%", "AFM 37.5%", "AFM 50%")  
 
     #to keep the same order between the scenarios
     data$Scenario <- factor(data$Scenario, levels = unique(data$Scenario))
@@ -114,29 +114,30 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
 
     # set the maximum value of the y axis
 
-      # if(grepl("PDF", axis_name, fixed = TRUE) && grepl("bs", file_label, fixed = TRUE)) {
-      # 
-      #     ymax_value = 4.7e-03
-      #     ymin_value = 0
-      # 
-      #   }
-    # 
-    #  if(grepl("PDF", axis_name, fixed = TRUE) && grepl("static", file_label, fixed = TRUE)) {
-    # 
-          # ymax_value = 3.5e-03
-          # ymin_value = 0
-          # br = c(0, 1e-03, 2e-03, 3e-03)
-
-    #   }
-    # 
-      if(grepl("PDF", axis_name, fixed = TRUE) && length(pal) < 9) {
-
-          ymax_value = 9.9e-04 #9.990e-04
-          ymin_value = 0
-
+    if(grepl("PDF", axis_name, fixed = TRUE) && grepl("bs", file_label, fixed = TRUE)) {
+    
+        ymax_value = 4.7e-03
+        ymin_value = 0
+    
       }
 
-      if(grepl("Mha", axis_name, fixed = TRUE)) {
+      
+    if(grepl("PDF", axis_name, fixed = TRUE) && grepl("static", file_label, fixed = TRUE)) {
+  
+        ymax_value = 3.5e-03
+        ymin_value = 0
+        br = c(0, 1e-03, 2e-03, 3e-03)
+    
+      }
+
+      # if(grepl("PDF", axis_name, fixed = TRUE) && length(pal) < 9) {
+      # 
+      #     ymax_value = 9.9e-04 #9.990e-04
+      #     ymin_value = 0
+      # 
+      # }
+      # 
+       if(grepl("Mha", axis_name, fixed = TRUE)) {
 
         ymax_value = 350
         ymin_value = 0
@@ -150,13 +151,13 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
 
       }
 
-    # if(grepl("PDF", axis_name, fixed = TRUE) && grepl("nocutoff_timber", file_label, fixed = TRUE)) {
-    # 
-          # ymax_value = 6.5e-04
-          # ymin_value = 0 #-3e-04
-    # 
-    # }
-    # 
+  if(grepl("PDF", axis_name, fixed = TRUE) && length(pal) < 9) { # for sensitivity analysis
+
+    ymax_value = 6.5e-04
+    ymin_value = 0 #-3e-04
+
+    }
+
     # if(grepl("PDF", axis_name, fixed = TRUE) && grepl("nocutoff_static", file_label, fixed = TRUE)) {
 # 
           # ymax_value = 3.5e-03
@@ -173,7 +174,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       #theme_classic() + # select the theme of the plot
       #theme_minimal(base_size = 15) + # select the theme of the plot
       theme_minimal_hgrid() +
-      theme(legend.position = "right", 
+      theme(legend.position = "none", 
            legend.text = element_text(size = 10),
            axis.text = element_text(size = 10),
            axis.text.x = element_text(angle = 90),
@@ -191,9 +192,10 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       ylim(ymin_value, ymax_value) + 
       #theme(panel.border = element_rect(color = "black", fill = NA)) +
       # guides(fill = guide_legend(nrow = 2, byrow = TRUE)) +
-      # facet_wrap(Pathway ~ Group, nrow = 1) # + #horizontal
-      facet_wrap(Pathway ~ Group, ncol = 1) #vertical
-      #facet_grid(Pathway ~ Group)
+      facet_wrap(Pathway ~ Group, nrow = 1) #horizontal
+      #coord_polar() 
+      #facet_wrap(Pathway ~ Group, ncol = 1) #vertical
+      # facet_grid(Pathway ~ Group)
       
     # if(grepl("PDF", axis_name, fixed = TRUE)) {
     #   figure <- figure +
@@ -204,7 +206,8 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
     if(grepl("bs", file_label, fixed = TRUE)) {
     figure +
         geom_errorbar(data = data_top, aes(x = Scenario, y = !! sym(column), ymin = lower95, ymax = upper95), width = 0.02, color = "black", size = 0.05) +
-        geom_point(data = data_top, aes(x  = Scenario, y = !! sym(column)), color = "black", size = 1)
+        geom_point(data = data_top, aes(x  = Scenario, y = !! sym(column)), stat = "identity", color = "black", size = 1) +
+        geom_line(data = data_top, aes(x = Scenario, y = !! sym(column), color = "#41AB5D", size = 0.5))
       }
     
     return(figure)
@@ -322,6 +325,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
     #pal = c("#C2DF23FF", "#51C56AFF", "#1E9B8AFF", "#2D708EFF", "#433E85FF")
     pal = rev(c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8"))
     pal = c("#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
+    pal = c("#C3D6E8", "#8C96C6", "#8C6BB1", "#530A50")
     palette_name = "BuPu"
     #pal = rev(c("#762A83", "#9970AB", "#C2A5CF", "#E7D4E8"))
     # pal = rev(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"))
@@ -335,10 +339,9 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
      if(grepl("timber", file_label, fixed = TRUE)) {
         data$Category <- factor(data$Category, levels = c("Timber", "Selection", "Retention", "Clear_cut", "EP_EU"), labels = c("Timber plantations", "Selection", "Retention", "Clear cut", "Lignocellulosic energy crops"))
         data <- data %>% filter(Category != "Other_management")
-        pal = (c("#9DCFD7", "#9970AB", "#C2A5CF", "#E7D4E8", "#40004B"))     
-        pal = c("#FDAE6B", "#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
+        #pal = (c("#9DCFD7", "#9970AB", "#C2A5CF", "#E7D4E8", "#40004B"))     
+        pal = append("#FDAE6B", pal)
         labs = c("Timber plantations", "Selection", "Retention",  "Clear cut", "Lignocel. energy crops")
-
         } else { 
         data <- data %>% filter(Category != "Timber" & Category != "Other_management")
         data$Category <- factor(data$Category, levels = c("Selection", "Retention", "Clear_cut",  "EP_EU"), labels = c("Selection", "Retention", "Clear cut","Lignocel. energy crops"))
@@ -352,7 +355,7 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
     figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDF", axis_name = "Extinction risk [PDF]", file_label = file_label)
     figure
     
-    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex.png"), width = width_height[1], height = width_height[2], units = "cm")
+    ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex_horizontal_AFMfree.png"), width = width_height[1], height = width_height[2], units = "cm")
     #ggsave(paste0(plots_path, "EUForest_", year, "_", palette_name, file_label, "_EPnoex_or.pdf"), width = 30, height = 11, units = "cm")
 
   }
@@ -518,7 +521,8 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
       palette_name = "BuPu"
       #palette_name = "BrBG_rev"
       pal_EU = (c("#40004B", "#9970AB", "#C2A5CF", "#E7D4E8"))
-      pal_EU = c("#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
+      pal_EU = c("#C3D6E8", "#8C96C6", "#8C6BB1", "#530A50")
+      #pal_EU = c("#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
       #pal_EU = (c("#8C510A", "#BF812D", "#DFC27D", "#F6E8C3"))
       pal_im = rev(c("#D9F0D3", "#A6DBA0", "#5AAE61", "#1B7837", "#00441B"))
       pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")
@@ -544,25 +548,15 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
         data <- data %>% filter(Category != "EU28_Forest_net") %>% full_join(data_EU) %>%
           full_join(data_EU)
                       
-        # Load the cumulative data and subtract the share of "Other_management" (see previous function)
+        # Load the cumulative data 
           data_top <-read.csv(paste0(csv_path, "EUFootprint_", year, file_label, "_top_EP.csv"), header = TRUE)
-          data_other_manag <- read.csv(paste0(csv_path, "EUForest_", year, file_label, "_EPnoex.csv"), header = TRUE)
-          data_other_manag <- data_other_manag %>% filter(Category == "Other_management")
-          data_other_manag <- data_other_manag %>% rename(Values = PDF)
-          data_top <- data_top %>% full_join(data_other_manag) %>% 
-            mutate(ratio = Values/PDF, 
-                PDF = PDF - Values)
-          data_top <- data_top %>% mutate(lower95 = lower95 - lower95*ratio, upper95 = upper95 - upper95*ratio) %>%
-            select(-ratio, -Values, -Category)
-
-      rm(data_other_manag)
-      
+        
       # Clean and arrange the data 
-        data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 Lignocel. energy crops"), 
-                                Category = str_replace(Category, "Clear_cut_EU", "EU28 Clear cut"),
-                                Category = str_replace(Category, "Retention_EU", "EU28 Retention"),
-                                Category = str_replace(Category, "Selection_EU", "EU28 Selection"),
-                                Category = str_replace(Category, "Timber_EU", "EU28 Timber plantations"),
+        data <- data %>% mutate(Category = str_replace(Category, "EU28_Energy_crops", "EU28 - Lignocel. energy crops"), 
+                                Category = str_replace(Category, "Clear_cut_EU", "EU28 - Clear cut"),
+                                Category = str_replace(Category, "Retention_EU", "EU28 - Retention"),
+                                Category = str_replace(Category, "Selection_EU", "EU28 - Selection"),
+                                Category = str_replace(Category, "Timber_EU", "EU28 - Timber plantations"),
                                 Category = str_replace(Category, "Energy_plantations_im", "Import - Energy plantations"), 
                                 Category = str_replace(Category, "Pulp_Timber_Plantation_im", "Import - Timber and pulp plantations"),
                                 Category = str_replace(Category, "Clear_cut_im", "Import - Clear cut"),
@@ -570,23 +564,26 @@ plot.EU.barplot <- function(data, data_top, pal, column, axis_name, file_label) 
                                 Category = str_replace(Category, "Selective_im", "Import - Selective logging"))
         
       
-      data <- data %>% filter(Category != "EU28 Timber plantations")
+      data <- data %>% filter(Category != "EU28 - Timber plantations")
       
       data$Category <- factor(data$Category, levels = c(rev(c("Import - Energy plantations", "Import - Timber and pulp plantations", "Import - Clear cut",
-                                                      "Import - Selection", "Import - Selective logging")), rev(c("EU28 Lignocel. energy crops", 
-                                                      "EU28 Clear cut", "EU28 Retention", "EU28 Selection"))))
+                                                      "Import - Selection", "Import - Selective logging")), rev(c("EU28 - Lignocel. energy crops", 
+                                                      "EU28 - Clear cut", "EU28 - Retention", "EU28 - Selection"))))
       pal = c(pal_im, pal_EU) 
 
       
       data <- data %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
       data_top <- data_top %>% separate(col = Group, into = c("Pathway", "Group"), sep = "_")
       
+      # save the data in a new .csv file
+      write.csv(data, paste0(csv_path, "EU_Footprint_", year, file_label, "_EP_disaggregated.csv"), row.names = FALSE)
+      
       # Plot
       figure <- plot.EU.barplot(data = data, data_top = data_top, pal = pal, column = "PDF", axis_name = "Extinction risk [PDF]", file_label = file_label)
       figure
       
       # Save as png
-      ggsave(paste0(plots_path, "EUFootprint&Forest_", year, "_", palette_name, file_label, "_EP_im-for-all-disaggr_PDF_hor.png"), width = width_height[1], height = width_height[2], units = "cm")
+      ggsave(paste0(plots_path, "EUFootprint&Forest_", year, "_", palette_name, file_label, "_EP_im-for-all-disaggr_PDF_horizontal_AFMfree.pdf"), width = width_height[1], height = width_height[2], units = "cm")
 
   }
   
@@ -681,7 +678,11 @@ EU.areas.barplot.EP.dis <- function(aggr_plot_path_areas, label_timber, file_lab
       palette_name = "BuPu"
       pal_EU = c("#9EBCDA", "#8C96C6", "#8C6BB1", "#810F7C")
       pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")
-            
+      
+      pal_EU = c("#C3D6E8", "#8C96C6", "#8C6BB1", "#530A50")
+      pal_im = c("#F7FCB9", "#D9F0A3", "#ADDD8E", "#41AB5D", "#238443")
+      #pal_im = rev(c("#C7EAE5", "#80CDC1", "#35978F", "#01665E", "#003C30"))
+      
       # Load and prepare the data 
       data <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year,"_", label_timber, "_disaggr.csv"), header = TRUE)
       data_top <-read.csv(paste0(aggr_plot_path_areas, "areas_EUFootprint_", year, "_", label_timber, "_top_EP.csv"), header = TRUE)
@@ -718,7 +719,7 @@ EU.areas.barplot.EP.dis <- function(aggr_plot_path_areas, label_timber, file_lab
       figure <- plot.EU.barplot(data = data, pal = pal, column = "Values", axis_name = "Mha", file_label = file_label)
         figure
         
-      ggsave(paste0(plots_path, "EUFootprint&Forest_areas_", year, "_", palette_name, file_label, "_EPnoex_all-dis_new.pdf"), width = width_height[1], height = width_height[2], units = "cm")
+      ggsave(paste0(plots_path, "EUFootprint&Forest_areas_", year, "_", palette_name, file_label, "_EPnoex_all-dis_new-pal.png"), width = width_height[1], height = width_height[2], units = "cm")
 
   }
       

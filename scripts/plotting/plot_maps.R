@@ -1,3 +1,4 @@
+setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
 
 library("triangle") # triangular distribution -> for the distribution of the z values
 library(parallel)
@@ -14,7 +15,7 @@ rename <- dplyr::rename
     source("./scripts/plotting/map_PDF_multi.R")
   
   
-  ############################ MARGINAL ######################################
+  ############################ BASELINE ######################################
   
     # General settings for the calculation of the impacts
       marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
@@ -33,7 +34,7 @@ rename <- dplyr::rename
     
         id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
         map = "PDF" # "PDF" 
-        graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
+        graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
                               # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
         ratio = FALSE
         difference = FALSE
