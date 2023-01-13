@@ -78,6 +78,7 @@ Files:
 - *set_directories.R*: script called in main.R that creates variables containing the paths to folders/files (e.g. 
 	the path to the results, to the plots, to the aggregated data, etc).
 - INPUT OUTPUT FILE
+
 Folders:
 - **create_directories**: script called in main.R that creates the needed directories if they do not exist already 
 	(e.g., where the results are stored).
@@ -96,7 +97,9 @@ Folders:
 ### results
 Files: 
 - *readme.md*: file describing the folder content in further detail.
+
 Folders:
+
 The folders in this path contain the extinction risk calculated at ecoregion resolution, per each scenario and land use types usign the scrips in the folder */scripts/model* that are called in the main.R file.  
 Labeling of the folders:
 	- Baseline, SharedEffort or LowerIntensity: scenario to which the results belong.
@@ -113,7 +116,7 @@ Folders:
 
 - **areas/**: it contains the files created by the scripts aggregate_areas.R and areas_Rdata-to-csv.R and the relative plots. 
 - **archived/**: folder containing material used for testing and eventually not included in the final version of the manuscript.
-- The folders containing the aggregated values and plotting of the extinction risk. Each of these folders contains multiple sub-folders corresponding to the multiple scenarios, 
+- The other folders containing the aggregated values and plotting of the extinction risk. Each of these folders contains multiple sub-folders corresponding to the multiple scenarios, 
 where the aggregated results and the plots are stores. Each sub-folder contains:
 	- an .Rdata file with the aggregated results output of the script aggregate_results.R.
 	- A folder called */csv* which contains the .csv files of the aggregated results created by EU_Rdata-to-csv.R and global_Rdata-to-csv.R.
