@@ -3,9 +3,13 @@ Author: Francesca Rosa, ETH Zürich
 
 # data/model_parameters/ecoregions_data/z_analysis
 
-This folder contains some plots meant to explore the dataset [1] used to obtain the z values used in the study.
+This folder contains contains the raw files then processed to obtain the z values used as input in the model for the calculation of the impacts and some analyses. 
 
-Additionally, it contains these files:
+Folders: 
+
+- **plots**: plots meant to explore the dataset [1] used to obtain the z values used in the study.
+
+Files
 
 - *z_originals_Drakare_2005_SITable1.csv*: table with the aggregated data from the SI of the data source [1].
 - *z_SAR_data_full-table.csv* and *z_SAR_data_full-table.xlsx*: original files sent by Prof. Hillebrand (corresponding 
