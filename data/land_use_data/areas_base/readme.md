@@ -8,10 +8,10 @@ This folder contains the unprocessed raw data from GLOBIOM on areas and biomass 
 
 Folders: 
 
-- OriginalFiles: list of original files sent by GLOBIOM, containing data on the areas and the volume of wood harvested under the multiple scenarios considered
-- Baseline: raw files with data on the Baseline scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
-- SharedEffort: raw files with data on the SharedEffort scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
-- LowerIntensity: raw files with data on the LowerIntensity scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
+- **OriginalFiles**: list of original files sent by GLOBIOM, containing data on the areas and the volume of wood harvested under the multiple scenarios considered
+- **Baseline**: raw files with data on the Baseline scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
+- **SharedEffort**: raw files with data on the SharedEffort scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
+- **LowerIntensity**: raw files with data on the LowerIntensity scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
 		This falls under the Baseline scenario, but part of the imports and the exports are harvested from 
 		low-intensity forestry, though for the imports much less area is covered by low-intensity management than the SharedEffort approach and the management is selective logging instead of Reduced impact logging.
 		WARNING: the LowerIntensity approach was tested but the results were not included in the published article.
@@ -21,18 +21,18 @@ In each of these folders, there are the files with data on the area and the biom
 
 #### Abbreviations use in the files of this folder
 
-*WARNING*: In the original files, in the results and in the aggregated values, the labeling of the scenarios is slightly different
+**WARNING**: In the original files, in the results and in the aggregated values, the labeling of the scenarios is slightly different
           compared to the abbreviations used in the manuscript (see below)
 
--Climate mitigation scenarios
+- Climate mitigation scenarios
 	- REF = Reference -> RCP6.5 in the manuscript
 	- RCP = RCP 2.6
 
--EU Forest Use Scenarios
+- EU Forest Use Scenarios
 	- MFM = Multifunctional Forest Management > forcing of multifunctional forest management models on suitable area. This scenario is called closer-to-nature (CFM) in the manuscript.
 	- SFM = Set Aside Forest Management > forcing of set aside on suitable area
 
--EU Forest Management scenarios
+- EU Forest Management scenarios
 	- noAF = no alternative forest management
 	- AF0 = not forcing payments for alternative extensive managements (favouring alternative intensification managements > clearcuts) -> *laissez-faire* in the manuscript
 	- AF25 = forcing with payments to 25% expansion of alternative extensive managements (selective, retention) or set-aside -> CFM12.5% or SFM12.5% in the manuscript
