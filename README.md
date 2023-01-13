@@ -18,9 +18,7 @@ It contains two subfolders: *land_use_data* and *model_parameters*
 
 ### data
 
-#### data/model_parameters
-
-##### ecoregions_data
+#### data/model_parameters/ecoregions_data
 
 Files:
 
@@ -62,7 +60,7 @@ Folders:
 	- *readme.md*: file providing an overview of the scenarios and the acronyms used in GLOBIOM.
 	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
 	
-- *areas_processed*
+- **areas_processed**
 	- *readme.md*: file describing the folder content in further detail.
 	- .RData files: results of the tidying up process made through the function do_tidy_match.R called in main.R.
 	- *notimber/Baseline/*, *notimber/SharedEffort/* and *notimber/LowerIntensity/*: folders containing the.csv files 
@@ -71,48 +69,56 @@ Folders:
 	- *timber/Baseline/*: folder containing the.csv files resulting from the matching between the areas of the different GLOBIOM model, through the application of the function 
 	do_tidy_match.R called in main.R. under the “timber” setting.- *readme.md*: document that describes the content of the sub-folders.
 	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
-	- AREAS USER
+- AREAS USER
 
 
 ### scripts
+Files:
 - *readme.md*: file describing the folder content in further detail.
-- *data_preparation*: scripts used to tidy up and match the data on the area and to calculate the model 
-	parameters used as input in the model. The input and output of these scripts are in the folder */data*
-- *model*: scripts that take the output of the functions in */data_preparation* as input and calculate the 
-	extinction risk per year, scenario, land use and ecoregion and to store the results in the folder */results*.
-- *aggregation*: scripts that take the files in */results* as input and aggregate them (e.g. summing the 
-	impacts over ecoregions). The output of these scripts is saved in */aggregation_plotting*.
-- *plotting*: scripts used to plot the values of the .csv files in */results* or in */aggregation_plotting*; the 
-	plots are saved in */aggregation_plotting*.
 - *set_directories.R*: script called in main.R that creates variables containing the paths to folders/files (e.g. 
 	the path to the results, to the plots, to the aggregated data, etc).
-- *create_directories*: script called in main.R that creates the needed directories if they do not exist already 
-	(e.g., where the results are stored).
-- *archived*: folder containing material used for testing and eventually not included in the final version of the manuscript.
 - INPUT OUTPUT FILE
+Folders:
+- **create_directories**: script called in main.R that creates the needed directories if they do not exist already 
+	(e.g., where the results are stored).
+- **data_preparation**: scripts used to tidy up and match the data on the area and to calculate the model 
+	parameters used as input in the model. The input and output of these scripts are in the folder */data*
+- **model**: scripts that take the output of the functions in */data_preparation* as input and calculate the 
+	extinction risk per year, scenario, land use and ecoregion and to store the results in the folder */results*.
+- **aggregation**: scripts that take the files in */results* as input and aggregate them (e.g. summing the 
+	impacts over ecoregions). The output of these scripts is saved in */aggregation_plotting*.
+- **plotting**: scripts used to plot the values of the .csv files in */results* or in */aggregation_plotting*; the 
+	plots are saved in */aggregation_plotting*.
+
+- **archived**: folder containing material used for testing and eventually not included in the final version of the manuscript.
+
 
 ### results
-
-This folder contains the extinction risk calculated at ecoregion resolution, per each scenario and land use types with the scrips in the folder */scripts/model* that are called in the main.R file.  
-Labeling of the sub-folders:
+Files: 
+- *readme.md*: file describing the folder content in further detail.
+Folders:
+The folders in this path contain the extinction risk calculated at ecoregion resolution, per each scenario and land use types usign the scrips in the folder */scripts/model* that are called in the main.R file.  
+Labeling of the folders:
 	- Baseline, SharedEffort or LowerIntensity: scenario to which the results belong.
 	- timber = EU timber plantations have been included
 	- cutoff = response ratios larger than 1 converted to 1
-	- bs or static = confidence interval calculated with bootstrapping or are not calculated.
-The folder also contains a *readme.md* files with further details. 
+	- bs or static = confidence interval calculated with bootstrapping or are not calculated. 
 
 ### aggregation_plotting
 
-This folder contains multiple sub-folders corresponding to the multiple scenarios, where the aggregated results and the plots are stores. 
-Each sub-folder contains
+Files:
+- *readme.md*: file describing the folder content in further detail.
+
+Folders:
+
+- **areas/**: it contains the files created by the scripts aggregate_areas.R and areas_Rdata-to-csv.R and the relative plots. 
+- **archived/**: folder containing material used for testing and eventually not included in the final version of the manuscript.
+- The folders containing the aggregated values and plotting of the extinction risk. Each of these folders contains multiple sub-folders corresponding to the multiple scenarios, 
+where the aggregated results and the plots are stores. Each sub-folder contains:
 	- an .Rdata file with the aggregated results output of the script aggregate_results.R.
 	- A folder called */csv* which contains the .csv files of the aggregated results created by EU_Rdata-to-csv.R and global_Rdata-to-csv.R.
 	- A folder called */plots* with the plots and maps created by the scripts in scripts/plotting.
 
-There are two additional sub-folders 
-	- *areas/*: it contains the files created by the scripts aggregate_areas.R and areas_Rdata-to-csv.R and the relative plots. 
-	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
-The folder also contains a *readme.md* files with further details. 
 
 
 
