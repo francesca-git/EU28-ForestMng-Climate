@@ -1,31 +1,39 @@
 
 
-setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
+# First, set your working directory
+
+setwd("") 
+
+demo_folder <- "./demo/"
+
+# IMPORTANT: this script is meant to calculate the global extinction risk and not the regional.
+
+############################ LOAD THE NEED LIBRARIES ######################################
 
 library(pacman)
-p_load(dplyr, tidyr, abind, tidyverse)  # dataframe management and string management
+p_load(dplyr, tidyr, abind, tidyverse)  # dataframe management 
 select <- dplyr::select
 rename <- dplyr::rename
 
 
-working_folder <- "./user/"
-
 ############################ INITIAL SETTINGS ######################################
 
-# IMPORTANT: DO NOT CHANGE THEM 
+# IMPORTANT: DO NOT CHANGE THEM AND STORE THE NEEDED FILES IN THE RIGHT PATH
 
-CI = FALSE # WARNING: this user calculation is available only for the static case, without calculating the confidence intervals, otherwise it would take too long.
+CI = FALSE # WARNING: this demo calculation is available only for the static case, without the calculation of the confidence intervals.
 BS = FALSE 
 
-source(paste0(working_folder, "scripts/load_parameters.R"))
+source(paste0(demo_folder, "load_parameters.R"))
 ecodata_path <- "./data/model_parameters/ecoregions_data/" # path of the directory where the data on the model parameters are stored
-parameters = load.parameters(ecodata_path)
+# The files needed are 
+#     - paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/rr_ecoregion_static.Rdata")
+#     - paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/zvalues_static.Rdata)
 
-# IMPORTANT: this script is meant to calculate the global extinction risk and not the regional.
+parameters = load.parameters(ecodata_path)
 
 ############################ PREPARATION OF THE AREAS - USER'S AREAS ######################################
   
-areas <- read.csv("./user/data/areas.csv")
+areas <- read.csv(paste0(demo_folder, "areas.csv"))
 # Please fill out with your data the .csv file available the path defined here above. 
 # The columns of the file are the land use categories, the rows the ecoregions. In each cell, enter the area of the corresponding land use per that specific ecoregion (either in Mha, km2 or m2).
 # IMPORTANT: do not change the format, the column's names, the columns' order, the row's names, the rows' order. Just enter the numeric values into the corresponding cells.
@@ -55,9 +63,15 @@ Slost <- calculate.slost(Total_RemainingNatural_areas = Areas_org_new, Land_use_
   # Aggr2.5_matrix: not relevant for this calculation 
   # Aggr97.5_matrix: not relevant for this calculation 
 
+# IMPORTANT: for the function calculate.slost to work, the following .R files must be kept at this path:
+#   - paste0(your working directory, "scripts/model/model_functions.R)
+#   - paste0(your working directory, "scripts/model/parameters_calculation.R)
+
 Slost <- Slost %>% relocate(Eco_code, .before = Annual)
 
-write.csv(Slost, paste0(working_folder, "results/Global_extinction_risk_PDF.csv"), row.names = FALSE)
+############################ SAVING AS .CSV ######################################
+
+write.csv(Slost, paste0(demo_folder, "results/Global_extinction_risk_PDF.csv"), row.names = FALSE)
 
 
 

@@ -86,10 +86,10 @@ Folders:
 
 The folders in this path contain the extinction risk calculated at ecoregion resolution, per each scenario and land use types usign the scrips in the folder */scripts/model* that are called in the main.R file.  
 Labeling of the folders:
-	- Baseline, SharedEffort or LowerIntensity: scenario to which the results belong.
-	- timber = EU timber plantations have been included.
-	- cutoff = response ratios larger than 1 converted to 1.
-	- bs or static = confidence interval calculated with bootstrapping or are not calculated. 
+- Baseline, SharedEffort or LowerIntensity: scenario to which the results belong.
+- timber = EU timber plantations have been included.
+- cutoff = response ratios larger than 1 converted to 1.
+- bs or static = confidence interval calculated with bootstrapping or are not calculated. 
 
 ### aggregation_plotting
 

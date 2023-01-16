@@ -4,9 +4,6 @@
 load.parameters <- function(ecodata_path) {
 
      necoregions = 804                      
-     Ecoregions = read.csv(paste0(ecodata_path, "Ecoregions_description.csv"), header = TRUE) # Ecoregions specifications from Chaudhary et al. (2015)
-     Ecoregions <- Ecoregions %>% dplyr::select(Eco_code) %>% mutate(Eco_code = as.factor(Eco_code)) # convert the eco codes of the ecoregions to a factor
-     
       
 ############################# CALCULATION OR LOADING OF THE INPUT PARAMETERS ############################# 
       
