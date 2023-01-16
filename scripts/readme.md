@@ -1,9 +1,11 @@
 October 2022
+
 Author: Francesca Rosa, ETH Zürich
 
 ### scripts
 
-Files:
+#### Files:
+
 - *readme.md*: file describing the folder content in further detail.
 - *set_directories.R*: script called in main.R that creates variables containing the paths to folders/files (e.g. 
 	the path to the results, to the plots, to the aggregated data, etc).
@@ -12,7 +14,7 @@ Files:
 - *scripts_functions_input_output.xlsx*: excel file with the list of scripts, functions, data input and output.
 - *scripts_functions_input_output.pdf*: .pdf file created with *scripts_functions_input_output.xlsx*.
 
-Folders:
+#### Folders:
 
 - **data_preparation**: the scripts in this folder are used to prepare the land use areas from GLOBIOM, the 
 z values from Drakare et al. (2005) and the vulnerability scores (VS) to be used in the extinction risk model (*scripts/model*). 
@@ -33,7 +35,7 @@ The other parameters needed in the model are already available in the .csv files
 
 - **model**: scripts that take the output of the functions in *data_preparation/* as input and calculate the 
 	extinction risk per year, scenario, land use and ecoregion and to store the results in the folder *results/*.
-	WARNING: for the details of which function is defined in which script and which input and output are needed and produced in each script, please see the pdf file *model/scripts_functions_input_output.pdf*
+	**Warning**: for the details of which function is defined in which script and which input and output are needed and produced in each script, please see the pdf file *model/scripts_functions_input_output.pdf*
 	- *calculate_impact.R*: main script, which calls all the other functions and is the only one to be ran. Used in *main.R*.
 	- *calculate_slost.R*: it contains the main function of the model (*calculate.slost*). Used in *calculate_impacts.R*.
 	- *allocate_impacts.R*: it contains the function *name.landuse* (it creates a character vector with the names of the columns of the different land use types) 
@@ -59,7 +61,7 @@ Structure of the scripts used for the model:
 	in each scenario, year and per grouped land use categories. The input data for these scripts are in *data/land_use_data/areas_base*. 
 	*volume_per_category_oneyear.R* was used to produce the values plotted in Figure S13.
 	**Warning**: *volume_per_category.R* can be used only for the Baseline scenario and its output were not included in the final manuscript. 
-	- *impacts_per_volumne.R and *impacts_per_volume_oneyear.R*: they convert the results expressed as 
+	- *impacts_per_volumne.R* and *impacts_per_volume_oneyear.R*: they convert the results expressed as 
 	PDF to PDF per Mm3 of roundwood equivalent. The input data for these scripts are the .csv files in *results* and in *data/land_use_data/areas_base*.
 	Used in *main.R* to. *impacts_per_volume_oneyear.R* was used to produced the data in Table S15.1. *impacts_per_volume.R* was used to produced the data in Table S18.1.
 	**Warning**: *impacts_per_volume.R* can be used only for the Baseline scenario. 
@@ -80,7 +82,7 @@ Structure of the scripts used for the model:
 	- *plot_map.R*: it is called in *plot_all_maps.R* and it contains the function that can plot the global or EU map at ecoregion resolution.
 	- *impacts_per_volume_ranges.R*: script that plots the ranges per GLOBIOM region of the impacts per volume of biomass harvested (PDF/Mm3), as in the Figures in S18.
 	- *maps_shapefiles/*: it contains the shapefiles of the global ecoregion, of the EU map and of the GLOBIOM regions.
-	IMPORTANT: the map of the ecoregions is not uploaded to the github repository as it is not owned by the authors. It can be downloaded here.
+	**Important**: the map of the ecoregions is not uploaded to the github repository as it is not owned by the authors. It can be downloaded here.
 	https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world. Once the files have been downloaded, they can be stored in 
 	the folder *maps_shapefiles/* by creating a subfolder *WWF_Ecoregions/* and then used for plotting.  
 
