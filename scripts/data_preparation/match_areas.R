@@ -6,7 +6,7 @@
 # Date: started in March 2020
 # unit of the output data: Mha
 
-# WARNING: this function 
+#### this function is used in the script do_tidy_match.R ####
 
 # working directory set with the script main.R available in the main folder
 
@@ -21,7 +21,7 @@ library(purrr)
 library(tibble)
 library(stringr)
 
-match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
+match.areas <- function(timber, label_approach, not_rel_wet, areas_processed_path) {
 
   source("./scripts/data_preparation/areas_functions.R")      # R file containing the function used in this script
 
@@ -35,13 +35,13 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
   # FALSE = excluding not relevant lands and wetlands 
   # TRUE = including not relevant lands and wetlands 
   
-  if (timber == FALSE) { load("./data/land_use_data/areas_processed/areas-to-match.RData") # all areas corresponding to timber plantations are 0 Mha
-  } else if(timber == TRUE) {load("./data/land_use_data/areas_processed/areas-to-match_timber.RData") } # Here we consider that part of the areas covered by clear cut in EU are allocated to Timber plantations.
+  if (timber == FALSE) { load(paste0("./data/land_use_data/areas_processed/areas-to-match_", label_approach, ".RData")) # all areas corresponding to timber plantations are 0 Mha
+  } else if(timber == TRUE) {load(paste0("./data/land_use_data/areas_processed/areas-to-match_", label_approach, "_timber.RData")) } # Here we consider that part of the areas covered by clear cut in EU are allocated to Timber plantations.
                                                                         # therefore, after all the allocation processes, the column containing data on Timber plantations is subtracted from Clear cut  
   
   # the file uploaded here above contains several elements:  
-    # - data.list.steps - list whose elements are the dataframes containing the areas of the different land use types (Mha), considering both the marginal and average approach: "Import_forest_av", "Import_forest_mg",  
-        # "Import_energy_plant", "EU_forest", "EU_energy_plant", "Export_forest_av", "Export_forest_mg", "Broad_land_use", "Forest_intensity"
+    # - data.list.steps - list whose elements are the dataframes containing the areas of the different land use types (Mha): "Import_forest",  
+        # "Import_energy_plant", "EU_forest", "EU_energy_plant", "Export_forest", "Broad_land_use", "Forest_intensity"
     # - ecoregions_in_Globiom - dataframe containing the codes of the ecoregions included in the GLOBIOM model
     # - EU_ecoregions - dataframe containing the codes of EU ecoregions 
     # - Globiom_eco_EU - dataframe containing the codes of EU ecoregions, the name of the corresponding Globiom region ("EU") and the share of these ecoregions set to 1, in order to use it later with the Neg_allocation function
@@ -74,24 +74,20 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
         areas <- list()
         areas.fin.disaggr <- list()
         
-        if(marginal == TRUE) {approach = "_mg"
-          }else if(marginal == FALSE) {approach = "_av"}
-      
     for (i in 1:ntstep) {
   
       print(paste0("Time step: ", tstep[i]))
       
-       # Comments on the following steps are in the section of code on the average approach
-      
+
               ################################################## 1) CREATE A SINGLE DATAFRAME ##################################################
   
      # Create a single dataframe which combines all the input data
   
-        areas <- data.list.steps[[paste0("Import_forest", approach)]][[i]] %>% 
+        areas <- data.list.steps[[paste0("Import_forest")]][[i]] %>% 
                       full_join(data.list.steps[["Import_energy_plant"]][[i]]) %>% 
                         full_join(data.list.steps[["EU_forest"]][[i]]) %>% 
                           full_join(data.list.steps[["EU_energy_plant"]][[i]]) %>%
-                            full_join(data.list.steps[[paste0("Export_forest", approach)]][[i]]) %>%
+                            full_join(data.list.steps[[paste0("Export_forest")]][[i]]) %>%
                               full_join(data.list.steps[["Broad_land_use"]][[i]]) %>%
                                 inner_join(ecoregions_in_Globiom) %>%                         # intersects the ecoregions available in Globiom with the ones in the other land use files  
                                   unite("Scenario", Climate:Management, remove = TRUE) %>%    # creates one single column merging the information about scenarios (climate, management, forest use)
@@ -100,12 +96,21 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                                         areas$Scenario <- as.factor(areas$Scenario)     # keeps the Scenario column as factor
                                           areas$Ecoregion <- as.factor(areas$Ecoregion) # keeps the Ecoregion column as factor    
                                           
-        if(marginal == TRUE){ # This lines add those columns which contain forest management types not modeled in the marginal approach 
-          areas <- areas %>% add_column("Selection_im" = 0, .after = "Plantation_im") %>%
+        if(label_approach == "Baseline"){ # This lines add those columns which contain forest management types not modeled in the baseline approach 
+          areas <- areas %>% add_column("RIL_im" = 0, .after = "Plantation_im") %>%
                     add_column("Selective_im" = 0, .before = "EP_CrpLnd_im") %>%
-                      add_column("Selection_EU_ex" = 0, .after = "Clear_cut_EU_ex")
+                      add_column("Selection_im" = 0, .before = "Selective_im") %>%
+                        add_column("Selection_EU_ex" = 0, .after = "Clear_cut_EU_ex")
+        }
+         
+        if(label_approach == "SharedEffort"){ # This lines add those columns which contain forest management types not modeled in the baseline approach 
+          areas <- areas %>% add_column("Selective_im" = 0, .before = "EP_CrpLnd_im") 
         }
                                           
+        if(label_approach == "LowerIntensity"){ # This lines add those columns which contain forest management types not modeled in the baseline approach 
+          areas <- areas %>% add_column("RIL_im" = 0, .after = "Plantation_im") 
+                    
+        }
                                           
             ################################################## 2) START MATCHING THE DATASETS ##################################################
          
@@ -116,8 +121,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                         mutate(CrpLnd_EU = CrpLnd_EU - EP_CrpLnd_EU, CrpLnd_RoW = CrpLnd_RoW - EP_CrpLnd_im,          # broad land use classes
                                GrsLnd_EU = GrsLnd_EU - EP_GrsLnd_EU, GrsLnd_RoW = GrsLnd_RoW - EP_GrsLnd_im,          # these subtractions produce negative values in some ecoregions
                                NatLnd_EU = NatLnd_EU - EP_NatLnd_EU, NatLnd_RoW = NatLnd_RoW - EP_NatLnd_im) %>%
-                          # mutate(MngFor = MngFor - Clear_cut_im - Clear_cut_EU - Selection_EU - Retention_EU - Plantation_im) %>%
-                          mutate(MngFor = MngFor - Clear_cut_im - Plantation_im - Selection_im - Selective_im) %>% # - Clear_cut_EU - Selection_EU - Retention_EU) %>%
+                          mutate(MngFor = MngFor - Clear_cut_im - Plantation_im - Selection_im - Selective_im - RIL_im) %>% 
                             inner_join(urban) %>%
                               mutate(sum_EUfor = Clear_cut_EU + Selection_EU + Retention_EU) # also Timber_plant_EU contains EU forest areas, but it is already included in Clear_cut_EU
                                 areas_in$Ecoregion <- as.factor(areas_in$Ecoregion)
@@ -160,7 +164,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                 test_check <- areas %>% filter(Scenario == scenario_test, Ecoregion == ecoregion_test) 
                 
                 if(abs(test$MngFor - (test_check$MngFor - test_check$Clear_cut_im - test_check$Plantation_im
-                                      - test_check$Selection_im - test_check$Selective_im)) > 1e-10) {
+                                      - test_check$Selection_im - test_check$Selective_im - test_check$RIL_im)) > 1e-10) {
                   stop("ERROR in section 2 - managed forests")
                 }
                 
@@ -234,13 +238,13 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
               test4 = colSums(areas_EP_alloc_RoW[3:length(areas_EP_alloc_RoW)])
               test4a = sum(test4)
               if(round(test4a-test3a, 3) != 0) {stop("ERROR - allocation of Crp, Grs or Nat RoW")}
-              if(abs(sum(test3["CrpLnd_RoW"], test3["GrsLnd_RoW"], test3["NatLnd_RoW"]) - sum(test4["CrpLnd_RoW"], test4["GrsLnd_RoW"], test4["NatLnd_RoW"])) > 1e-04) {stop("ERROR - marginal - allocation of Crp, Grs or Nat - RoW")}
+              if(abs(sum(test3["CrpLnd_RoW"], test3["GrsLnd_RoW"], test3["NatLnd_RoW"]) - sum(test4["CrpLnd_RoW"], test4["GrsLnd_RoW"], test4["NatLnd_RoW"])) > 1e-04) {stop("ERROR - allocation of Crp, Grs or Nat - RoW")}
               
               # Check allocation of energy plantations inside EU ====
               test5 = colSums(areas_EP_alloc_EU[3:length(areas_EP_alloc_EU)])
               test5a = sum(test5)
               if(round(test4a-test5a, 3) != 0) {stop("ERROR - allocation of Crp, Grs or Nat - EU")}
-              if(abs(sum(test5["CrpLnd_EU"], test5["GrsLnd_EU"], test5["NatLnd_EU"]) - sum(test4["CrpLnd_EU"], test4["GrsLnd_EU"], test4["NatLnd_EU"])) > 1e-04) {stop("ERROR - marginal - allocation of Crp, Grs or Nat - EU")}
+              if(abs(sum(test5["CrpLnd_EU"], test5["GrsLnd_EU"], test5["NatLnd_EU"]) - sum(test4["CrpLnd_EU"], test4["GrsLnd_EU"], test4["NatLnd_EU"])) > 1e-04) {stop("ERROR - allocation of Crp, Grs or Nat - EU")}
               
               # Check separation of Urban areas ====
                 test6 = areas_EP_alloc_EU
@@ -303,7 +307,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                           Annual_RoW = CrpLnd_RoW, Permanent_RoW = OagLnd_RoW, Pasture_RoW = GrsLnd_RoW, Urban_RoW = Urban_RoW,
                           For_ClearCut_EU = Clear_cut_EU, For_ClearCut_im = Clear_cut_im, For_ClearCut_ex = Clear_cut_EU_ex, For_Retention_EU = Retention_EU, 
                           For_PlantationFuel_im = Plantation_im/2, For_TimberPlant_EU = Timber_plant_EU, For_TimberPlant_ex = Timber_plant_EU_ex, For_TimberPlant_im = Plantation_im/2,
-                          For_SelectionSystem_EU = Selection_EU, For_SelectionSystem_im = Selection_im, For_SelectionSystem_ex = Selection_EU_ex, For_Selective_im = Selective_im,
+                          For_SelectionSystem_EU = Selection_EU, For_SelectionSystem_im = Selection_im, For_SelectionSystem_ex = Selection_EU_ex, For_Selective_im = Selective_im, For_ReducedImpactLogging_im = RIL_im,
                           EP_EU = Ene_Plant_EU, EP_conv_EU = EP_CrpLnd_EU+EP_GrsLnd_EU+EP_NatLnd_EU, EP_RoW = Ene_Plant_RoW, EP_conv_im = EP_CrpLnd_im+EP_GrsLnd_im+EP_NatLnd_im, 
                           Afforested_EU = AfrLnd_EU, Afforested_RoW = AfrLnd_RoW, Regrowth = For_Regrowth_EU + For_Regrowth, ForOther_Extensive_EU = For_Extensive_EU, ForOther_Extensive_RoW = For_Extensive, 
                           ForOther_Intensive_EU = For_Intensive_EU, ForOther_Intensive_RoW = For_Intensive) #26 # we consider a single For_Regrowth, because Regrowth in EU is 0
@@ -325,7 +329,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                                             For_Selective_im = For_Selective_im,
                                             For_Agroforestry = 0,
                                             For_TimberPlant = For_TimberPlant_EU + For_TimberPlant_ex + For_TimberPlant_im,
-                                            For_RIL = 0,
+                                            For_ReducedImpactLogging_im = For_ReducedImpactLogging_im,
                                             Secondary = Afforested_EU + Afforested_RoW + Regrowth, 
                                             ForOther_Extensive = ForOther_Extensive_EU + ForOther_Extensive_RoW, 
                                             ForOther_Intensive = ForOther_Intensive_EU + ForOther_Intensive_RoW) 
@@ -337,7 +341,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                 # "fr_Annual_EU"               "fr_Permanent_EU"            "fr_Pasture_EU"              "fr_Urban_EU"               
                 # "fr_Annual_RoW"              "fr_Permanent_RoW"           "fr_Pasture_RoW"             "fr_Urban_RoW"               "fr_For_ClearCut_EU"         "fr_For_ClearCut_im"        
                 # "fr_For_ClearCut_ex"         "fr_For_Retention_EU"        "fr_For_PlantationFuel_im"   "fr_For_PlantationTimber_im" "fr_For_TimberPlant_EU"      "fr_For_TimberPlant_ex"     
-                # "fr_For_SelectionSystem_EU"  "fr_For_SelectionSystem_im"  "fr_For_Selective_im"        "fr_EP_EU"                   "fr_EP_conv_EU"              "fr_EP_RoW"                  "fr_EP_conv_im"             
+                # "fr_For_SelectionSystem_EU"  "fr_For_SelectionSystem_im"  "fr_For_Selective_im"        "fr_RIL_im"                              "fr_EP_EU"                   "fr_EP_conv_EU"              "fr_EP_RoW"                  "fr_EP_conv_im"             
                 # "fr_Afforested_EU"           "fr_Afforested_RoW"          "fr_Regrowth"                "fr_ForOther_Extensive_EU"   "fr_ForOther_Extensive_RoW"  "fr_ForOther_Intensive_EU"  
                 # "fr_ForOther_Intensive_RoW" 
                       
@@ -354,6 +358,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                           fr_For_SelectionSystem_im = For_SelectionSystem_im/For_SelectionSystem,
                           fr_For_SelectionSystem_ex = For_SelectionSystem_ex/For_SelectionSystem,
                           fr_For_Selective_im = 1,
+                          fr_For_ReducedImpactLogging_im = 1,
                           fr_EP_EU = EP_EU/Permanent, fr_EP_conv_EU = EP_conv_EU/Permanent, fr_EP_RoW = EP_RoW/For_PlantationFuel, fr_EP_conv_im = EP_conv_im/For_PlantationFuel, 
                           fr_Afforested_EU = Afforested_EU/Secondary, fr_Afforested_RoW = Afforested_RoW/Secondary, fr_Regrowth = Regrowth/Secondary, 
                           fr_ForOther_Extensive_EU = ForOther_Extensive_EU/ForOther_Extensive, fr_ForOther_Extensive_RoW = ForOther_Extensive_RoW/ForOther_Extensive, 
@@ -387,13 +392,13 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
              
               # Save the results  ======
                 if (timber == FALSE) {
-                  write.csv(areas_fin_disaggr, paste0(areas_processed_path, "disaggregated/areas_disaggr", approach, "_", tstep[i], ".csv"), row.names = FALSE)
-                  write.csv(areas_aggr, paste0(areas_processed_path, "aggregated/areas_aggr", approach, "_", tstep[i], ".csv"), row.names = FALSE)
-                  write.csv(fr_areas, paste0(areas_processed_path, "fraction/fr_areas_disaggr", approach, "_", tstep[i], ".csv"), row.names = FALSE)
+                  write.csv(areas_fin_disaggr, paste0(areas_processed_path, "disaggregated/areas_disaggr_", label_approach, "_", tstep[i], ".csv"), row.names = FALSE)
+                  write.csv(areas_aggr, paste0(areas_processed_path, "aggregated/areas_aggr_", label_approach, "_", tstep[i], ".csv"), row.names = FALSE)
+                  write.csv(fr_areas, paste0(areas_processed_path, "fraction/fr_areas_disaggr_", label_approach, "_", tstep[i], ".csv"), row.names = FALSE)
                 } else if (timber == TRUE){
-                  write.csv(areas_fin_disaggr, paste0(areas_processed_path, "disaggregated/areas_disaggr", approach, "_", tstep[i], "_timber.csv"), row.names = FALSE)
-                  write.csv(areas_aggr, paste0(areas_processed_path, "aggregated/areas_aggr", approach, "_", tstep[i], "_timber.csv"), row.names = FALSE)
-                  write.csv(fr_areas, paste0(areas_processed_path, "fraction/fr_areas_disaggr", approach, "_", tstep[i], "_timber.csv"), row.names = FALSE)
+                  write.csv(areas_fin_disaggr, paste0(areas_processed_path, "disaggregated/areas_disaggr_", label_approach, "_", tstep[i], "_timber.csv"), row.names = FALSE)
+                  write.csv(areas_aggr, paste0(areas_processed_path, "aggregated/areas_aggr_", label_approach, "_", tstep[i], "_timber.csv"), row.names = FALSE)
+                  write.csv(fr_areas, paste0(areas_processed_path, "fraction/fr_areas_disaggr_", label_approach, "_", tstep[i], "_timber.csv"), row.names = FALSE)
               }     
          
             rm(areas_in, areas_fin_disaggr, areas_aggr)
@@ -412,7 +417,7 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                         Annual_RoW = CrpLnd_RoW, Permanent_RoW = OagLnd_RoW, Pasture_RoW = GrsLnd_RoW, Urban_RoW = Urban_RoW,
                         For_ClearCut_EU = Clear_cut_EU, For_ClearCut_im = Clear_cut_im, For_ClearCut_ex = Clear_cut_EU_ex, For_Retention_EU = Retention_EU, 
                         For_PlantationFuel_im = Plantation_im/2, For_TimberPlant_EU = Timber_plant_EU, For_TimberPlant_ex = Timber_plant_EU_ex, For_TimberPlant_im = Plantation_im/2,
-                        For_SelectionSystem_EU = Selection_EU, For_SelectionSystem_im = Selection_im, For_SelectionSystem_ex = Selection_EU_ex, For_Selective_im = Selective_im,
+                        For_SelectionSystem_EU = Selection_EU, For_SelectionSystem_im = Selection_im, For_SelectionSystem_ex = Selection_EU_ex, For_Selective_im = Selective_im, For_ReducedImpactLogging_im = RIL_im,
                         EP_EU = Ene_Plant_EU, EP_conv_EU = EP_CrpLnd_EU+EP_GrsLnd_EU+EP_NatLnd_EU, EP_RoW = Ene_Plant_RoW, EP_conv_im = EP_CrpLnd_im+EP_GrsLnd_im+EP_NatLnd_im, 
                         Afforested_EU = AfrLnd_EU, Afforested_RoW = AfrLnd_RoW, Regrowth = For_Regrowth_EU + For_Regrowth, ForOther_Extensive_EU = For_Extensive_EU, ForOther_Extensive_RoW = For_Extensive, 
                         ForOther_Intensive_EU = For_Intensive_EU, ForOther_Intensive_RoW = For_Intensive,
@@ -420,11 +425,9 @@ match.areas <- function(timber, marginal, not_rel_wet, areas_processed_path) {
                 
               areas_fin_disaggr_notReWet$Ecoregion <- as.factor(areas_fin_disaggr_notReWet$Ecoregion) 
               
-              if(marginal == TRUE) {
-                write.csv(areas_fin_disaggr_notReWet, paste0("./data/land_use_data/areas_processed/NotRel-Wet/mg/areas_disaggr_", tstep[i], "_notRel-Wet.csv"), row.names = FALSE)
-              }else if(marginal == FALSE) {
-                write.csv(areas_fin_disaggr_notReWet, paste0("./data/land_use_data/areas_processed/NotRel-Wet/av/areas_disaggr_", tstep[i], "_notRel-Wet.csv"), row.names = FALSE)
-              }
+          # Save the results
+          write.csv(areas_fin_disaggr_notReWet, paste0("./data/land_use_data/areas_processed/NotRel-Wet/", approach , "/areas_disaggr_", tstep[i], "_notRel-Wet.csv"), row.names = FALSE)
+              
               rm(areas_in, areas_fin_disaggr_notReWet)
 
 

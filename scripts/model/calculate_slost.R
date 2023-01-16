@@ -1,4 +1,4 @@
-source("./scripts/model/CF_functions.R")
+source("./scripts/model/model_functions.R")
 source("./scripts/model/parameters_calculation.R")
 
 
@@ -12,16 +12,17 @@ select <- dplyr::select
       # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
     # Land_use_areas : dataframe which contains one column per each land use category. The rows correspond to the 
       # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
+    # param: list containing the parameters of the model: "ratio_eco", 
     # CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated
     # vulnerability: TRUE or FALSE 
     
 
     if((CI != FALSE & CI != TRUE) | missing(CI)) {stop("Select one option for the calculation of the confidence intervals (FALSE or TRUE)")}
     
-    ratio_eco = param[["ratio_eco"]]
-    weight_tx = param[["weight_tx"]]
-    Sorg_VS = param[["Sorg_VS"]]
-    zvalues = param[["zvalues"]]
+    ratio_eco = param[["ratio_eco"]] # response ratios at ecoregion level
+    weight_tx = param[["weight_tx"]] # weighting factors at taxon level
+    Sorg_VS = param[["Sorg_VS"]] # original number of species and vulnerability scores
+    zvalues = param[["zvalues"]] # z values
         
     necoregions = dim(ratio_eco)[1]                       # number of ecoregions = length of the first dimension of the array ratio_eco 
     Ecoregions = dimnames(ratio_eco)[[1]]

@@ -11,10 +11,12 @@
       } else if (BS == TRUE) {label_CI = "bs"}}
     
         
-    if (marginal == TRUE) { label_approach = "mg"
-    } else if (marginal == FALSE) {label_approach = "av"
-      if (lowintensity_imports == TRUE) {label_approach =  "av-LII"}
-      }
+    if (baseline == TRUE) { label_approach = "Baseline"
+    } else if (baseline == FALSE) {
+      if (shared_effort == TRUE) {label_approach =  "SharedEffort"}
+      else if (lower_intensity == TRUE) {label_approach = "LowerIntensity"}
+    }
+    
     if (label_timber == "notimber") { 
       label = paste0(label_cutoff, "_", label_CI, "_", label_approach)  
     } else if (label_timber != "") { 
@@ -32,8 +34,7 @@
 
     ### LAND USE AREAS ###
     areas_path = "./data/land_use_data/"
-    areas_base_path = paste0(areas_path, "areas_base/")
-    if(lowintensity_imports == TRUE) {areas_base_path = paste0(areas_path, "areas_base/av-LII/")}
+    areas_base_path = paste0(areas_path, "areas_base/", label_approach, "/")
     areas_processed_path =  paste0(areas_path, "areas_processed/", label_timber, "/", label_approach, "/")
 
     areas_processed_path_user =  paste0("./data/land-use/areas_user/")

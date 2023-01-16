@@ -113,6 +113,7 @@ convert.to.PDFha <- function(results_path, areas_processed_path, csv_path, file_
                           (abs(test$ForOther_Intensive_EU_median - test_check3$ForOther_Intensive_EU_median) > 1e-16) |
                           (abs(test$ForOther_Intensive_RoW_median - test_check3$ForOther_Intensive_RoW_median) > 1e-16) |
                           (abs(test$For_Selective_im_median - test_check3$For_Selective_im_median) > 1e-16) |
+                          (abs(test$For_ReducedImpactLogging_im_median - test_check3$For_ReducedImpactLogging_im_median) > 1e-16) |
                           (abs(test$For_SelectionSystem_EU_median - test_check3$For_SelectionSystem_EU_median) > 1e-16) |
                           (abs(test$EP_EU_median - test_check3$EP_EU_median) > 1e-16) |
                           (abs(test$EP_conv_EU_median - test_check3$EP_conv_EU_median) > 1e-16) |
@@ -127,7 +128,7 @@ convert.to.PDFha <- function(results_path, areas_processed_path, csv_path, file_
                     rm(test, test_check1, test_check2, test_check3)
           # ====
   
-  write.csv(ratio, paste0(csv_path, "PDF-ha.csv"), row.names = FALSE)
+  write.csv(ratio, paste0(csv_path, "PDF_ha.csv"), row.names = FALSE)
    
   ratio_tot <- df_PDF
   df_PDF_sum <- data.frame(df_PDF %>% select(-Ecoregion) %>%
@@ -141,7 +142,7 @@ convert.to.PDFha <- function(results_path, areas_processed_path, csv_path, file_
   ratio_tot <- data.frame(bind_cols(df_PDF_sum[1:3], df_PDF_sum[4:length(df_PDF_sum)]/df_Areas_sum[4:length(df_Areas_sum)]) %>%
               replace(is.na(.), 0)) 
                     
-  write.csv(ratio_tot, paste0(csv_path, "PDF-ha_tot.csv"), row.names = FALSE)
+  write.csv(ratio_tot, paste0(csv_path, "PDF_ha_tot.csv"), row.names = FALSE)
 
 }
   

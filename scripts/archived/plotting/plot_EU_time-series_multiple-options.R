@@ -9,12 +9,19 @@ library(RColorBrewer)
 library(scico)
 
 
-plot.EU.timeseries <- function(csv_path, file_label, plots_path, id) {
+plot.EU.timeseries <- function(csv_path, file_label, plots_path, id, energy_exports) {
   
   if (id == "EUFootprint") {
+    if(energy_exports == "EPnoex" | energy_exports == "ex") {
     file_name = paste0("EUFootprint_time-series", file_label, "_EP.csv")
+    } else if(energy_exports == "noEPnoex"){ file_name = paste0("EUFootprint_time-series", file_label, "_noEP.csv")
+    }
   } else if (id == "EUForest") {
-    file_name = paste0("EUForest_time-series", file_label, "_EPnoex.csv")
+    if(energy_exports == "EPnoex") { file_name = paste0("EUForest_time-series", file_label, "_EPnoex.csv")
+    } else if(energy_exports == "ex") { file_name = paste0("EUForest_time-series", file_label, "_ex.csv")
+    } else if(energy_exports == "noEPnoex") { file_name = paste0("EUForest_time-series", file_label, "_noEPnoex.csv")
+      
+    }
   }
   
   data <- read.csv(paste0(csv_path, file_name), header = TRUE)

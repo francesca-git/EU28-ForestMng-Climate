@@ -1,5 +1,5 @@
 source("./scripts/model/parameters_calculation.R")
-source("./scripts/model/CF_functions.R")
+source("./scripts/model/model_functions.R")
 source("./scripts/model/calculate_slost.R")
 source("./scripts/model/allocate_impacts.R")
 
@@ -7,13 +7,6 @@ if(!require("pacman")){install.packages("pacman")};require("pacman")
 p_load(MASS, dplyr, tidyr, abind, tidyverse, stringr, foreach, fitdistrplus, truncdist)  # dataframe management and string management
 select <- dplyr::select
 
-
-# calculate.impacts <- function(cutoff, CI, BS, marginal, label, areas_processed_path, results_path, ecodata_path, vulnerability) {
-#   
-#   if(missing(cutoff)) {cutoff = TRUE}
-#   if(missing(CI)) {CI = FALSE}
-#   if(missing(BS)) {BS = TRUE}
-#   if(missing(marginal)) {marginal = TRUE}
     
 ############################# INITIAL SETTINGS ############################# 
   
@@ -71,10 +64,6 @@ select <- dplyr::select
         } else if (cutoff == FALSE) { load(paste0(ecodata_path, "rr_z/rr_ecoregion_static_nocutoff.Rdata"))}
       
       ratio_eco_static <- rr_ecoregion
-########################################################################################################################################################################     
-    #ratio_eco_static[,"SelectiveLogging",,] <- ratio_eco_static [,"ReducedImpactLogging",,]
-########################################################################################################################################################################     
-
 
         if (CI == TRUE) {
           if(cutoff == TRUE){
@@ -141,9 +130,6 @@ select <- dplyr::select
           
 ############################# CALCULATION OF THE IMPACTS ############################# 
         
-  # tsteps = c(2030, 2040, 2060, 2070, 2080, 2090) # seq(from = 2000, to = 2100, by = 10)  
-  # ntsteps = length(tsteps) #time steps: 2000 -> 2100
-  # tstep_areas = c(4,5,7,8,9,10)
   
   tsteps = seq(from = 2000, to = 2100, by = 10)  # temporal steps
  
@@ -304,11 +290,6 @@ select <- dplyr::select
           }
             
 
-          # Slost_aggr_matrix <- test_matrix
-          # Slost_aggr2.5_matrix <- test_matrix
-          # Slost_aggr97.5_matrix <- test_matrix
-          # Slost_taxa_matrix <- list("Plants" = test_matrix, "Birds" =  test_matrix, "Mammals" = test_matrix)
-          # 
           Slost_list <- list("Total_impacts" = Slost_aggr_matrix, "Total_impacts_2.5q" = Slost_aggr2.5_matrix, "Total_impacts_97.5q" = Slost_aggr97.5_matrix,
                              "Plants" = Slost_taxa_matrix[["Plants"]], "Birds" = Slost_taxa_matrix[["Birds"]], "Mammals" = Slost_taxa_matrix[["Mammals"]])
           
@@ -384,7 +365,7 @@ select <- dplyr::select
   rm(ptm_endyear, ptm_year, run_time)
 
       
-#}
+
   
 
   

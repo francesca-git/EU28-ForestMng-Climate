@@ -93,7 +93,7 @@
                                 abs(test$EU_Forest_net - (test_check$For_ClearCut_EU + test_check$For_Retention_EU + test_check$For_TimberPlant_EU +
                                                         test_check$For_SelectionSystem_EU + test_check$ForOther_Extensive_EU + test_check$ForOther_Intensive_EU)) > 1e-3  |
                                 abs(test$Import_Energy_plantations - test_check$EP_conv_im) > 1e-16  |
-                                abs(test$Import_Forest - (test_check$For_ClearCut_im + test_check$For_PlantationFuel_im +  test_check$For_TimberPlant_im + test_check$For_SelectionSystem_im + test_check$For_Selective_im)) > 1e-13 )
+                                abs(test$Import_Forest - (test_check$For_ClearCut_im + test_check$For_PlantationFuel_im +  test_check$For_TimberPlant_im + test_check$For_SelectionSystem_im + test_check$For_Selective_im + test_check$For_ReducedImpactLogging_im)) > 1e-13 )
                               {stop("ERROR in the aggregation of land use for EU footprint")}
                               
                             # ====
@@ -222,7 +222,7 @@
                   
             rm(sums_oneyear)
             
-      ################## EU INTERNAL INCLUDING IMPORTS #######################
+      ################## EU INTERNAL INCLUDING EXPORTS #######################
 
         results_temp <- results[[year]] %>%
                               unite("Group", Group:Forest_use, remove = TRUE) %>%
@@ -313,7 +313,7 @@
                               abs(test$Forest - (test_check$For_ClearCut_EU +  test_check$For_ClearCut_im + test_check$For_ClearCut_ex + 
                                 test_check$For_Retention_EU + test_check$For_SelectionSystem_EU + test_check$For_PlantationFuel_im + test_check$For_TimberPlant_im +
                                 test_check$For_TimberPlant_EU + test_check$For_TimberPlant_ex + test_check$ForOther_Extensive_EU + 
-                                test_check$ForOther_Extensive_RoW + test_check$ForOther_Intensive_EU + test_check$ForOther_Intensive_RoW)) > 1e-16 |
+                                test_check$ForOther_Extensive_RoW + test_check$ForOther_Intensive_EU + test_check$ForOther_Intensive_RoW + test_check$For_Selective_im + test_check$For_ReducedImpactLogging_im)) > 1e-16 |
                               abs(test$Pasture - (test_check$Pasture_EU + test_check$Pasture_RoW)) > 1e-16  |
                               abs(test$Permanent_crops - (test_check$Permanent_EU + test_check$Permanent_RoW)) > 1e-16  |
                               abs(test$Urban - (test_check$Urban_EU + test_check$Urban_RoW)) > 1e-16 ) 
@@ -377,7 +377,7 @@
                                abs(test$Forest - (test_check$For_ClearCut_EU +  test_check$For_ClearCut_im + test_check$For_ClearCut_ex +
                                  test_check$For_Retention_EU + test_check$For_SelectionSystem_EU + test_check$For_PlantationFuel_im + test_check$For_TimberPlant_im +
                                 test_check$For_TimberPlant_EU + test_check$For_TimberPlant_ex + test_check$ForOther_Extensive_EU +
-                                 test_check$ForOther_Extensive_RoW + test_check$ForOther_Intensive_EU + test_check$ForOther_Intensive_RoW)) > 1e-11 |
+                                 test_check$ForOther_Extensive_RoW + test_check$ForOther_Intensive_EU + test_check$ForOther_Intensive_RoW + test_check$For_Selective_im + test_check$For_ReducedImpactLogging_im)) > 1e-11 |
                                abs(test$Pasture - (test_check$Pasture_EU + test_check$Pasture_RoW)) > 1e-11 |
                                abs(test$Permanent_crops - (test_check$Permanent_EU + test_check$Permanent_RoW)) > 1e-11 |
                                abs(test$Urban - (test_check$Urban_EU + test_check$Urban_RoW)) > 1e-11) {

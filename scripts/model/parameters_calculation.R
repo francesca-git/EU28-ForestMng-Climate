@@ -3,7 +3,7 @@ if(!require("pacman")){install.packages("pacman")};require("pacman")
 p_load(dplyr, tidyr, abind, tidyverse, stringr)  # dataframe management and string management
 select <- dplyr::select
 
-source("./scripts/model/CF_functions.R")                # source of all functions used here
+source("./scripts/model/model_functions.R")                # source of all functions used here
 source("./scripts/model/distributions.R")
 
   ############################# LOAD THE DATA ############################# 
@@ -210,7 +210,7 @@ source("./scripts/model/distributions.R")
         biomes = c(1:14, "Artificial")  # unique(CF_local_raw$Biome_ID). Only 13% of raw local CF assigned to Urban areas were also assigned to a biome, of which only two biomes have enough data to calculate the mean. Therefore, I created an additional "biome" class, called "Artificial", where to store all raw data for urban areas, regardless of the biome.
         nbiome = length(biomes)         # number of biomes
         
-        CFloc_landuse = CFcalc(CF_local_landuse, taxa, land_use_types, biomes)	# Local CF (source file: CF_function.R)
+        CFloc_landuse = CFcalc(CF_local_landuse, taxa, land_use_types, biomes)	# Local CF (source file: model_functions.R)
         
         CFloc_group_landuse = CFloc_landuse[[2]]    # list of grouped CF (raw data are grouped by biome, land use type and taxa, if less than 5 data points are available, data are grouped by land use and taxa or only by land use)
         indices_land_use = CFloc_landuse[[3]] # list of indexes to define each element of CFloc_group_landuse. E.g., indices_land_use[[1]] = c(1,1,1), because CFloc_group_landuse[[1]] contains the grouped local CF corresponding to the first element of the vectors biomes, land_use_types and taxa

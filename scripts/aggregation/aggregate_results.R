@@ -75,10 +75,10 @@
         # test ====
         y <- sample(x = c(11,11), 1)                        # random year
         r <- sample(1:nrow(results[[1]]), 1)        # random row
-        if ((rowSums(results[[y]][r, 4:33], na.rm = TRUE) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
-          if(length(results[[y]]) > 33) { 
-            if ((rowSums(results[[y]][r, 34:63], na.rm = TRUE) - sums[[y]][r,5] > 1e-16) |
-                (rowSums(results[[y]][r, 64:93], na.rm = TRUE) - sums[[y]][r,6] > 1e-16))  {stop("ERROR in the calculation of the sums (CI)")}
+        if ((rowSums(results[[y]][r, 4:34], na.rm = TRUE) - sums[[y]][r,4]) > 1e-16) {stop("ERROR in the calculation of the sums (median)")}
+          if(length(results[[y]]) > 34) { 
+            if ((rowSums(results[[y]][r, 35:65], na.rm = TRUE) - sums[[y]][r,5] > 1e-16) |
+                (rowSums(results[[y]][r, 66:96], na.rm = TRUE) - sums[[y]][r,6] > 1e-16))  {stop("ERROR in the calculation of the sums (CI)")}
           }
   
         # ====

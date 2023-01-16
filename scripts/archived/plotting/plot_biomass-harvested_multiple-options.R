@@ -12,19 +12,16 @@ library(abind)                            # dataframe management
 library(tidyverse)                        # dataframe management
 library(stringr)                          # string management
 
-aggregate.vol.energy.biomass.import <- function(areas_base_path, marginal) {
+aggregate.vol.energy.biomass.import <- function(areas_base_path) {
   
-  if (marginal == TRUE) { data <- read.csv(paste0(areas_base_path, "ImportWood_energyplantations_mg.csv"), header = TRUE)
-      } else if (marginal == FALSE) {data <- read.csv(paste0(areas_base_path, "ImportWood_energyplantations_av.csv"), header = TRUE)}
-  
+ data <- read.csv(paste0(areas_base_path, "ImportWood_energyplantations.csv"), header = TRUE)
   
   data_aggr <- data %>% group_by(Mitigation_scenario, Forest_use, Management_scenario,	Category) %>%
                 summarise_if(is.numeric, sum) %>% data.frame()
     
   names(data_aggr)[5:length(data_aggr)] <- as.character(seq(from = 2000, to = 2100, by = 10))
   
-  if (marginal == TRUE) {  write.csv(data_aggr, paste0(areas_base_path, "wood_ene-plant-import_mg.csv"), row.names = FALSE)
-      } else if (marginal == FALSE) {write.csv(data_aggr, paste0(areas_base_path, "wood_ene-plant-import_av.csv"), row.names = FALSE)}
+  write.csv(data_aggr, paste0(areas_base_path, "wood_ene-plant-import.csv"), row.names = FALSE)
 
 }
 
@@ -44,10 +41,6 @@ library(tidyverse)                        # dataframe management
 library(stringr)                          # string management
 #source("./scripts/plotting/for_WBF/EU_barplots_WBF.R")
 
-#############################################################################################################################################################################
-                                                                                # 1 #
-#############################################################################################################################################################################
-
 
 #############################################################################################################################################################################
 
@@ -63,10 +56,7 @@ library(stringr)                          # string management
 EUForest.volume.barplot.EP.dis <- function(areas_base_path, csv_path, plots_path, label_timber, file_label, year, width_height) {
   
   # Load the data
-  if(grepl("mg", file_label, fixed = TRUE)) {
-    data <- read.csv(paste0(areas_base_path, "Split_volumes_mg.csv"), header = TRUE)
-    }  else if (grepl("av", file_label, fixed = TRUE)) {    data <- read.csv(paste0(areas_base_path, "Split_volumes_av.csv"), header = TRUE)
-  }
+    data <- read.csv(paste0(areas_base_path, "Split_volumes.csv"), header = TRUE)
   
   # Clean and prepare the data
   data <- data %>% unite("Group", Mitigation_scenario:Forest_use, sep = "_") %>%

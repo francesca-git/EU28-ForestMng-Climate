@@ -12,30 +12,30 @@ rename <- dplyr::rename
 
 ############################ PDF ######################################
 
-    source("./scripts/plotting/map_PDF_multi.R")
-  
-  
-  ############################ BASELINE ######################################
-  
-    # General settings for the calculation of the impacts
-      marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
-      timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-      CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
-  
-    # Settings to define which .Rdata file to load for the response ratios and the z values 
-      cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
-      vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
-      BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
-                              # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-      lowintensity_imports = FALSE   
-      
-  
+ ################################ BASELINE ##########################################
+
+  # General settings for the calculation of the impacts
+    baseline = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modeled in GLOBIOM applying the baseline scenario (in the EU up to 138 Mha are under forest managemnt and imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: another option is selected.
+    shared_effort = FALSE   # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a shared-effort approach (in the EU up to 160 Mha are under forest management and imports come partially from low-intensity forest management). FALSE: another option is selected.
+    lower_intensity = FALSE # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a lower-intensity approach (same as baseline, but part of the imports and the exports are harvested from low-intensity management, though for the imports much less area is covered by low-intensity management than the shared-effort approach). FALSE: another option is selected.
+                            # NB: the lower-intensity approach was tested but the results were not included in the published article.
+    
+    timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
+    CI = TRUE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+
+  # Settings to define which .Rdata file to load for the response ratios and the z values 
+    cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
+    vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
+    BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
+                            # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
+    source("./scripts/plotting/plot_map.R")
+
     ############################ FOOTPRINT ######################################
     
         id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
         map = "PDF" # "PDF" 
-        graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                              # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+        graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
+                              # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature50%, Closer-to-nature100%, SetAside50% and Set-Aside100%
         ratio = FALSE
         difference = FALSE
         
@@ -60,8 +60,8 @@ rename <- dplyr::rename
        
         id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
         map = "PDF" # "PDF" 
-        graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                              # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+        graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
+                              # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature50%, Closer-to-nature100%, SetAside50% and Set-Aside100%
         ratio = FALSE
         difference = FALSE
         
@@ -83,28 +83,31 @@ rename <- dplyr::rename
         plot.map(results_path, result_files, file_label, plots_path, id, map, graph, ratio, difference)
     
         
-  ############################ AVERAGE ######################################
+ ################################ SHARED-EFFORT ##########################################
       
-    # General settings for the calculation of the impacts
-      marginal = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
-      timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-      CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+  # General settings for the calculation of the impacts
+    baseline = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modeled in GLOBIOM applying the baseline scenario (in the EU up to 138 Mha are under forest managemnt and imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: another option is selected.
+    shared_effort = TRUE   # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a shared-effort approach (in the EU up to 160 Mha are under forest management and imports come partially from low-intensity forest management). FALSE: another option is selected.
+    lower_intensity = FALSE # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a lower-intensity approach (same as baseline, but part of the imports and the exports are harvested from low-intensity management, though for the imports much less area is covered by low-intensity management than the shared-effort approach). FALSE: another option is selected.
+                            # NB: the lower-intensity approach was tested but the results were not included in the published article.
+    
+    timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
+    CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+
+  # Settings to define which .Rdata file to load for the response ratios and the z values 
+    cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
+    vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
+    BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
+                            # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
   
-    # Settings to define which .Rdata file to load for the response ratios and the z values 
-      cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
-      vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
-      BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
-                              # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-      lowintensity_imports = TRUE   
-  
-    source("./scripts/plotting/map_PDF_multi.R") 
+    source("./scripts/plotting/plot_map.R") 
       
       ############################ FOOTPRINT ######################################
   
       id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
       map = "PDF" # "PDF" 
-      graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                            # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+      graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
+                            # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature50%, Closer-to-nature100%, SetAside50% and Set-Aside100%
       ratio = FALSE
       difference = FALSE
       
@@ -128,8 +131,8 @@ rename <- dplyr::rename
      
       id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
       map = "PDF" # "PDF" 
-      graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                            # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+      graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
+                            # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature50%, Closer-to-nature100%, SetAside50% and Set-Aside100%
       ratio = FALSE
       difference = FALSE
       
@@ -153,26 +156,29 @@ rename <- dplyr::rename
       
 ############################ RATIO AND DIFFERENCE ######################################
        
-      source("./scripts/plotting/map_PDF_multi.R")
+      source("./scripts/plotting/plot_map.R")
 
-  ############################ MARGINAL ######################################
+  ############################ BASELINE ######################################
     
     # General settings for the calculation of the impacts
-    marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
-    timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-    CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
-
-  # Settings to define which .Rdata file to load for the response ratios and the z values 
-    cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
-    vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
-    BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
-                            # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-    lowintensity_imports = FALSE   
+      baseline = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modeled in GLOBIOM applying the baseline scenario (in the EU up to 138 Mha are under forest managemnt and imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: another option is selected.
+      shared_effort = FALSE   # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a shared-effort approach (in the EU up to 160 Mha are under forest management and imports come partially from low-intensity forest management). FALSE: another option is selected.
+      lower_intensity = FALSE # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a lower-intensity approach (same as baseline, but part of the imports and the exports are harvested from low-intensity management, though for the imports much less area is covered by low-intensity management than the shared-effort approach). FALSE: another option is selected.
+                              # NB: the lower-intensity approach was tested but the results were not included in the published article.
+      
+      timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
+      CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+  
+    # Settings to define which .Rdata file to load for the response ratios and the z values 
+      cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
+      vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
+      BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
+                              # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
 
     id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
     map = "PDF" # "PDF" 
-    graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+    graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
+                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature50%, Closer-to-nature100%, SetAside50% and Set-Aside100%
     ratio = TRUE
     difference = FALSE
     
@@ -191,7 +197,7 @@ rename <- dplyr::rename
     
     id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
     map = "PDF" # "PDF" 
-    graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
+    graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
                
     ratio = TRUE
     difference = FALSE
@@ -209,24 +215,27 @@ rename <- dplyr::rename
     plot.map(results_path, result_files, file_label, plots_path, id, map, graph, ratio, difference)
     # This other function is meant to be tailored according to what it is needed to be plotted.
     
-    ############################ AVERAGE ######################################
+    ############################ SHARED-EFFORT ######################################
     
     # General settings for the calculation of the impacts
-    marginal = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
-    timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
-    CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
-
-  # Settings to define which .Rdata file to load for the response ratios and the z values 
-    cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
-    vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
-    BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
-                            # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-    lowintensity_imports = TRUE   
-
+      baseline = FALSE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modeled in GLOBIOM applying the baseline scenario (in the EU up to 138 Mha are under forest managemnt and imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: another option is selected.
+      shared_effort = TRUE   # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a shared-effort approach (in the EU up to 160 Mha are under forest management and imports come partially from low-intensity forest management). FALSE: another option is selected.
+      lower_intensity = FALSE # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a lower-intensity approach (same as baseline, but part of the imports and the exports are harvested from low-intensity management, though for the imports much less area is covered by low-intensity management than the shared-effort approach). FALSE: another option is selected.
+                              # NB: the lower-intensity approach was tested but the results were not included in the published article.
+      
+      timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
+      CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
+  
+    # Settings to define which .Rdata file to load for the response ratios and the z values 
+      cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
+      vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
+      BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
+                              # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
+    
     id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
     map = "PDF" # "PDF" 
-    graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
+    graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
+                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature50%, Closer-to-nature100%, SetAside50% and Set-Aside100%
     ratio = TRUE
     difference = FALSE
     
@@ -245,7 +254,7 @@ rename <- dplyr::rename
     
     id = "EUForest" # options: "EUForest", "EUFootprint" or "Global"
     map = "PDF" # "PDF" 
-    graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
+    graph = "B-25-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Closer-to-nature100% and Set-Aside100%
                
     ratio = TRUE
     difference = FALSE

@@ -14,8 +14,9 @@ p_load(ggplot2, colorspace, scico, viridis, RColorBrewer, gridExtra, nord, ggpub
 select <- dplyr::select
 
 #### Load the data and check what's in there ####
-  directory <- "./data/model_parameters/ecoregions_data/z_analysis/"
-  data_loaded <- read.csv(pate0(sirectory, "z_SAR_data_full-table.csv"), header = TRUE)
+  directory <- "./data/model_parameters/ecoregions_data/"
+  directory_plots <- paste0(directory, "z_analysis/plots/")
+  data_loaded <- read.csv(pate0(directory, "z_SAR_data_full-table_Drakare_2005.csv"), header = TRUE)
   head(data_loaded)
 
   unique(data_loaded$group)
@@ -96,7 +97,7 @@ select <- dplyr::select
         geom_jitter(width = 0.05, alpha = 0.3) +
           facet_wrap(~group, ncol = 3) +
             theme(legend.position = "none")
-  ggsave(filename = paste0(directory, "boxplots_habitat_group.png"))
+  ggsave(filename = paste0(directory_plots, "boxplots_habitat_group.png"))
 
   ggplot(data = data_mbp, aes(y = z, x = habitat)) +
     #geom_violin(aes(fill = group), alpha = 0.2) +
@@ -104,7 +105,7 @@ select <- dplyr::select
         geom_jitter(width = 0.05, alpha = 0.2) +
           theme(text = element_text(size = 25)) +
             theme(legend.position = "none")
-  ggsave(filename = paste0(directory, "boxplots_habitat.png"))
+  ggsave(filename = paste0(directory_plots, "boxplots_habitat.png"))
   
   ggplot(data = data_mbp %>% filter(method == "ind" | method == "nes"), aes(y = z, x = habitat)) +
     #geom_violin(aes(fill = group), alpha = 0.2) +
@@ -112,7 +113,7 @@ select <- dplyr::select
         geom_jitter(width = 0.05, alpha = 0.3) +
           facet_wrap(method ~ group, ncol = 3) +
             theme(legend.position = "none")
-  ggsave(filename = paste0(directory, "boxplots_habitat_method_group.png"))
+  ggsave(filename = paste0(directory_plots, "boxplots_habitat_method_group.png"))
   
   ggplot(data = data_an_p, aes(y = z, x = habitat)) +
     #geom_violin(aes(fill = group), alpha = 0.2) +
@@ -120,25 +121,26 @@ select <- dplyr::select
         geom_jitter(width = 0.05, alpha = 0.3) +
           facet_wrap(~ group, ncol = 3) +
             theme(legend.position = "none")
-  ggsave(filename = paste0(directory, "boxplots_habitat_an_pl.png"))
+  ggsave(filename = paste0(directory_plots, "boxplots_habitat_an_pl.png"))
     
   ggplot(data, aes(x = z, fill = group)) + 
     geom_histogram(alpha = 0.3, position = 'identity', bins = 30)
     
+  # function used to plot FigureS9.1
   ggplot(data_an_p, aes(x = z)) + 
     geom_histogram(alpha = 0.3, position = 'identity', bins = 30) +
       geom_vline(data = mean_median_hab, aes(xintercept = mean_z), size = 0.5, linetype="dashed")+
         geom_vline(data = mean_median_hab, aes(xintercept = median_z), size = 0.5) +
           facet_wrap(~ habitat, ncol = 3) +
             theme(legend.position = "right")
-  ggsave(filename = paste0(directory, "histograms_habitats.png"))
+  ggsave(filename = paste0(directory_plots, "histograms_habitats.png"))
 
   breaks <- seq(0, 1, by = 0.1)
   ggplot(data %>% filter(group == "plants" | group == "birds" | group == "mammals"), 
          aes(x = z, fill = group, color = group)) + 
   geom_histogram(alpha = 0.3, position = 'identity', breaks = breaks) +
     facet_wrap(~ habitat, ncol = 3)
-  ggsave(filename = paste0(directory, "histograms_habitat_group.png"))
+  ggsave(filename = paste0(directory_plots, "histograms_habitat_group.png"))
 
     
     

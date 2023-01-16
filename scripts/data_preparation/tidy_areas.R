@@ -19,7 +19,7 @@
   library(tibble)
   library(stringr)
 
-  tidy.areas <- function(timber, areas_base_path) {
+  tidy.areas <- function(timber, label_approach, areas_base_path) {
     
     source("./scripts/data_preparation/areas_functions.R")
 
@@ -36,39 +36,56 @@
   
     if (read_the_data == TRUE) {
       
-      import_forest_av <- read.csv(paste0(areas_base_path, "Import_forest_area_average_Mha.csv"), header = TRUE) # import forest areas (average approach), Mha
-      import_forest_mg <- read.csv(paste0(areas_base_path, "Import_forest_area_marginal_Mha.csv"), header = TRUE) # import forest areas (marginal approach), Mha
+      import_forest <- read.csv(paste0(areas_base_path, "Import_forest_area_Mha.csv"), header = TRUE) # import forest areas, Mha
       import_eplant <- read.csv(paste0(areas_base_path, "Import_pellets_plantation_area_Mha.csv"), header = TRUE) # import energy plantations, Mha
       EU_eplant <- read.csv(paste0(areas_base_path, "Internal_EU28_perennial_energy_crops_area_1000ha.csv"), header = TRUE) # EU energy plantations, in 1000ha and not Mha
-      export_forest_av <- read.csv(paste0(areas_base_path, "Export_forest_area_average_Mha.csv"), header = TRUE) # export forest areas (average approach, no timber plantations), Mha
-      EU_forest_temp <- read.csv(paste0(areas_base_path, "Internal_EU28_managed_forest_area_1000ha_timber.csv"), header = TRUE) # EU forest areas. These contain the areas of Clear-cut and of Timber plantations to be subtracted from those of Clear-cut.
-      export_forest_mg_temp <- read.csv(paste0(areas_base_path, "Export_marginal_timber_Mha.csv"), header = TRUE) # export forest areas (marginal approach, timber plantations), in 1000ha and not Mha
-        EU_forest_temp[is.na(EU_forest_temp)] <- 0
-        export_forest_mg_temp[is.na(export_forest_mg_temp)] <- 0
+      export_forest <- read.csv(paste0(areas_base_path, "Export_forest_area_Mha.csv"), header = TRUE) # export forest areas (no timber plantations), Mha
       
       # EU forest: with or without timber plantations (according to what is indicated at the beginning of the script with "timber")
         # including timber plantations in EU forest managements
-          if (timber == TRUE) {  
+          if (label_approach == "Baseline") { 
+                          
+            EU_forest_temp <- read.csv(paste0(areas_base_path, "Internal_EU28_managed_forest_area_1000ha_timber.csv"), header = TRUE) # EU forest areas. These contain the areas of Clear-cut and of Timber plantations to be subtracted from those of Clear-cut.
+            export_forest_temp <- read.csv(paste0(areas_base_path, "Export_timber_Mha.csv"), header = TRUE) # export forest areas (baseline approach, timber plantations), in 1000ha and not Mha
+            EU_forest_temp[is.na(EU_forest_temp)] <- 0
+            export_forest_temp[is.na(export_forest_temp)] <- 0 
+            
+          if(timber == TRUE && label_approach != "Baseline") {stop("The option to include timber plantations in the EU is available only for the Baseline scenario")}  
+            if(timber == TRUE) {
+
             EU_forest <- EU_forest_temp # keep the file as it is because it already includes timber plantations
-            export_forest_mg <- export_forest_mg_temp # keep the file as it is because it already includes timber plantations  
-            rm(EU_forest_temp, export_forest_mg_temp)
+            export_forest <- export_forest_temp # keep the file as it is because it already includes timber plantations  
+            rm(EU_forest_temp, export_forest_temp)
+            
+            }
+             
         # excluding timber plantations from EU forest managements
-            # areas of timber plantations from EU_forest_temp and export_forest_mg will be replaced by 0 values
+            # areas of timber plantations from EU_forest_temp and export_forest will be replaced by 0 values
             # this way, the dataframe with and without timber plantations will have the same structure, number or rows and columns, but 0 Mha will be allocated in the dataframe where timber plantations msut be excluded
-          } else if (timber == FALSE) {
+          else if (timber == FALSE) {
               temp <- EU_forest_temp %>% filter(Category == "Timber_plant_EU") %>% # create a dataframe with 0 Mha as values for timber plantations 
                                  mutate_if(is.numeric, ~(.*0))
               temp_notimb <- filter(EU_forest_temp, Category != "Timber_plant_EU") # filter the rows with other forest management type than timber plantations
               EU_forest <- bind_rows(temp_notimb, temp) # filter the rows which do not contains areas of timber plantations and bind them to the temporary dataframe with 0 values for timber plantations
               rm(temp)
-              temp_notimb_ex <- read.csv(paste0(areas_base_path, "Export_forest_area_marginal_Mha.csv"), header = TRUE) # load the file with the export data without timber plantations
-              temp <- export_forest_mg_temp %>% filter(Category == "Timber_plant_EU_ex") # filter the rows with timber plantations form export_forest_mg_temp
+              temp_notimb_ex <- read.csv(paste0(areas_base_path, "Export_forest_area_Mha.csv"), header = TRUE) # load the file with the export data without timber plantations
+              temp <- export_forest_temp %>% filter(Category == "Timber_plant_EU_ex") # filter the rows with timber plantations form export_forest_temp
               temp <- temp %>% mutate_if(is.numeric, ~(.*0)) # convert the values to 0
-              export_forest_mg <- bind_rows(temp_notimb_ex, temp) # bind the loaded file with the rows containing 0 as values for timber plantations
-              export_forest_av <- bind_rows(export_forest_av, temp)
-              rm(temp, EU_forest_temp, export_forest_mg_temp, temp_notimb_ex, temp_notimb)
+              export_forest <- bind_rows(temp_notimb_ex, temp) # bind the loaded file with the rows containing 0 as values for timber plantations
+              rm(temp, EU_forest_temp, export_forest_temp, temp_notimb_ex, temp_notimb)
+            }
           }
-  
+
+      if (label_approach != "Baseline") { EU_forest_temp <- read.csv(paste0(areas_base_path, "Internal_EU28_managed_forest_area_1000ha_timber.csv"), header = TRUE) # EU forest areas. These contain the areas of Clear-cut and of Timber plantations to be subtracted from those of Clear-cut.
+              temp <- EU_forest_temp %>% filter(Category == "Timber_plant_EU") %>% # create a dataframe with 0 Mha as values for timber plantations to make the data have the same structure as in the scenario Baseline and be able to apply the functions in this and in other scripts to the data consistently 
+                                 mutate_if(is.numeric, ~(.*0))
+              temp_ex <- temp %>% mutate(Category = str_replace(Category, "Timber_plant_EU", "Timber_plant_EU_ex"))
+              temp_notimb <- filter(EU_forest_temp, Category != "Timber_plant_EU") # filter the rows with other forest management type than timber plantations
+              EU_forest <- bind_rows(temp_notimb, temp) # filter the rows which do not contains areas of timber plantations and bind them to the temporary dataframe with 0 values for timber plantations
+              export_forest <- bind_rows(export_forest, temp_ex)
+              rm(temp_notimb, temp, temp_ex)
+      }
+      
       broad_land_use_ref <- read.csv(paste0(areas_base_path, "Land_use_area_ref_Mha.csv"), header = TRUE) # Broad land use categories (annual crops, pastures, etc.) in the reference climatic mitigation scenario (RCP6.5), Mha
       broad_land_use_rcp <- read.csv(paste0(areas_base_path, "Land_use_area_rcp_Mha.csv"), header = TRUE) # Broad land use categories (annual crops, pastures, etc.) in the more ambitious climatic mitigation scenario (RCP2.6), Mha 
       forest_intensity_ref <- read.csv(paste0(areas_base_path, "Forest_Intensity_ref_Mha.csv"), header = TRUE) # Areas of Regrowth, Intensive forest management or Extensive forest management in the GLOBIOM regions for the reference climatic mitigation scenario (RCP6.5), Mha 
@@ -155,8 +172,8 @@
       
       # definition of different lists to re-arrange data into one single list
       
-      data = list(import_forest_av, import_forest_mg, import_eplant, EU_forest, EU_eplant, export_forest_av, export_forest_mg, broad_land_use, forest_intensity)
-      fu_data = list(import_forest_av, import_forest_mg, import_eplant, EU_forest, EU_eplant, export_forest_av, export_forest_mg)
+      data = list(import_forest, import_eplant, EU_forest, EU_eplant, export_forest, broad_land_use, forest_intensity)
+      fu_data = list(import_forest, import_eplant, EU_forest, EU_eplant, export_forest)
       lu_data = list(broad_land_use, forest_intensity)
       
       # list of forest management data and removal of rows with Lake and Rock and Ice
@@ -195,7 +212,7 @@
             
         }
           
-        #two level list. First level: same as data.list (Import_forest_av, Import_forest_mg, Import_energy_plant, etc.). Second level: time steps.
+        #two level list. First level: same as data.list (Import_forest, Import_energy_plant, etc.). Second level: time steps.
         
         data.list.steps[[k]] <- temp.list
       
@@ -203,7 +220,7 @@
       }
     
         
-      names(data.list.steps) = c("Import_forest_av", "Import_forest_mg", "Import_energy_plant", "EU_forest", "EU_energy_plant", "Export_forest_av", "Export_forest_mg", "Broad_land_use", "Forest_intensity")
+      names(data.list.steps) = c("Import_forest", "Import_energy_plant", "EU_forest", "EU_energy_plant", "Export_forest", "Broad_land_use", "Forest_intensity")
     
       #cleaning the dataframe
       
@@ -218,8 +235,8 @@
                               ################################################## SAVE THE DATA TO A .RDATA FILE ##################################################
   
       
-    if (timber == FALSE) { save(data.list.steps, ecoregions_in_Globiom, EU_ecoregions, Globiom_eco_EU, Globiom_eco_org, urban, file = "./data/land_use_data/areas_processed/areas-to-match.RData") 
-      } else if (timber == TRUE) { save(data.list.steps, ecoregions_in_Globiom, EU_ecoregions, Globiom_eco_EU, Globiom_eco_org, urban,file = "./data/land_use_data/areas_processed/areas-to-match_timber.RData") }
+    if (timber == FALSE) { save(data.list.steps, ecoregions_in_Globiom, EU_ecoregions, Globiom_eco_EU, Globiom_eco_org, urban, file = paste0("./data/land_use_data/areas_processed/areas-to-match_", label_approach, ".RData")) 
+      } else if (timber == TRUE) { save(data.list.steps, ecoregions_in_Globiom, EU_ecoregions, Globiom_eco_EU, Globiom_eco_org, urban, file = paste0("./data/land_use_data/areas_processed/areas-to-match_", label_approach, "_timber.RData")) }
     
     rm(list = ls())
   

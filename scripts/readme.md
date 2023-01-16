@@ -9,7 +9,8 @@ Files:
 	the path to the results, to the plots, to the aggregated data, etc).
 - *create_directories*: script called in main.R that creates the needed directories if they do not exist already 
 	(e.g., where the results are stored).
-- INPUT OUTPUT FILE
+- *scripts_functions_input_output.xlsx*: excel file with the list of scripts, functions, data input and output.
+- *scripts_functions_input_output.pdf*: .pdf file created with *scripts_functions_input_output.xlsx*.
 
 Folders:
 
@@ -40,7 +41,7 @@ The other parameters needed in the model are already available in the .csv files
 	- *paramenters_calculation.R*: functions which prepare or calculate the parameters needed in the model (e.g., the response ratios, the z values, the weighting factors). Used in *bootstrapping.R* and to calculate the input for *calculate_impacts.R*. 
 	WARNING: this function does not need to be run, as its output have already been calculated and are stored in data/model_parameters/ecoregions_data/rr_z.
 	- *bootstrapping.R*: functions needed to perform the computation of confidence intervals with bootstrapping. Some functions used in this R file are defined in *parameters_calculation.R*. Used to calculate the input for *calculate_impacts.R*. 
-		WARNING: this function does not need to be run, as its output have already been calculated and are stored in data/model_parameters/ecoregions_data/rr_z.
+	WARNING: this function does not need to be run, as its output have already been calculated and are stored in data/model_parameters/ecoregions_data/rr_z.
 	- *model_functions.R*: multiple functions called in the various scripts of the model.
 	- *distributions.R*: function used to test the distributions of the response ratios and define the parametrization. *Used in parameters_calculation.R*
  
@@ -78,7 +79,10 @@ Structure of the scripts used for the model:
 	- *plot_all_maps.R*: it plots all the maps published in the manuscript, both main text and SI. It uses the script in *plot_map.R*.
 	- *plot_map.R*: it is called in *plot_all_maps.R* and it contains the function that can plot the global or EU map at ecoregion resolution.
 	- *impacts_per_volume_ranges.R*: script that plots the ranges per GLOBIOM region of the impacts per volume of biomass harvested (PDF/Mm3), as in the Figures in S18.
-	- Folder *maps_shapefiles/*: it contains the shapefiles of the global ecoregion, of the EU map and of the GLOBIOM regions.
+	- *maps_shapefiles/*: it contains the shapefiles of the global ecoregion, of the EU map and of the GLOBIOM regions.
+	IMPORTANT: the map of the ecoregions is not uploaded to the github repository as it is not owned by the authors. It can be downloaded here.
+	https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world. Once the files have been downloaded, they can be stored in 
+	the folder *maps_shapefiles/* by creating a subfolder *WWF_Ecoregions/* and then used for plotting.  
 
 - **archived**: folder containing material used for testing and eventually not included in the final version of the manuscript.
 

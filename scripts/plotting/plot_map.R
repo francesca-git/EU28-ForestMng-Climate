@@ -104,7 +104,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
   
   if(map == "PDFha") {
       legend = "Extinction risk per hectare [PDF/ha] (logarithmic scale)"
-      data <- read.csv(paste0(csv_path, "PDF-ha.csv"), header = TRUE)
+      data <- read.csv(paste0(csv_path, "PDF_ha.csv"), header = TRUE)
       
         if(id == "Global") {data <- data %>% filter(Year == "2100" | Year == "2020")
         }else if (id != "Global")  {data <- data %>% filter(Year == "2100")}
@@ -136,7 +136,7 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
                   EUFootprint = case_when((energy_exports == "ex" | energy_exports == "EPnoex") 
                                           ~ rowSums(select(., contains("median") & ((contains("EP") & contains("EU"))|(starts_with("For") & contains("EU"))|(contains("EP") & contains("im"))|(starts_with("For_") & contains("im")))), na.rm = TRUE),
                                           # For_ClearCut_EU_median + For_ClearCut_im_median + For_Retention_EU_median + For_Plantation_im_median + For_TimberPlant_EU_median + 
-                                          #   + For_SelectionSystem_EU_median + For_Selective_im_median + EP_EU_median + EP_conv_EU_median + EP_conv_im_median + ForOther_Extensive_EU_median + 
+                                          #   + For_SelectionSystem_EU_median + For_Selective_im_median + For_ReducedImpactLogging_im_median + EP_EU_median + EP_conv_EU_median + EP_conv_im_median + ForOther_Extensive_EU_median + 
                                           #   + ForOther_Intensive_EU_median,
                                           (energy_exports == "noEPnoex")
                                           ~ rowSums(select(., contains("median") & ((starts_with("For") & contains("EU"))|(starts_with("For_") & contains("im")))), na.rm = TRUE)),
@@ -332,11 +332,11 @@ plot.map <- function(results_path, result_files, file_label, plots_path, id, map
       
     if(ratio == TRUE & difference == FALSE) {
     #png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff.png"),  width = 5, height = 9, res = 600, units = "in") # 10, 18
-      png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_ratio_new.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
+      png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_ratio.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
         }else if(difference == TRUE & ratio == FALSE) {
-          png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff_new.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
+          png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_diff.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
           }else if(ratio == FALSE & difference == FALSE){
-            png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, "_new_pal.png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
+            png(file = paste0(plots_path, map, "-", id,"_", climate, "_", year[1], "_", region, file_label, "_",energy_exports, ".png"),  width = 30, height = 15, res = 600, units = "cm") # 20, 10
               }
     }
   
