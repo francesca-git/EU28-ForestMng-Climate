@@ -47,8 +47,8 @@ The other parameters needed in the model are already available in the .csv files
 	- *model_functions.R*: multiple functions called in the various scripts of the model.
 	- *distributions.R*: function used to test the distributions of the response ratios and define the parametrization. *Used in parameters_calculation.R*
  
-Structure of the scripts used for the model:
-		
+	Structure of the scripts used for the model:
+	![alt text](https://github.com/francesca-git/EU28-ForestMng-Climate/blob/main/scripts/model/model_structure.png)
 
 - **aggregation**: scripts that take the files in *results/* as input and aggregate them (e.g. summing the 
 	impacts over ecoregions). The output of these scripts is saved in *aggregation_plotting/*.
