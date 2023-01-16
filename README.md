@@ -14,6 +14,8 @@ It contains two subfolders: *land_use_data* and *model_parameters*
 
 **archived**: Folders and files used for testing and eventually not included in the final version of the manuscript.
 
+**demo**: Folder containing scripts and template files which allow the user to calculate the extinction risk in PDF using his/her area data.
+
 ### Detailed description of the folders
 
 ### data
