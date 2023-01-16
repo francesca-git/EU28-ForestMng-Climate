@@ -20,6 +20,9 @@ It contains two subfolders: *land_use_data* and *model_parameters*
 
 #### data/model_parameters/ecoregions_data
 
+This folder contains the raw and processed data used to obtain the input parameters for the model, namely the response ratios (rr), the 
+z values, the original number of species, the weighting factors and the vulnerability scores (VS).
+
 Files:
 
 - .csv files providing i) the description of the ecoregions and the relative data, ii) the ecoregions included in 
@@ -27,56 +30,31 @@ GLOBIOM iii) the local Characterization factors (used to obtain the response rat
 in the model.
 - A *readme.md* file with a further detailed description of the .csv files.
 
-Folders:
+Folders (see the readme.md file in each folder for further details):
 
-- **z_analysis**
-	- *z_SAR_data_full-table.csv*: table with the z values sent by the corresponding author of Drakare et al. (2005).
-	- *z_originals_Drakare _2005_SITable1.csv*: table available in the SI of Drakare et al. (2005).
-	- *z_analysis.xlxs*: .xlxs file with some tests on z.
-	- Some plots.
-	- *readme.md*: file describing the folder content in further detail.
-- **rr_zz** (rr = response ratio)
-	- .Rdata files containing the results of the calculation of rr and z values with both approaches: static (no bootstrapping) 
-	and bootstrapping (bs). For rr, there are different files for rr for forest management and for the other land uses. 
-	Additionally, there is a .csv file with the response ratios for forest management (as for there only global values are available).
-	- *readme.md*: file describing the folder content in further detail.
-- **VS** (VS = vulnerability scores) 
-	- *Global_Regional_species-lost_LCImpact.csv*: .csv with the global and regional CFs of LC-Impact used to calculate the vulnerability scores for plants. 
-	- *VS_plants_LU.csv*: .csv file with the VS as ratio between global CFs and regional CFs
-	- *VS_plants.csv*: .csv file with the average of VS per land use.
-	- *original-files/*: folder containing the excel worksheets of the LC-Impact methodology.
-	- *readme.md*: file describing the folder content in further detail.
-	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
+- **z_analysis**: it contains the raw files then processed to obtain the z values used as input in the model for the calculation of the impacts and some analyses. 
+- **rr_zz** (rr = response ratio): it contains the data on response ratios and z values used as input in the model for the calculation of the impacts. The files result from the application of the functions in *scripts/model/parameters_calculation.R*, *scripts/model/bootstrapping.R* and
+*scripts/data_preparation* to the .csv files in *data/model_parameters/ecoregions_data/*.
+- **VS** (VS = vulnerability scores): it contains the raw and processed files used to obtain the VS (vulnerability scores) for plants usign the scripts *scripts/VS_plants.R*.
 
 #### data/land_use_data
 
-Folders:
+This folder contains the raw data from GLOBIOM on areas and biomass harvested, as well as the .csv files prepared
+ to be used in the processing function that tidies and matches the areas (*scripts/data_preparation/do_tidy_match.R*).
 
-- **areas_base** 
-	- .csv files containing the land use areas sent by Fulvio di Fulvio (IIASA) which were obtained with the GLOBIOM model.
-	- *analysis*: folder containing files where some data have been looked at in more detail. 
-	- *OriginalFiles/*: folder containing the original files sent by IIASA with data on areas and on volume harvested.
-	- *Baseline/*: folder containing raw files with data on the Baseline scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
-	- *SharedEffort/*: folder containing raw files with data on the SharedEffort scenario prepared to be used in the scripts main.R through the do_tidy_match.R function.
-	- *LowerIntensity/*: folder containing raw files with data on the LowerIntensity scenario prepared to be used in the scripts main.R through the do_tidy_match.R function
-		(this scenario was used only for testing and is not included in the final manuscript).
-	- *readme.md*: file providing an overview of the scenarios and the acronyms used in GLOBIOM.
-	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
-	
-- **areas_processed**
-	- *readme.md*: file describing the folder content in further detail.
-	- .RData files: results of the tidying up process made through the function do_tidy_match.R called in main.R.
-	- *notimber/Baseline/*, *notimber/SharedEffort/* and *notimber/LowerIntensity/*: folders containing the.csv files 
-	resulting from the matching between the areas of the different GLOBIOM model, through the application of the function 
-	do_tidy_match.R called in main.R. 
-	- *timber/Baseline/*: folder containing the.csv files resulting from the matching between the areas of the different GLOBIOM model, through the application of the function 
-	do_tidy_match.R called in main.R. under the “timber” setting.
-	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
-- AREAS USER
+Folders (see the readme.md file in each folder for further details):
 
+- **areas_base**: it contains the raw data from GLOBIOM on areas and biomass harvested, as well as the .csv files prepared
+ to be used in the processing function that tidies and matches the areas (*scripts/data_preparation/do_tidy_match.R*).
+- **areas_processed**: it contains the results of the process used to match the areas of the two GLOBIOM models: the main 
+model which projects global future land use and a model specific for EU internal wood and energy crops 
+production and EU forest biomass import and export, as described in the maniscript. The scripts used
+to produce the areas are in *scripts/data_preparation* and are called in the section "Preparation of the areas" in the file main.R
 
 ### scripts
+
 Files:
+
 - *readme.md*: file describing the folder content in further detail.
 - *set_directories.R*: script called in main.R that creates variables containing the paths to folders/files (e.g. 
 	the path to the results, to the plots, to the aggregated data, etc).
@@ -84,7 +62,8 @@ Files:
 - *scripts_functions_input_output.xlsx*: excel file with the list of scripts, functions, data input and output.
 - *scripts_functions_input_output.pdf*: .pdf file created with *scripts_functions_input_output.xlsx*.
 
-Folders:
+Folders (see the readme.md file in scripts/ for further details):
+
 - **data_preparation**: scripts used to tidy up and match the data on the area and to calculate the model 
 	parameters used as input in the model. The input and output of these scripts are in the folder *data/*
 - **model**: scripts that take the output of the functions in *data_preparation/* as input and calculate the 
@@ -98,7 +77,9 @@ Folders:
 
 
 ### results
+
 Files: 
+
 - *readme.md*: file describing the folder content in further detail.
 
 Folders:
@@ -113,17 +94,18 @@ Labeling of the folders:
 ### aggregation_plotting
 
 Files:
+
 - *readme.md*: file describing the folder content in further detail.
 
 Folders:
 
-- **areas/**: it contains the files created by the scripts aggregate_areas.R and areas_Rdata-to-csv.R and the relative plots. 
+- **areas/**: it contains the files created by the scripts *aggregate_areas.R* and *areas_Rdata-to-csv.R* and the relative plots. 
 - **archived/**: folder containing material used for testing and eventually not included in the final version of the manuscript.
 - The other folders containing the aggregated values and plotting of the extinction risk. Each of these folders contains multiple sub-folders corresponding to the multiple scenarios, 
 where the aggregated results and the plots are stores. Each sub-folder contains:
-	- an .Rdata file with the aggregated results output of the script aggregate_results.R.
-	- A folder called */csv* which contains the .csv files of the aggregated results created by EU_Rdata-to-csv.R and global_Rdata-to-csv.R.
-	- A folder called */plots* with the plots and maps created by the scripts in scripts/plotting.
+	- an .Rdata file with the aggregated results output of the script *aggregate_results.R*.
+	- A folder called *csv/* which contains the .csv files of the aggregated results created by *EU_Rdata-to-csv.R*.
+	- A folder called *plots/* with the plots and maps created by the scripts in *scripts/plotting*.
 
 
 

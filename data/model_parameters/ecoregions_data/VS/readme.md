@@ -1,11 +1,10 @@
 August 2021
+
 Author: Francesca Rosa, ETH Zürich
 
-data/model_parameters/ecoregions_data/VS
+# data/model_parameters/ecoregions_data/VS
 
 This folder contains the raw and processed files used to obtain the VS (vulnerability scores) for plants usign the scripts *scripts/VS_plants.R*.
-
-Files:
 
 The LC-Impact methodology documentation [1] does not provide the VS for plants (and neither does the publication on which the LC-Impact methodology is based [2]), 
 but it provides the CFs for plants. Therefore, it was possible to obtain the VS as ratio between the global CFs for plants 
@@ -17,6 +16,14 @@ numerical rounding when the CFs were calculated for the LC-Impact methodology). 
 results were saved in *VS_plants.csv*. The VS calculated were copied in the *input_data/ecoregions_data/Ecoregions_description.csv* in the column VS_plants (the rest 
 of the file Ecoregions_descriptoin.csv comes from Chaudhary et al, 2015 [2]).
 
+Files: 
+
+- *Global_Regional_species-lost_LCImpact.csv* and *Global_Regional_species-lost_LCImpact.xlsx*: .csv with the global and regional CFs of LC-Impact used to calculate the vulnerability scores for plants. 
+
+- *VS_plants_LU.csv*: .csv file with the VS as ratio between global CFs and regional CFs
+
+- *VS_plants.csv*: .csv file with the average of VS per land use.
+
 Folders: 
 
 - **original-files**: folder containing the files used to calculate the VS (*Ch6 PSLregional v01.csv* and *PerTaxonAndAggregated global CF_Average_July 17th 2016.csv*). 
@@ -24,4 +31,5 @@ Folders:
 - **archived**: folder containing files used to perform some tests but not inlcuded in the final analysis.
 
 [1] Chaudhary, A.; Verones, F.; De Baan, L.; Pfister, S.; Hellweg, S. Chapter 11 - Land Stress: Potential Species Loss Form Land Use. LC-IMPACT Version 1.0, www.lc-impact.eu. 2016.
+
 [2] Chaudhary, A.; Verones, F.; De Baan, L.; Hellweg, S. Quantifying Land Use Impacts on Biodiversity: Combining Species-Area Models and Vulnerability Indicators. Environ. Sci. Technol. 2015, 49 (16), 9987–9995. https://doi.org/10.1021/acs.est.5b02507.

@@ -7,7 +7,7 @@ Author: Francesca Rosa, ETH Zürich
 The purpose of the folder is to store aggregated results and plots. The results are aggregated fist with a general
 function that sums the impacts over the ecoregions and store the resulting values in an .RData file and 
 then with more specific functions that calculate additional results and produce .csv files. This process is performed
-with the functions and scripts in the section "Aggregatie the results for analysis and for plotting" of the main.R.
+with the functions and scripts in the section "Aggregate the results for analysis and for plotting" of the main.R.
 
 This folder contains multiple subfolders corresponding to the scenarios/settings considered in the analysis and the folder *areas/*.
 
@@ -18,9 +18,11 @@ The other subfolders contains:
    	through the function aggregate.results. This .RData file is used as input in the function *create.csv.EU.EPnoex* from 
    	*EU_Rdata-to-csv.R*, which takes the values in the .RData files and further aggregate or group them into multiple .csv files. 
    
-- A folder */csv*, containing the results of the more specific aggregation process. 
+- A folder *csv/*, containing the results of the more specific aggregation process. 
 
-- A folder */plots*.
+- A folder *plots/*.
+
+The folder *archived* contains files used for testing but not included in the final version of the manuscript.
 
 
 #### Abbreviations used in the files of this folder

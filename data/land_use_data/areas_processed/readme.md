@@ -1,4 +1,5 @@
 August 2021
+
 Author: Francesca Rosa
 
 # data/land_use_data/areas_processed
@@ -39,6 +40,7 @@ In the folder notimber, three sub-folders are present, which correspond to addit
 	WARNING: This option was used for testing, but the results and description were not included in the final manuscript. 
 
 In each subfolder, there are three sub-subfolders with the land use data per ecoregion:
+
 - **aggregated**: the values of areas are aggregated without distinction between EU and RoW and considering the categories used 
 	in the biodiversity model (e.g., there is no distinction between Cropland_EU and Cropland_RoW, and the Energy crops (EP) in EU
 	are under the category of Permanent crops, as that is the category from which the response ration for the Energy crops in the EU
@@ -48,7 +50,7 @@ In each subfolder, there are three sub-subfolders with the land use data per eco
 
 The folder *archived* contains files which in the end were not used for the final manuscript.
 
-#### Abbreviations use in the files of this folder
+#### Abbreviations used in the files of this folder
 
 **WARNING**: In the original files, in the results and in the aggregated values, the labeling of the scenarios is slightly different
           compared to the abbreviations used in the manuscript (see below)

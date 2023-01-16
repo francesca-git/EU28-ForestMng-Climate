@@ -4,6 +4,9 @@ Author: Francesca Rosa
 
 # ecoregions_data
 
+This folder contains the raw and processed data used to obtain the input parameters for the model, namely the response ratios (rr), the 
+z values, the original number of species, the weighting factors and the vulnerability scores (VS).
+
 Each sub-folder has a dedicated readme.md file.
 
 List of .csv files available in this:
