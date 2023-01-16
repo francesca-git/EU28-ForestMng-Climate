@@ -1,6 +1,7 @@
 archived/*
 scripts/plotting/maps_shapefiles/WWF_Ecoregions/*
 data/model_parameters/ecoregions_data/rr_z/rr_ecoregion_bs.Rdata
+data/model_parameters/ecoregions_data/rr_z/zvalues_ecoregion_bs.Rdata
 data/model_parameters/ecoregions_data/z_analysis/z_originals_Drakare_2005_SITable1.csv
 data/model_parameters/ecoregions_data/z_analysis/z_originals_Drakare_2005_SITable1.xlsx
 data/model_parameters/ecoregions_data/z_analysis/z_SAR_data_full-table_Drakare_2005.csv
