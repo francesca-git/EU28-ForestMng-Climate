@@ -31,6 +31,7 @@ In each cell, enter the area of the corresponding land use per that specific eco
 	These are the data needed:
 		- paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/rr_ecoregion_static.Rdata")
 		- paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/zvalues_static.Rdata)
+	
 	These are the functions needed:
 		- paste0(your working directory, "scripts/model/model_functions.R)
 		- paste0(your working directory, "scripts/model/parameters_calculation.R)
