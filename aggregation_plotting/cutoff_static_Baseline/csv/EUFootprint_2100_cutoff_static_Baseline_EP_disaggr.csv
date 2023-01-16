@@ -1,0 +1,241 @@
+"Pathway","Group","Scenario","Category","PDF"
+"RCP2.6","MFM","noAFM","EU28 - Lignocel. energy crops",0.000351743722515045
+"RCP2.6","MFM","noAFM","Import - Energy plantations",0.000454250589882271
+"RCP2.6","MFM","noAFM","Import - Clear cut",0.00021239322900596
+"RCP2.6","MFM","noAFM","Import - Timber and pulp plantations",0.00083360536451778
+"RCP2.6","MFM","noAFM","Import - Selection",0
+"RCP2.6","MFM","noAFM","Import - Selective logging",0
+"RCP2.6","MFM","noAFM","Import - Reduced Impact Logging",0
+"RCP2.6","SFM","noAFM","EU28 - Lignocel. energy crops",0.000351733115917897
+"RCP2.6","SFM","noAFM","Import - Energy plantations",0.000451812301637342
+"RCP2.6","SFM","noAFM","Import - Clear cut",0.000212675702874441
+"RCP2.6","SFM","noAFM","Import - Timber and pulp plantations",0.000842445368753722
+"RCP2.6","SFM","noAFM","Import - Selection",0
+"RCP2.6","SFM","noAFM","Import - Selective logging",0
+"RCP2.6","SFM","noAFM","Import - Reduced Impact Logging",0
+"REF","MFM","noAFM","EU28 - Lignocel. energy crops",8.27444439131752e-05
+"REF","MFM","noAFM","Import - Energy plantations",4.87830153561766e-05
+"REF","MFM","noAFM","Import - Clear cut",0.000202715085140627
+"REF","MFM","noAFM","Import - Timber and pulp plantations",0.000571486461899012
+"REF","MFM","noAFM","Import - Selection",0
+"REF","MFM","noAFM","Import - Selective logging",0
+"REF","MFM","noAFM","Import - Reduced Impact Logging",0
+"REF","SFM","noAFM","EU28 - Lignocel. energy crops",8.28855990741895e-05
+"REF","SFM","noAFM","Import - Energy plantations",5.16126651968838e-05
+"REF","SFM","noAFM","Import - Clear cut",0.000201659745658766
+"REF","SFM","noAFM","Import - Timber and pulp plantations",0.000583195249567466
+"REF","SFM","noAFM","Import - Selection",0
+"REF","SFM","noAFM","Import - Selective logging",0
+"REF","SFM","noAFM","Import - Reduced Impact Logging",0
+"RCP2.6","MFM","AFMfree","EU28 - Lignocel. energy crops",0.000343064122555681
+"RCP2.6","MFM","AFMfree","Import - Energy plantations",0.000407814993864167
+"RCP2.6","MFM","AFMfree","Import - Clear cut",0.000153678023138103
+"RCP2.6","MFM","AFMfree","Import - Timber and pulp plantations",0.000607057113937255
+"RCP2.6","MFM","AFMfree","Import - Selection",0
+"RCP2.6","MFM","AFMfree","Import - Selective logging",0
+"RCP2.6","MFM","AFMfree","Import - Reduced Impact Logging",0
+"RCP2.6","SFM","AFMfree","EU28 - Lignocel. energy crops",0.00034256335857348
+"RCP2.6","SFM","AFMfree","Import - Energy plantations",0.000387156622337685
+"RCP2.6","SFM","AFMfree","Import - Clear cut",0.000156426659184977
+"RCP2.6","SFM","AFMfree","Import - Timber and pulp plantations",0.000602969553130522
+"RCP2.6","SFM","AFMfree","Import - Selection",0
+"RCP2.6","SFM","AFMfree","Import - Selective logging",0
+"RCP2.6","SFM","AFMfree","Import - Reduced Impact Logging",0
+"REF","MFM","AFMfree","EU28 - Lignocel. energy crops",7.91899706887859e-05
+"REF","MFM","AFMfree","Import - Energy plantations",5.14101421696144e-05
+"REF","MFM","AFMfree","Import - Clear cut",0.000133566581220752
+"REF","MFM","AFMfree","Import - Timber and pulp plantations",0.00035740987278912
+"REF","MFM","AFMfree","Import - Selection",0
+"REF","MFM","AFMfree","Import - Selective logging",0
+"REF","MFM","AFMfree","Import - Reduced Impact Logging",0
+"REF","SFM","AFMfree","EU28 - Lignocel. energy crops",7.93689653846123e-05
+"REF","SFM","AFMfree","Import - Energy plantations",4.76228007168028e-05
+"REF","SFM","AFMfree","Import - Clear cut",0.00013578197933407
+"REF","SFM","AFMfree","Import - Timber and pulp plantations",0.00037309422380345
+"REF","SFM","AFMfree","Import - Selection",0
+"REF","SFM","AFMfree","Import - Selective logging",0
+"REF","SFM","AFMfree","Import - Reduced Impact Logging",0
+"RCP2.6","MFM","AFM25","EU28 - Lignocel. energy crops",0.000347463433583583
+"RCP2.6","MFM","AFM25","Import - Energy plantations",0.000461512759438893
+"RCP2.6","MFM","AFM25","Import - Clear cut",0.000166112124938739
+"RCP2.6","MFM","AFM25","Import - Timber and pulp plantations",0.000608585661267317
+"RCP2.6","MFM","AFM25","Import - Selection",0
+"RCP2.6","MFM","AFM25","Import - Selective logging",0
+"RCP2.6","MFM","AFM25","Import - Reduced Impact Logging",0
+"RCP2.6","SFM","AFM25","EU28 - Lignocel. energy crops",0.000353313067420106
+"RCP2.6","SFM","AFM25","Import - Energy plantations",0.00052298622584096
+"RCP2.6","SFM","AFM25","Import - Clear cut",0.000195974640039631
+"RCP2.6","SFM","AFM25","Import - Timber and pulp plantations",0.00074782755453372
+"RCP2.6","SFM","AFM25","Import - Selection",0
+"RCP2.6","SFM","AFM25","Import - Selective logging",0
+"RCP2.6","SFM","AFM25","Import - Reduced Impact Logging",0
+"REF","MFM","AFM25","EU28 - Lignocel. energy crops",7.98368604851518e-05
+"REF","MFM","AFM25","Import - Energy plantations",4.86378686390715e-05
+"REF","MFM","AFM25","Import - Clear cut",0.00013908626104583
+"REF","MFM","AFM25","Import - Timber and pulp plantations",0.000371765375240453
+"REF","MFM","AFM25","Import - Selection",0
+"REF","MFM","AFM25","Import - Selective logging",0
+"REF","MFM","AFM25","Import - Reduced Impact Logging",0
+"REF","SFM","AFM25","EU28 - Lignocel. energy crops",8.12323449260023e-05
+"REF","SFM","AFM25","Import - Energy plantations",5.51178844456071e-05
+"REF","SFM","AFM25","Import - Clear cut",0.000182267690870672
+"REF","SFM","AFM25","Import - Timber and pulp plantations",0.000432515061912343
+"REF","SFM","AFM25","Import - Selection",0
+"REF","SFM","AFM25","Import - Selective logging",0
+"REF","SFM","AFM25","Import - Reduced Impact Logging",0
+"RCP2.6","MFM","AFM50","EU28 - Lignocel. energy crops",0.000351541198618661
+"RCP2.6","MFM","AFM50","Import - Energy plantations",0.000517508742069603
+"RCP2.6","MFM","AFM50","Import - Clear cut",0.000186364028903781
+"RCP2.6","MFM","AFM50","Import - Timber and pulp plantations",0.0006528692369624
+"RCP2.6","MFM","AFM50","Import - Selection",0
+"RCP2.6","MFM","AFM50","Import - Selective logging",0
+"RCP2.6","MFM","AFM50","Import - Reduced Impact Logging",0
+"RCP2.6","SFM","AFM50","EU28 - Lignocel. energy crops",0.00036324117726111
+"RCP2.6","SFM","AFM50","Import - Energy plantations",0.000639992416626512
+"RCP2.6","SFM","AFM50","Import - Clear cut",0.000249430196130024
+"RCP2.6","SFM","AFM50","Import - Timber and pulp plantations",0.00111124828625781
+"RCP2.6","SFM","AFM50","Import - Selection",0
+"RCP2.6","SFM","AFM50","Import - Selective logging",0
+"RCP2.6","SFM","AFM50","Import - Reduced Impact Logging",0
+"REF","MFM","AFM50","EU28 - Lignocel. energy crops",8.09432520021318e-05
+"REF","MFM","AFM50","Import - Energy plantations",5.4164240971781e-05
+"REF","MFM","AFM50","Import - Clear cut",0.000160167380583331
+"REF","MFM","AFM50","Import - Timber and pulp plantations",0.000388597916704041
+"REF","MFM","AFM50","Import - Selection",0
+"REF","MFM","AFM50","Import - Selective logging",0
+"REF","MFM","AFM50","Import - Reduced Impact Logging",0
+"REF","SFM","AFM50","EU28 - Lignocel. energy crops",8.66613933665418e-05
+"REF","SFM","AFM50","Import - Energy plantations",6.18280124408496e-05
+"REF","SFM","AFM50","Import - Clear cut",0.000238810994150839
+"REF","SFM","AFM50","Import - Timber and pulp plantations",0.000772210980534552
+"REF","SFM","AFM50","Import - Selection",0
+"REF","SFM","AFM50","Import - Selective logging",0
+"REF","SFM","AFM50","Import - Reduced Impact Logging",0
+"RCP2.6","MFM","AFM75","EU28 - Lignocel. energy crops",0.000358776149435155
+"RCP2.6","MFM","AFM75","Import - Energy plantations",0.000558252725575381
+"RCP2.6","MFM","AFM75","Import - Clear cut",0.000200729812603676
+"RCP2.6","MFM","AFM75","Import - Timber and pulp plantations",0.000808677675216419
+"RCP2.6","MFM","AFM75","Import - Selection",0
+"RCP2.6","MFM","AFM75","Import - Selective logging",0
+"RCP2.6","MFM","AFM75","Import - Reduced Impact Logging",0
+"RCP2.6","SFM","AFM75","EU28 - Lignocel. energy crops",0.000369978031093775
+"RCP2.6","SFM","AFM75","Import - Energy plantations",0.000764966613567747
+"RCP2.6","SFM","AFM75","Import - Clear cut",0.000311838252551247
+"RCP2.6","SFM","AFM75","Import - Timber and pulp plantations",0.00129360672107834
+"RCP2.6","SFM","AFM75","Import - Selection",0
+"RCP2.6","SFM","AFM75","Import - Selective logging",0
+"RCP2.6","SFM","AFM75","Import - Reduced Impact Logging",0
+"REF","MFM","AFM75","EU28 - Lignocel. energy crops",8.29780839310846e-05
+"REF","MFM","AFM75","Import - Energy plantations",5.24352982337198e-05
+"REF","MFM","AFM75","Import - Clear cut",0.000174535488910072
+"REF","MFM","AFM75","Import - Timber and pulp plantations",0.000496468148440492
+"REF","MFM","AFM75","Import - Selection",0
+"REF","MFM","AFM75","Import - Selective logging",0
+"REF","MFM","AFM75","Import - Reduced Impact Logging",0
+"REF","SFM","AFM75","EU28 - Lignocel. energy crops",9.3530504859193e-05
+"REF","SFM","AFM75","Import - Energy plantations",9.42353831694846e-05
+"REF","SFM","AFM75","Import - Clear cut",0.000335494959669312
+"REF","SFM","AFM75","Import - Timber and pulp plantations",0.00104399181717559
+"REF","SFM","AFM75","Import - Selection",0
+"REF","SFM","AFM75","Import - Selective logging",0
+"REF","SFM","AFM75","Import - Reduced Impact Logging",0
+"RCP2.6","MFM","AFM100","EU28 - Lignocel. energy crops",0.000362999454245691
+"RCP2.6","MFM","AFM100","Import - Energy plantations",0.000633440815216596
+"RCP2.6","MFM","AFM100","Import - Clear cut",0.000232987067006432
+"RCP2.6","MFM","AFM100","Import - Timber and pulp plantations",0.000852271206155938
+"RCP2.6","MFM","AFM100","Import - Selection",0
+"RCP2.6","MFM","AFM100","Import - Selective logging",0
+"RCP2.6","MFM","AFM100","Import - Reduced Impact Logging",0
+"RCP2.6","SFM","AFM100","EU28 - Lignocel. energy crops",0.00037914321115013
+"RCP2.6","SFM","AFM100","Import - Energy plantations",0.000840598168724411
+"RCP2.6","SFM","AFM100","Import - Clear cut",0.000365427209813689
+"RCP2.6","SFM","AFM100","Import - Timber and pulp plantations",0.00159905643686156
+"RCP2.6","SFM","AFM100","Import - Selection",0
+"RCP2.6","SFM","AFM100","Import - Selective logging",0
+"RCP2.6","SFM","AFM100","Import - Reduced Impact Logging",0
+"REF","MFM","AFM100","EU28 - Lignocel. energy crops",8.58156341020968e-05
+"REF","MFM","AFM100","Import - Energy plantations",6.32199277038525e-05
+"REF","MFM","AFM100","Import - Clear cut",0.000209688650533457
+"REF","MFM","AFM100","Import - Timber and pulp plantations",0.000599786228633286
+"REF","MFM","AFM100","Import - Selection",0
+"REF","MFM","AFM100","Import - Selective logging",0
+"REF","MFM","AFM100","Import - Reduced Impact Logging",0
+"REF","SFM","AFM100","EU28 - Lignocel. energy crops",9.90831613662191e-05
+"REF","SFM","AFM100","Import - Energy plantations",0.000141298325923412
+"REF","SFM","AFM100","Import - Clear cut",0.000417383531834356
+"REF","SFM","AFM100","Import - Timber and pulp plantations",0.00144660931419521
+"REF","SFM","AFM100","Import - Selection",0
+"REF","SFM","AFM100","Import - Selective logging",0
+"REF","SFM","AFM100","Import - Reduced Impact Logging",0
+"RCP2.6","MFM","noAFM","EU28 - Clear cut",0.000291601910628497
+"RCP2.6","MFM","noAFM","EU28 - Retention",0
+"RCP2.6","MFM","noAFM","EU28 - Selection",1.67358423258854e-06
+"RCP2.6","SFM","noAFM","EU28 - Clear cut",0.000291634162967333
+"RCP2.6","SFM","noAFM","EU28 - Retention",0
+"RCP2.6","SFM","noAFM","EU28 - Selection",1.67118640301301e-06
+"REF","MFM","noAFM","EU28 - Clear cut",0.000187758828483941
+"REF","MFM","noAFM","EU28 - Retention",0
+"REF","MFM","noAFM","EU28 - Selection",9.1493758111061e-06
+"REF","SFM","noAFM","EU28 - Clear cut",0.000187839813979007
+"REF","SFM","noAFM","EU28 - Retention",0
+"REF","SFM","noAFM","EU28 - Selection",9.1386687302387e-06
+"RCP2.6","MFM","AFMfree","EU28 - Clear cut",0.000223887352011094
+"RCP2.6","MFM","AFMfree","EU28 - Retention",8.01336329252262e-06
+"RCP2.6","MFM","AFMfree","EU28 - Selection",2.26084124001334e-06
+"RCP2.6","SFM","AFMfree","EU28 - Clear cut",0.00022478327599615
+"RCP2.6","SFM","AFMfree","EU28 - Retention",7.99120003652643e-06
+"RCP2.6","SFM","AFMfree","EU28 - Selection",1.96059616545754e-06
+"REF","MFM","AFMfree","EU28 - Clear cut",0.000146685648113225
+"REF","MFM","AFMfree","EU28 - Retention",5.35963078015986e-06
+"REF","MFM","AFMfree","EU28 - Selection",8.16740398869958e-06
+"REF","SFM","AFMfree","EU28 - Clear cut",0.000155805962733177
+"REF","SFM","AFMfree","EU28 - Retention",5.40963439029653e-06
+"REF","SFM","AFMfree","EU28 - Selection",6.26511565574805e-06
+"RCP2.6","MFM","AFM25","EU28 - Clear cut",0.000206322816491038
+"RCP2.6","MFM","AFM25","EU28 - Retention",6.3751403616728e-06
+"RCP2.6","MFM","AFM25","EU28 - Selection",5.38544806951023e-06
+"RCP2.6","SFM","AFM25","EU28 - Clear cut",0.000206424599795568
+"RCP2.6","SFM","AFM25","EU28 - Retention",6.61191023741116e-06
+"RCP2.6","SFM","AFM25","EU28 - Selection",1.43370159953223e-06
+"REF","MFM","AFM25","EU28 - Clear cut",0.000152121042891449
+"REF","MFM","AFM25","EU28 - Retention",4.27394915580375e-06
+"REF","MFM","AFM25","EU28 - Selection",1.00098396959922e-05
+"REF","SFM","AFM25","EU28 - Clear cut",0.000165672411023356
+"REF","SFM","AFM25","EU28 - Retention",5.04499274448778e-06
+"REF","SFM","AFM25","EU28 - Selection",4.61862552506762e-06
+"RCP2.6","MFM","AFM50","EU28 - Clear cut",0.000186669452322718
+"RCP2.6","MFM","AFM50","EU28 - Retention",4.58122957119416e-06
+"RCP2.6","MFM","AFM50","EU28 - Selection",8.76802705894683e-06
+"RCP2.6","SFM","AFM50","EU28 - Clear cut",0.000184874347486189
+"RCP2.6","SFM","AFM50","EU28 - Retention",4.65175404192742e-06
+"RCP2.6","SFM","AFM50","EU28 - Selection",1.3521480282105e-06
+"REF","MFM","AFM50","EU28 - Clear cut",0.000145635045211575
+"REF","MFM","AFM50","EU28 - Retention",3.42988830109388e-06
+"REF","MFM","AFM50","EU28 - Selection",1.23294494250491e-05
+"REF","SFM","AFM50","EU28 - Clear cut",0.000145841792696591
+"REF","SFM","AFM50","EU28 - Retention",3.7978703783388e-06
+"REF","SFM","AFM50","EU28 - Selection",4.11837052307043e-06
+"RCP2.6","MFM","AFM75","EU28 - Clear cut",0.000167979513129606
+"RCP2.6","MFM","AFM75","EU28 - Retention",2.41649809656074e-06
+"RCP2.6","MFM","AFM75","EU28 - Selection",1.20882427804022e-05
+"RCP2.6","SFM","AFM75","EU28 - Clear cut",0.000162976374613319
+"RCP2.6","SFM","AFM75","EU28 - Retention",2.43500615143033e-06
+"RCP2.6","SFM","AFM75","EU28 - Selection",1.11254520742455e-06
+"REF","MFM","AFM75","EU28 - Clear cut",0.000129531941737422
+"REF","MFM","AFM75","EU28 - Retention",1.88661232702861e-06
+"REF","MFM","AFM75","EU28 - Selection",1.52573413679477e-05
+"REF","SFM","AFM75","EU28 - Clear cut",0.000115488168518631
+"REF","SFM","AFM75","EU28 - Retention",2.4788053060605e-06
+"REF","SFM","AFM75","EU28 - Selection",4.04646741421352e-06
+"RCP2.6","MFM","AFM100","EU28 - Clear cut",0.00014820961663623
+"RCP2.6","MFM","AFM100","EU28 - Retention",0
+"RCP2.6","MFM","AFM100","EU28 - Selection",1.55002639748755e-05
+"RCP2.6","SFM","AFM100","EU28 - Clear cut",0.000142192305904746
+"RCP2.6","SFM","AFM100","EU28 - Retention",0
+"RCP2.6","SFM","AFM100","EU28 - Selection",1.47044820572075e-07
+"REF","MFM","AFM100","EU28 - Clear cut",0.000113009569254191
+"REF","MFM","AFM100","EU28 - Retention",0
+"REF","MFM","AFM100","EU28 - Selection",1.83311867115077e-05
+"REF","SFM","AFM100","EU28 - Clear cut",9.2240721246236e-05
+"REF","SFM","AFM100","EU28 - Retention",0
+"REF","SFM","AFM100","EU28 - Selection",3.62086572495197e-06
