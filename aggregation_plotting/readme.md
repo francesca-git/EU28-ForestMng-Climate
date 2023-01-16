@@ -18,12 +18,12 @@ The other subfolders contains:
    	through the function aggregate.results. This .RData file is used as input in the function *create.csv.EU.EPnoex* from 
    	*EU_Rdata-to-csv.R*, which takes the values in the .RData files and further aggregate or group them into multiple .csv files. 
    
-- A folder */csv*', containing the results of the more specific aggregation process. 
+- A folder */csv*, containing the results of the more specific aggregation process. 
 
 - A folder */plots*.
 
 
-#### Abbreviations use in the files of this folder
+#### Abbreviations used in the files of this folder
 
 **WARNING**: In the original files, in the results and in the aggregated values, the labeling of the scenarios is slightly different
           compared to the abbreviations used in the manuscript (see below)

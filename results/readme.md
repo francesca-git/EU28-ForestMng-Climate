@@ -1,4 +1,5 @@
 February 2022
+
 Author: Francesca Rosa, ETH Zürich
 
 # results/
@@ -30,7 +31,7 @@ The code words used to identify the scenario/settings to which each sub-folder b
 The folder *archived/* contains material used for testing and eventually not included in the manuscript.
 
 
-#### Abbreviations use in the files of this folder
+#### Abbreviations used in the files of this folder
 
 **WARNING**: In the original files, in the results and in the aggregated values, the labeling of the scenarios is slightly different
           compared to the abbreviations used in the manuscript (see below)

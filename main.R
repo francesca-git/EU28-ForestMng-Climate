@@ -1,58 +1,62 @@
-
-###### SET THE PATH FOR ALL OPERATIONS, LOAD THE DATA, AGGREGATE THE RESULTS, PLOT THE RESULTS ###### 
-
-# Load the file and set the path for saving the output
 # March 2021
-# Author: Francesca Rosa
-####################
-############################ SET WORKING DIRECTORY ################################
+# Author: Francesca Rosa, ETH Zürich
+
+
+############################################################################
+############################ SET WORKING DIRECTORY #########################
+############################################################################
 
 setwd("C:/Users/Rosa/Documents/GitHub/forest-management") 
-#setwd("/home/frrosa/R/forest-management/") 
 
+
+############################################################################
 ############################ LOAD LIBRARIES ################################
+############################################################################
 
 library(pacman)
-p_load(dplyr, tidyr, abind, tidyverse, stringr)  # dataframe management and string management
+p_load(dplyr, tidyr, abind, tidyverse, stringr, compare, readr, purrr, tibble, stringr, rgdal, foreach, arsenal, MASS)  # dataframe management and string management
 
 p_load(ggplot2, colorspace, scico, viridis, RColorBrewer, gridExtra, nord, ggpubr, sf, sp, rgdal, rcartocolor) # plotting
-
-p_load(dplyr, tidyr, compare, readr, purrr, tibble, stringr, rgdal)  
-
-
-############### TO CHECK #################
-
-library("triangle") # triangular distribution -> for the distribution of the z values
-library(parallel)
-library(doParallel)
-library(foreach)
-library(arsenal)
-library(MASS)
 
 select <- dplyr::select
 rename <- dplyr::rename
 
+####################################################################################
 ############################ INITIAL SETTINGS ######################################
+####################################################################################
 
   # General settings for the calculation of the impacts
-    marginal = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modelled by GLOBIOM with a marginal approach (imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: the script loads the areas modelled by GLOBIOM with an average approach (imports and exports involve all types of forest management). 
-    timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only if approach == "MG"
+    baseline = TRUE         # TRUE or FALSE. Default IS TRUE. TRUE: the script loads the areas modeled in GLOBIOM applying the baseline scenario (in the EU up to 138 Mha are under forest managemnt and imports and exports involve only intensive forest use, Plantation and Clear cut). FALSE: another option is selected.
+    shared_effort = FALSE     # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a shared-effort approach (in the EU up to 160 Mha are under forest management and imports come partially from low-intensity forest management, namely Reduced Impact Logging). FALSE: another option is selected.
+    lower_intensity = FALSE  # TRUE or FALSE. TRUE: the script loads the areas modelled by GLOBIOM with a lower-intensity approach (same as baseline, but part of the imports and the exports are harvested from low-intensity forestry, though for the imports much less area is covered by low-intensity management than the shared-effort approach and the management is selective logging instead of Reduced impact logging). FALSE: another option is selected.
+                             # WARNING: the lower-intensity approach was tested but the results were not included in the published article.
+    
+    timber = FALSE          # TRUE or FALSE. FALSE = default setting which means that timber plantations are not included in the management practices considered part of EU clear cut areas have been allocated to Timber plantations). WARNING: This option is valid only for the Baseline scenario (when baseline == TRUE)
     CI = FALSE              # TRUE (confidence intervals are calculated) or FALSE (confidence intervals are not calculated)
-
+                            # WARNING: the calculation with the CI takes lot of time and space (might not be suitable for a laptop)
+    
   # Settings to define which .Rdata file to load for the response ratios and the z values 
-    cutoff = TRUE           # TRUE (all raw RR > 1 are set to 1) or FALSE
-    vulnerability = TRUE    # TRUE (global impacts are quantified) or FALSE. Default = TRUE. 
+    cutoff = FALSE           # TRUE (all raw RR > 1 are set to 1) or FALSE. WARNING: this option was a test and the results were not included in the final manuscript.
+    vulnerability = TRUE     # TRUE (global impacts are quantified) or FALSE. Default = TRUE. The code must run with this option in his default value (TRUE)
+    
+    # if CI == TRUE, then one should decide how to calculate the CI (not relevant if CI == FALSE)
     BS = TRUE               # If CI = TRUE and BS = TRUE, confidence intervals are quantified with bootstrapping. If CI = TRUE and BS = FALSE, confidence intervals are quantified with MonteCarlo simulation. 
                             # if CI = FALSE, no confidence intervals are quantified so it does not matter which value is assigned to BS.
-    lowintensity_imports = FALSE   
 
     subcase = "" # available options: "" = all species groups aggregated, "mammals" = results for mammals (aggregated), "birds" = results for birds (aggregated), "plants" = results for plants (aggregated)
-
+    # WARNING: The extinction risk is calculated for all the species groups aggregated and for each individually by default. 
+    #          This option matters only when it comes to aggregating and plotting the results. 
+    
+    
 ############################# SETTING THE LOCATION OF THE DIRECTORIES NEEDED TO RUN THE MODEL, AGGREGATE THE RESULTS AND PLOT THEM  ############################# 
 
+  # This script creates variables storing the relevant paths (e.g., aggr_plot_path is the path where aggregated results and plots are saved)
   source("./scripts/set_directories.R")
     
+    
+############################################################################################
 ############################ PREPARATION OF THE AREAS ######################################
+############################################################################################
 
    # Do you have your own areas? If yes, go to the next section "Preparation of the areas - user's areas" and DO NOT RUN THE NEXT LINES OF CODE. 
     
@@ -62,26 +66,22 @@ rename <- dplyr::rename
    # if no, then run the next lines of code. 
     
     NR_W_included = FALSE # FALSE: default setting - the matching process will remove not relevant land and wetland from the land use areas, TRUE: the matching process will not remove
-    # not relevant land and wetland from the land use areas. The defaul is FALSE becauseand not relevant lands have no matching land use classes in the biodiversity model
-    # The option TRUE is used to produce the .csv files (available in data/land_use_data/areas_processed/NotRel-Wet) needed to plot the maps with the future land use according to the GLOBIOM model.
+    # not relevant land and wetland from the land use areas. The defaul is FALSE becausea not relevant land and wetland have no matching land use classes in the biodiversity model
+    # The option TRUE is used to produce the .csv files (available in data/land_use_data/areas_processed/NotRel-Wet) to plot the maps with the future land use according to the GLOBIOM model.
     source("./scripts/data_preparation/do_tidy_match.R")
-    tidy.match.areas(timber, marginal, NR_W_included, areas_base_path, areas_processed_path)
-
-############################ PREPARATION OF THE AREAS - USER'S AREAS ######################################
-  
-  # If you want to use your own areas to do the calculation, fill out the .csv file available at /data/land_use_data/areas_user/aggergated with your data. 
-  # The columns of the file are the land use categories, the rows the ecoregions. In each cell, enter the area of the corresponding land use per that specific ecoregion (either in Mha,km2 or m2).
-  # Then run the following line of code:
-
-    areas_processed_path <- areas_processed_path_user
     
+    tidy.match.areas(timber, label_approach, NR_W_included, areas_base_path, areas_processed_path)
+    # label_approach = "Baseline", "SharedEffort" or "LowerIntensity". The string is defined in set_directories.R and based on the value of baselie, shared_effort and lower_intensity
+  
 
-############################ CALCULATION OF SPECIES LOSS (PDF) ####################################
-
+###################################################################################################
+############################ CALCULATION OF THE EXTINCTION RISK (PDF) #############################
+###################################################################################################
+    
   # calculate.impacts.R
   
     source("./scripts/model/parameters_calculation.R")
-    source("./scripts/model/CF_functions.R")
+    source("./scripts/model/model_functions.R")
     source("./scripts/model/calculate_slost.R")
     source("./scripts/model/allocate_impacts.R")
     
@@ -90,12 +90,31 @@ rename <- dplyr::rename
     dir.create(results_path) # create the directory where the files will be saved
     #dir.create(paste0(results_path, "/by_species-group")) # create the directory where the files with the species-group-specific results will be saved
     
-    source("./scripts/model/calculate_impacts.R") # calculate.impacts(cutoff, CI, BS, marginal, label, areas_processed_path, results_path, ecodata_path, vulnerability)   
+    source("./scripts/model/calculate_impacts.R") 
+    # this script calculated the extinction risk and produces .csv files saved in 
+    # ./results/, in the folder named after the scenario selected
     
     
+# WARNING: In the original files, in the results and in the aggregated values (see below), the labeling of the scenarios is slightly different
+#          compared to the acronym used in the manuscript. 
+#          manuscript                 files used as input and output in the previous steps and in the aggregation (here below)
+#          RCP2.6                     RCP
+#          RCP6.5                     REF
+#          CFM                        MFM (multifunctional forest management)
+#          12.5% or SFM 12.5%         AFM25 (the difference in % is due to the fact that the % in the scenarios listed in the 
+                                            # original files were referred to the EU suitable area, which is 1/2 than the area
+                                            # currently under forest management, to which the figures and results in the manuscript are referred)
+#          CFM 25% or SFM 25%         AFM50
+#          CFM 37.5% or SFM 37.5%     AFM75
+#          CFM 50% or SFM 50%         AFM100
+
     
-############################ AGGREGATE THE RESULTS BOTH FOR ANALYSIS AND FOR PLOTTING ##############################
     
+####################################################################################################################
+############################ AGGREGATE THE RESULTS FOR ANALYSIS AND FOR PLOTTING ##############################
+####################################################################################################################
+    
+# This part of the script aggregates the results (e.g. over ecoregion or over land use or over sub-scenario)
     
 ############################ AREAS ##############################
 
@@ -114,18 +133,15 @@ rename <- dplyr::rename
           source("./scripts/aggregation/areas_Rdata-to-csv.R")         # functions to convert the .Rdata file to several .csv for areas
           create.csv.EU.areas(file_rdata_path_areas, aggr_plot_path_areas, label_timber, year) # areas_Rdata-to-csv.R
           
-      ################# PREPARE DATA FOR PLOTTING (aggregated .Rdata file -> .csv files for global impacts #######################
+############################# SPECIES GLOBAL EXTINCTION RISK ##############################
           
-          create.csv.global.areas(file_rdata_path_areas, aggr_plot_path_areas, label_timber, year)   # areas_Rdata-to-csv.R
-    
-    
-
-    
+# If a folder with the aggregation results for a given scenario is already present, then add the today's date to the name of the folder and create a new one for the new results
 if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr_plot_path, "_", format(as.Date(Sys.Date()), "%d.%m.%Y") ))} # check if the directory already exists. If it does, rename the older folder appending today's date to its name
       dir.create(aggr_plot_path) # create the directory
       
-      dir.create(plots_path) # create the director
+      dir.create(plots_path) # create the directory
       dir.create(csv_path)
+      
       
   ################# AGGREGATE DATA OVER THE ECOREGIONS AND/OR LAND USES #######################
       
@@ -139,200 +155,106 @@ if (dir.exists(aggr_plot_path) == TRUE) {file.rename(aggr_plot_path, paste0(aggr
 
   ################# PREPARE THE FILES TO BE PLOTTED #################
     
-    # General task: convert the aggregated .Rdata files to aggregated .csv file, grouping and selecting only the most relevant 
-     
+    # General task: convert the aggregated .Rdata files to aggregated .csv file, grouping and selecting only the most relevant. 
+    # Most of the following scripts and function were prepared to be used with the results for a single year, which can be selected.
+    
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
   
-    energy_exports = "EPnoex" # "EPex" or "noEPnoex"
+    energy_exports = "EPnoex" # it means that in the analysis the energy crops and plantations are included, while the exports are excluded,
+                              # consistently with the footprint approach
     
       ######## EU ##########
-      source("./scripts/aggregation/EU_Rdata-to-csv.R")            # functions to convert the .Rdata file to several .csv for EU impacts 
     
-        if (energy_exports == "ex") { create.csv.EU.ex(file_rdata_path, csv_path, file_label, year) # EU_Rdata-to-csv.R
-          }else if(energy_exports == "EPnoex") { create.csv.EU.EPnoex(file_rdata_path, csv_path, file_label, year)
-            }else if(energy_exports == "noEPnoex") {create.csv.EU.noEPnoex(file_rdata_path, csv_path, file_label, year)}
-      
-      ######## GLOBAL IMPACTS - DISAGGREGATED LAND USE CATEGORIES (PDF) ##########
+      source("./scripts/aggregation/EU_Rdata-to-csv.R") # functions to convert the .Rdata file to several .csv for EU impacts 
     
-          source("./scripts/aggregation/global_Rdata-to-csv.R")        # functions to convert the .Rdata file to several .csv for impacts of global land us
-          create.csv.global(CI, file_rdata_path, csv_path, file_label, year) # global_Rdata-to-csv.R
-  
-      ######## GLOBAL IMPACTS - AGGREGATED LAND USE CATEGORIES AND CI (PDF) ##########
+      create.csv.EU.EPnoex(file_rdata_path, csv_path, file_label, year)
+
+      ################# CALCULATE VOLUME OF WOOD HARVESTED (Mm3) #################
+          source("./scripts/aggregation/volume_per_category_oneyear.R")
+          calculate.volume.EP.dis.oneyear(areas_base_path, csv_path, file_label, year) # calculate the volume (Mm3) of roundwood equivalent which is harvested in each forestry category in a given year to meet the EU forest biomass demand 
+          # Script which creates the .csv file paste0(csv_path, "EUdemand_volumes_", year, file_label, "_disaggr.csv"), then used in the plotting function (see below) to obtain Figure S13
+          # The .csv file produced in this script is used as input in the script impacts_per_volume_oneyear.R and the relative function calculate.impacts.pervolume.oneyear
           
-          create.csv.noAF(file_rdata_path, csv_path, file_label) # global_Rdata-to-csv.R
-    
-      ################# CALCULATE IMPACTS PER VOLUME OF WOOD (PDF*year/Mm3) #################
-          
+      ################# CONVERT THE IMPACTS TO THE GLOBIOM REGION RESOLUTION [PDF] #################
           source("./scripts/aggregation/convert_to_GLOBIOMres.R")
           convert.to.GLOBIOMres(results_path, csv_path, areas_base_path, file_label)  # convert_to_GLOBIOMres.R  --> aggregate the impacts using the resolution of Globiom regions
+          # This script produces a .csv file (paste0("slost-globiom", file_label, ".csv")).
           
+      ################# CALCULATE IMPACTS PER VOLUME OF WOOD (PDF*year/Mm3) #################
+
+          source("./scripts/aggregation/impacts_per_volume_oneyear.R")
+          calculate.impacts.pervolume.oneyear(csv_path, year, file_label) # calculates the PDF * year / Mm3 per scenario and for the following grouped categories: EU28_forests, 	Import_forests,	Import_energy,	Imports_tot
+          # This script produces the .csv file paste0(csv_path, "PDF_Mm3_", year, file_label, ".csv"), used to fill table S15.1
+          # As input, it needs paste0(csv_path, "EUdemand_volumes_", year, file_label, "_disaggr.csv") produced with calculate.volume.EP.dis.oneyear and 
+          # (paste0(csv_path, "EU_Footprint_", year, file_label, "_EP_disaggregated.csv") produced with create.csv.EU.EPnoex.
+          
+          # WARNING: only available for the Baseline scenario. 
           source("./scripts/aggregation/impacts_per_volume.R")
-          calculate.impacts.pervolume(csv_path, file_label, areas_base_path)         # impacts_per_volume.R --> calculate the impacts per volume of wood in each Globiom region
+          calculate.impacts.pervolume(csv_path, file_label, areas_base_path)         # impacts_per_volume.R --> calculate the impacts per volume of wood in each Globiom region and in each ecoregion
+          # WARNING: this script takes as input the .csv produced through the function convert.to.GLOBIOMres (paste0("slost-globiom", file_label, ".csv")).
+          # The script produced two .csv files (paste0(csv_path, "PDF_Mm3_globiomregions_", file_label, ".csv") and paste0(csv_path, "PDF_Mm3", file_label, ".csv")).
+          # The second one was used to fill out Table S18.1.
+     
+      ################# CALCULATE VOLUME OF WOOD PER CATEGORY FOR ALL YEARS (Mm3) #################
+          # WARNING: only available for the Baseline scenario. It produced the .csv file paste0("Mm3_category", file_label, ".csv").
+          # The .csv produced through this script was not used/published in the manuscript.
+          source("./scripts/aggregation/volume_per_category.R")
+          calculate.volume.per.category(csv_path, file_label, areas_base_path)    
 
       ################# CALCULATE IMPACTS PER HECTARE (PDF/HA) #################
-          
+          # WARNING: only available for the Baseline scenario. Additionally, the .csv produced through this script ("PDF_ha.csv" and "PDF_ha_tot.csv")) were not used/published in the manuscript.
           source("./scripts/aggregation/convert_to_PDFha.R")
-          convert.to.PDFha(results_path, areas_processed_path, csv_path, file_label)    # convert_to_PDFha.R --> calculate the impacts per hectar (ecoregion resolution)
+          convert.to.PDFha(results_path, areas_processed_path, csv_path, file_label)    # convert_to_PDFha.R --> calculate the impacts per hectare (ecoregion resolution)
           
-      ################# CALCULATE VOLUME OF WOOD PER CATEGORY (Mm3) #################
-          
-          source("./scripts/aggregation/volume_per_category.R")
-          calculate.volume.per.category(csv_path, file_label, areas_base_path)    # convert_to_PDFha.R --> calculate the impacts per hectar (ecoregion resolution)
-          
-          
-          
-          
+
+################################################################
 ############################ PLOT ##############################
+################################################################
           
     # Select the year to be plotted and if the exports are included or not 
+    # Most of the following scripts and function were prepared to be used with the results for a single year, which can be selected.
           
     year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
 
-      ################# GLOBAL TIME SERIES AND AREAS (DISAGGREGATED) #######################
-          
-          source("./scripts/plotting/plot_global_time-series.R")              # functions to plot the impacts of global land use 
-          plot.global.time.series(csv_path, file_label, plots_path, label_timber, aggr_plot_path_areas)  # plot_global_time-series.R
-    
+
       ################# BARPLOT OF EU FOOTPRINT  #######################
           
-          source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
+          source("./scripts/plotting/EU_barplots.R")                  
           library(cowplot)
-          energy_exports = "EPnoex-all-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
-          if (energy_exports == "ex") { EUfootprint.barplot.EP(csv_path, file_label, plots_path, year) # EU_barplots.R
-            }else if(energy_exports == "EPnoex") { EUfootprint.barplot.EP(csv_path, file_label, plots_path, year)
-              }else if(energy_exports == "noEPnoex") { EUfootprint.barplot.noEP(csv_path, file_label, plots_path, year)
-                }else if(energy_exports == "EPnoex-dis") { EUfootprint.barplot.EP.dis(csv_path, file_label, plots_path, year)
-                  }else if(energy_exports == "EPnoex-all-dis") {
-                    width_height = c(16, 30)
-                    #width_height = c(30, 11)
-                    width_height = c(9, 27)
-                    width_height = c(27, 9)
-                    #width_height = c(24, 23)
-                    EU.barplot.EP.all.dis(csv_path, file_label, plots_path, year, width_height)
-                  }
-  
+          if(CI == TRUE) { width_height = c(30, 30) 
+          } else if(CI == FALSE) { width_height = c(32, 9)}
+          EU.barplot.EP.all.dis(csv_path, file_label, plots_path, year, width_height)
+          
       ################# BARPLOT OF EU INTERNAL FOREST IMPACTS #######################
-          source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
-          width_height = c(14, 25)
-          width_height = c(27, 9)
-          energy_exports = "EPnoex"
-          if (energy_exports == "ex") { EUinternal.barplot.noEPex(csv_path, file_label, plots_path, year) # EU_barplots.R
-            }else if(energy_exports == "EPnoex") { EUinternal.barplot.EPnoex(csv_path, file_label, plots_path, year)
-            }else if(energy_exports == "noEPnoex") { EUinternal.barplot.noEPnoex(csv_path, file_label, plots_path, year)}
           
+          source("./scripts/plotting/EU_barplots.R")                     
+          width_height = c(32, 9)
+          EUinternal.barplot.EPnoex(csv_path, file_label, plots_path, year, width_height)
+
       ################# BARPLOT OF EU DEMAND AREAS  #######################
-          source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
-          energy_exports = "EPnoex-all-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
-          if(energy_exports == "EPnoex-all-dis") {
-                    width_height = c(27, 15)
-                    width_height = c(9, 27)
-                    width_height = c(27, 9)
-                    EU.areas.barplot.EP.dis(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height)
-                  }
           
+          source("./scripts/plotting/EU_barplots.R")                     
+          width_height = c(32, 9)
+          EU.areas.barplot.EP.dis(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height)
+
       ################# BARPLOT OF EU DEMAND HARVEST  #######################
-          
-          source("./scripts/plotting/plot_biomass-harvested.R")                     # functions to plot the impacts of EU
-          energy_exports = "EPnoex-all-dis" # "EPex" or "noEPnoex" or "EPnoex-dis" ("EPnoex-dis is an additional option to plot the barplot of the EU footprint with a disaggregation of the forest management typed for imported wood biomass)
-          if(energy_exports == "EPnoex-all-dis") {
-                    width_height = c(27, 15)
-                    width_height = c(9, 27)
-                    width_height = c(27, 9)
-                    EU.volume.barplot.EP.dis(areas_base_path, csv_path, plots_path, label_timber, file_label, year, width_height)  
-                  }
-          
-      ################# GLOBAL TIME SERIES (AGGREGATED, WITH CI) #######################
-          
-          plot.global.time.series.CI(csv_path, file_label, plots_path) # plot_global_time-series.R --> noAF
-      
+         
+          source("./scripts/plotting/EU_barplots.R")                  
+          width_height = c(32, 9)
+          EU.volume.barplot.EP.dis(csv_path, file_label, plots_path, year, width_height)
+
       ################# EUROPEAN TIME SERIES (AGGREGATED) #######################
-          
+          # Plotting function used to plot the Figures in S14
           source("./scripts/plotting/plot_EU_time-series.R")            # function to plot the time series of EU internal impacts and footprint 
           id = "EUForest"
-          plot.EU.timeseries(csv_path, file_label, plots_path, id, energy_exports)  # plot_EU_time-series.R 
+          plot.EU.timeseries(csv_path, file_label, plots_path, id)  # plot_EU_time-series.R 
           
           id = "EUFootprint"
-          plot.EU.timeseries(csv_path, file_label, plots_path, id, energy_exports)  # plot_EU_time-series.R 
+          plot.EU.timeseries(csv_path, file_label, plots_path, id)  # plot_EU_time-series.R 
+          
+      # Other plots:
+      ###### To plot the maps, go to the file scripts/plotting/plot_all_maps.R #####
+      ###### To plot the ranges of impacts per GLOBIOM region (Figure S18.1 and S18.2), go to the file scripts/plotting/impacts_per_volume_ranges.R #####
           
           
-          
-          # WARNING: THE FUNCTIONS TO PLOT THE MAPS DO NOT WORK IF THEY ARE CALLED HERE. THEREFORE, THEY HAVE TO BE RUN MANUALLY, AFTER 
-          # SETTING THE id AND THE TYPE OF MAP, AS SHOWN HERE BELOW.
-
-      ################# MAP OF GLOBAL/EU IMPACTS #######################
-          
-          id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
-          map = "PDF" # "PDF" 
-          graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
-          
-          source("./scripts/plotting/map_PDF.R")                        
-          # Plots produced with this function: Global - 2020 vs 2100 RCP2.6 vs 2100 REF, EUFootprint - 2100 + RCP2.6 for MFM and SFM100; EUForest - 2100 + RCP2.6 vs REF for Baseline, MFM25%, MFM100%, SFM25%, SFM100% 
-          source("./scripts/plotting/map_PDF_multi.R")                   
-          ratio = FALSE
-          difference = FALSE
-          plot.map(results_path, result_files, file_label, plots_path, id, map, graph, ratio, difference)
-
-          # This other function is meant to be tailored according to what it is needed to be plotted.
-          
-      ################# MAP OF GLOBAL IMPACTS PER UNIT OF VOLUME #######################
-          
-          id = "EUFootprint"  # options: only "EUFootprint" 
-          source("./scripts/plotting/map_PDF-Mm3.R")                     # functions to plot the impacts on a map
-
-      ################# MAP OF GLOBAL/EU IMPACTS PER MHA #######################
-          id = "EUFootprint"
-          map = "PDFha" # "PDFha"
-          source("./scripts/plotting/map_PDF_multi.R")                   
-          
-      ################# MAP OF GLOBAL LAND USE #######################
-  
-          source("./scripts/plotting/map_areas.R")
-
-        #"areas.Rdata"
-        # results from the script: areas_prepare_for_plotting.R
-                            # data loaded: results - list of dataframes containing the sums over ecoregions per each year (disaggregated per land use), columns in each df: Group, Forest_use, Management, all the land uses
-                            # sums - list of dataframes dataframe containing the sums over ecoregions per each year (aggregated over the land uses), columns: Group, Forest_use, Management, Sum
-                            # tstep - vector with the time steps
-                            # results_median - list of dataframes containing the sums over ecoregions per each year considering only the median values (disaggregated per land use), columns in each df: Group, Forest_use, Management, all the land uses
-                            # sums_median - list of dataframes dataframe containing the sums over ecoregions per each year considering only the median values (aggregated over the land uses), columns: Group, Forest_use, Management, Sum  
-
-
-        #file_rdata <- paste0("sums", file_label, ".Rdata")
-        # results from the script: slost_aggregate.R
-                            # data loaded: results - list of dataframes containing the sums over ecoregions per each year (disaggregated per land use), columns in each df: Group, Forest_use, Management, all the land uses
-                            # sums - list of dataframes dataframe containing the sums over ecoregions per each year (aggregated over the land uses), columns: Group, Forest_use, Management, Sum, Sum_lower95, Sum_upper95
-                            # tstep - vector with the time steps
-                            # results_median - list of dataframes containing the sums over ecoregions per each year considering only the median values (disaggregated per land use), columns in each df: Group, Forest_use, Management, all the land uses
-                            # sums_median - list of dataframes dataframe containing the sums over ecoregions per each year considering only the median values (aggregated over the land uses), columns: Group, Forest_use, Management, Sum  
-                            # results_CI - list of dataframes containing the sums over ecoregions per each year considering only the CI values (disaggregated per land use), columns in each df: Group, Forest_use, Management, all the land uses
-                            # sums_CI - list of dataframes dataframe containing the sums over ecoregions per each year considering only the CI values (aggregated over the land uses), columns: Group, Forest_use, Management, Sum_upper, Sum_lower  
-
-
-########## PLOTS FOR THE WORLD BIODIVERSITY FORUM ###########
-          
-year = "2100" # select the year. WARNING: use a character string containing the year (e.g., "2100")
-
-source("./scripts/plotting/for_WBF/EU_barplots_WBF.R")
-source("./scripts/plotting/plot_biomass-harvested.R")
-source("./scripts/plotting/EU_barplots.R")                     # functions to plot the impacts of EU
-
-          width_height = c(9, 27)
-          EUFootprint.areas.barplot.EP(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height)
-          EUFootprint.volume.barplot.EP(areas_base_path, csv_path, plots_path, label_timber, file_label, year, width_height)  
-
-          EU.areas.barplot.EP.dis(aggr_plot_path_areas, label_timber, file_label, plots_path, year, width_height)
-          EU.volume.barplot.EP.dis(areas_base_path, csv_path, plots_path, label_timber, file_label, year, width_height)  
-    
-          EU.barplot.EP.dis(csv_path, file_label, plots_path, year, width_height)
-          EUFootprint.barplot.EP(csv_path, file_label, plots_path, year, width_height)
-          
-            
-          id = "EUFootprint" # options: "EUForest", "EUFootprint" or "Global"
-          map = "PDF" # "PDF" 
-          graph = "B-50" # "B-50" or "B-25-50", to be selected when id == "EUFootprint". "B-50" = the map will plot the following scenarios for 2100: Baseline, Multifunctional100% and Set-Aside100%
-                          # "B-25-50" = = the map will plot the following scenarios for 2100: Baseline, Multifunctional50%, Multifunctional100%, SetAside50% and Set-Aside100%
-          
-          source("./scripts/plotting/for_WBF/map_PDF_multi.R")                   
-          # This other function is meant to be tailored according to what it is needed to be plotted.
           

@@ -49,6 +49,9 @@ Folders:
 	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
 
 #### data/land_use_data
+
+Folders:
+
 - **areas_base** 
 	- .csv files containing the land use areas sent by Fulvio di Fulvio (IIASA) which were obtained with the GLOBIOM model.
 	- *analysis*: folder containing files where some data have been looked at in more detail. 
@@ -67,7 +70,7 @@ Folders:
 	resulting from the matching between the areas of the different GLOBIOM model, through the application of the function 
 	do_tidy_match.R called in main.R. 
 	- *timber/Baseline/*: folder containing the.csv files resulting from the matching between the areas of the different GLOBIOM model, through the application of the function 
-	do_tidy_match.R called in main.R. under the “timber” setting.- *readme.md*: document that describes the content of the sub-folders.
+	do_tidy_match.R called in main.R. under the “timber” setting.
 	- *archived/*: folder containing material used for testing and eventually not included in the final version of the manuscript.
 - AREAS USER
 
@@ -77,19 +80,19 @@ Files:
 - *readme.md*: file describing the folder content in further detail.
 - *set_directories.R*: script called in main.R that creates variables containing the paths to folders/files (e.g. 
 	the path to the results, to the plots, to the aggregated data, etc).
-- INPUT OUTPUT FILE
+- *create_directories*: script called in main.R that creates the needed directories if they do not exist already (e.g., where the results are stored).
+- *scripts_functions_input_output.xlsx*: excel file with the list of scripts, functions, data input and output.
+- *scripts_functions_input_output.pdf*: .pdf file created with *scripts_functions_input_output.xlsx*.
 
 Folders:
-- **create_directories**: script called in main.R that creates the needed directories if they do not exist already 
-	(e.g., where the results are stored).
 - **data_preparation**: scripts used to tidy up and match the data on the area and to calculate the model 
-	parameters used as input in the model. The input and output of these scripts are in the folder */data*
-- **model**: scripts that take the output of the functions in */data_preparation* as input and calculate the 
-	extinction risk per year, scenario, land use and ecoregion and to store the results in the folder */results*.
-- **aggregation**: scripts that take the files in */results* as input and aggregate them (e.g. summing the 
-	impacts over ecoregions). The output of these scripts is saved in */aggregation_plotting*.
-- **plotting**: scripts used to plot the values of the .csv files in */results* or in */aggregation_plotting*; the 
-	plots are saved in */aggregation_plotting*.
+	parameters used as input in the model. The input and output of these scripts are in the folder *data/*
+- **model**: scripts that take the output of the functions in *data_preparation/* as input and calculate the 
+	extinction risk per year, scenario, land use and ecoregion and to store the results in the folder *results/*.
+- **aggregation**: scripts that take the files in *results/* as input and aggregate them (e.g. summing the 
+	impacts over ecoregions). The output of these scripts is saved in *aggregation_plotting/*.
+- **plotting**: scripts used to plot the values of the .csv files in *results/* or in *aggregation_plotting/*; the 
+	plots are saved in *aggregation_plotting/*.
 
 - **archived**: folder containing material used for testing and eventually not included in the final version of the manuscript.
 
@@ -103,8 +106,8 @@ Folders:
 The folders in this path contain the extinction risk calculated at ecoregion resolution, per each scenario and land use types usign the scrips in the folder */scripts/model* that are called in the main.R file.  
 Labeling of the folders:
 	- Baseline, SharedEffort or LowerIntensity: scenario to which the results belong.
-	- timber = EU timber plantations have been included
-	- cutoff = response ratios larger than 1 converted to 1
+	- timber = EU timber plantations have been included.
+	- cutoff = response ratios larger than 1 converted to 1.
 	- bs or static = confidence interval calculated with bootstrapping or are not calculated. 
 
 ### aggregation_plotting

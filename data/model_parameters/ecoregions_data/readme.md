@@ -11,13 +11,13 @@ List of .csv files available in this:
 **Important**: the following files are not owned by the authors for the manuscript but by the authors of the 
 references listed below. Please cite them if you use these files. 
 
-	- *Ecoregions_description.csv*
+- *Ecoregions_description.csv*
 	Data on ecoregions from supplementary information of Chaudhary et al. (2015) [1], sheet Ecoregion description and VS.
 	The column VS_plants was obtained as described in the folder on vulnerability scores (*/input_data/VS*)
-	- *Ecoregions_in-Globiom.csv*
+- *Ecoregions_in-Globiom.csv*
 	List of ecoregions which resulted from the intersection of the ecoregions used in Chaudhary et al. (2015) [1] and
 	the ecoregions modelled in GLOBIOM. 
-	- *CF_local.csv*
+- *CF_local.csv*
 	List of local characterization factors from supplementary information of Chaudhary (2015) [1], sheet CF_local. 
 	Unlike the original paper, for this study no biome has been assigned to the land use class Urban. Already in Chaudhary
 	et al. (2015) [1], information on biome for artificial lands is not available for 164 out of 190 data points, and the
@@ -26,14 +26,14 @@ references listed below. Please cite them if you use these files.
 	for these taxa there are enough data points to model CF for forest use intensities (see next point on the list).
 	Also, only the following land use types has been considered, as for forest management data comes from Chaudhary
 	et al. (2016) [1], as explained in the next point: Annual crops, Permanent crops, Pastures, Urban.
-	- *CF_local_forest-use.csv*
+- *CF_local_forest-use.csv*
 	List of local characterization factors from supplementary information of Chaudhary et al. (2016) [2], sheet Raw data.
 	CF have been calculated as 1 minus the ratio between mean species richness in disturbed (managed) forest sites
 	and mean species richness in reference (unmanaged) forest sites. 
 	Only data on Plants, Mammals and Birds have been selected, the reason in described in the previous paragraph.
-	- *CF_local_complete.csv*
+- *CF_local_complete.csv*
 	Same as CF_local.csv but including data for all the species group and all the land use types, as in Chaudhary et al. (2015) [1].
-	- *z_input_values.csv*
+- *z_input_values.csv*
 	Z values resulting from the aggregation of the original data of Drakare et al. (2006) [3].
 
 [1] Chaudhary, A., Verones, F., de Baan, L., & Hellweg, S. (2015) Quantifying land use impacts on biodiversity: combining
