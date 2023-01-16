@@ -8,13 +8,21 @@ select <- dplyr::select
     
 
   calculate.slost <- function(Total_RemainingNatural_areas, Land_use_areas, param, CI, BS) { 
-    # Total_RemainingNatural_areas : dataframe with two columns, one with the total original areas, one with the remaining natural areas. The rows correspond to the 
-      # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
-    # Land_use_areas : dataframe which contains one column per each land use category. The rows correspond to the 
-      # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.)
-    # param: list containing the parameters of the model: "ratio_eco", 
-    # CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated
-    # vulnerability: TRUE or FALSE 
+# Arguments:
+  # Total_RemainingNatural_areas : dataframe with two columns, one with the total original areas, one with the remaining natural areas. The rows correspond to the 
+      # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.).
+  # Land_use_areas : dataframe which contains one column per each land use category. The rows correspond to the 
+      # ecoregions and are sorted in alphabetical order according to the ecoregion codes (AA0101, AA0102, etc.).
+  # param: list containing the parameters of the model: "ratio_eco", "weight_tx", "Sorg_VS", "zvalues".
+  # CI can be TRUE or FALSE. TRUE = the CI will be calculated, FALSE = the CI will not be calculated.
+# Output: 
+  # List with the following elements:
+  # Aggr_matrix: matrix with the values of the impacts Ecoregions x Land use.
+  # Aggr_df: dataframe with the values of the impacts, where rows = Ecoregions and colums = Land use (same as areas).
+  # PerTaxon_matrix: list containing the matrices with the values of the impacts Ecoregions x Land use per taxonomic group.
+  # PerTaxon_df: list containing dataframe with the values of the impacts, where rows = Ecoregions and colums = Land use (same as areas), per taxonomic group.
+  # Aggr2.5_matrix: if CI = TRUE, matrix with the values of the lower95% CI, Ecoregions x Land use. If CI = FALSE, all 0s.
+  # Aggr97.5_matrix: if CI = TRUE, matrix with the values of the upper95% CI, Ecoregions x Land use. If CI = FALSE, all 0s.
     
 
     if((CI != FALSE & CI != TRUE) | missing(CI)) {stop("Select one option for the calculation of the confidence intervals (FALSE or TRUE)")}
@@ -41,12 +49,10 @@ select <- dplyr::select
       # specieslost_sim calculates the affinity (h), the suitable areas (sum(hi*Ai)) and the species lost (no allocation, no weighting, 
       # no aggregation, as in eq. 11.3 of LCImpact method for land stress (Chaudhary, 2016), but multiplied also by the vulnerability scores)
 
-        print("CI = TRUE, in calculate_slost")
         system.time(  
         Slost_h_a_suit <- specieslost_sim(Sorg_VS, Total_RemainingNatural_areas$A_org, Total_RemainingNatural_areas$A_new, Land_use_areas, zvalues, ratio_eco, n = n)
         )
-        print("CI = TRUE, in calculate_slost, after Slost_h_a_suit")
-        
+       
         print
         h = Slost_h_a_suit[[1]]       # list of 3d array. The lenght of the list is equal to the number of n. Each array contains the affinity values per ecoregion (1st dim), land use category (2nd dim) and per taxon (3rd dim) 
                                       # Ecoregions are in alphabetical order according to the ecoregion code, AA0101, AA0102, etc. Taxa are "Plants"  "Birds"   "Mammals".
