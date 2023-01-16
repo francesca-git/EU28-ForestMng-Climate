@@ -28,14 +28,11 @@ In each cell, enter the area of the corresponding land use per that specific eco
 3. Before running it, do the following things 
 	- Set your working directory.
 	- Make sure that the functions and parameters needed for the calculationare in the right place: 
-	These are the data needed:
-		- paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/rr_ecoregion_static.Rdata")
-		- paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/zvalues_static.Rdata)
-	
-	These are the functions needed:
-		- paste0(your working directory, "scripts/model/model_functions.R)
-		- paste0(your working directory, "scripts/model/parameters_calculation.R)
-		- paste0(your working directory, "demo/load_parameters.R)	
+		- data: paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/rr_ecoregion_static.Rdata")
+		- data: paste0(your working directory, "/data/model_parameters/ecoregions_data/rr_z/zvalues_static.Rdata)
+		- functions: paste0(your working directory, "scripts/model/model_functions.R)
+		- functions: paste0(your working directory, "scripts/model/parameters_calculation.R)
+		- functions: paste0(your working directory, "demo/load_parameters.R)	
 
 	**Important**: store the data and the functions in your working directory by creating the same paths as here above. Otherwise the functions and the data will not be called. 
 
