@@ -11,12 +11,12 @@ Each sub-folder has a dedicated readme.md file.
 
 List of .csv files available in this:
 
-**Important**: the following files are not owned by the authors for the manuscript but by the authors of the 
+**Important**: the following files are not owned by the authors of this manuscript but by the authors of the 
 references listed below. Please cite them if you use these files. 
 
 - *Ecoregions_description.csv*
 	Data on ecoregions from supplementary information of Chaudhary et al. (2015) [1], sheet Ecoregion description and VS.
-	The column VS_plants was obtained as described in the folder on vulnerability scores (*/input_data/VS*)
+	The column VS_plants was obtained as described in the folder on vulnerability scores (*/input_data/VS*).
 - *Ecoregions_in-Globiom.csv*
 	List of ecoregions which resulted from the intersection of the ecoregions used in Chaudhary et al. (2015) [1] and
 	the ecoregions modelled in GLOBIOM. 
@@ -34,8 +34,6 @@ references listed below. Please cite them if you use these files.
 	CF have been calculated as 1 minus the ratio between mean species richness in disturbed (managed) forest sites
 	and mean species richness in reference (unmanaged) forest sites. 
 	Only data on Plants, Mammals and Birds have been selected, the reason in described in the previous paragraph.
-- *CF_local_complete.csv*
-	Same as CF_local.csv but including data for all the species group and all the land use types, as in Chaudhary et al. (2015) [1].
 - *z_input_values.csv*
 	Z values resulting from the aggregation of the original data of Drakare et al. (2006) [3].
 
