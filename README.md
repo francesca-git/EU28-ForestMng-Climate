@@ -1,3 +1,15 @@
+## Welcome to EU28-ForestMng-Climate
+
+This is the github repository of the open access research article
+
+Can Forest Management Practices Counteract Species Loss Arising from Increasing European Demand for Forest Biomass under Climate Mitigation Scenarios?
+
+Francesca Rosa, Fulvio Di Fulvio, Pekka Lauri, Adam Felton, Nicklas Forsell, Stephan Pfister, Stefanie Hellweg 
+
+*Environmental Science and Technology*, **2023**
+
+https://doi.org/10.1021/acs.est.2c07867
+
 
 ## Structure of the folders in the repository 
 
@@ -86,7 +98,8 @@ Files:
 
 Folders:
 
-The folders in this path contain the extinction risk calculated at ecoregion resolution, per each scenario and land use types usign the scrips in the folder */scripts/model* that are called in the main.R file.  
+The folders in this path contain the extinction risk calculated at ecoregion resolution, per each scenario and 
+land use types usign the scrips in the folder *scripts/model* that are called in the main.R file.  
 Labeling of the folders:
 - Baseline, SharedEffort or LowerIntensity: scenario to which the results belong.
 - timber = EU timber plantations have been included.
