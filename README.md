@@ -2,9 +2,12 @@
 
 This is the github repository of the open access research article
 
-*Can Forest Management Practices Counteract Species Loss Arising from Increasing European Demand for Forest Biomass under Climate Mitigation Scenarios?*
+**Can Forest Management Practices Counteract Species Loss Arising from Increasing European Demand for Forest Biomass under Climate Mitigation Scenarios?**
+
 Francesca Rosa, Fulvio Di Fulvio, Pekka Lauri, Adam Felton, Nicklas Forsell, Stephan Pfister, Stefanie Hellweg 
+
 *Environmental Science and Technology*, **2023**
+
 https://doi.org/10.1021/acs.est.2c07867
 
 This repository contains the data and the scripts used to perform the analyses, the results obtained, the aggregated values and 
@@ -25,7 +28,8 @@ mitigation scenario with greater demand for lignocellulosic crops and energywood
 is crucial to assess forest biomass supply chains for the early detection of extinction risks in non-EU regions and for developing strategies
 to prevent increase of global impacts.
 
-##### Keywords: biodiversity, species richness, biodiversity footprint, life cycle thinking,
+##### Keywords
+biodiversity, species richness, biodiversity footprint, life cycle thinking,
 bioeconomy, land use, leakage effects, closer-to-nature forests, set-aside, wood trade
 
 ## Structure of the folders in the repository 
