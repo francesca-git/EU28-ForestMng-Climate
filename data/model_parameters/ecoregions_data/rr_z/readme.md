@@ -19,7 +19,7 @@ Files:
 	calculate.RR.bs in scripts/model/bootstrapping.R. For rr, there are different files for rr for forest management and for the other land uses.
 	*Important*: two of the files, obtained with the bootstrapping procedure (*rr_ecoregion_bs.Rdata* and *zvalues_ecoregion_bs.Rdata*) and used 
 	in the model (in *scripts/model/calculate_impacts.R*) when the option to calculate the confidence intervals is on, were too big to be uploaded 
-	on github. Therefore, these files have been uploaded to zenodo. When the confidence intervals are not calculated, these files are not 
-	needed. 
+	on github. Therefore, these files have been uploaded to zenodo (https://zenodo.org/record/7543683#.Y9Vh-LXMJaQ). 
+	When the confidence intervals are not calculated, these files are not needed. 
 
 - *response_ratios_forest.csv*: a file with the response ratios for forest management for the various species groups.
